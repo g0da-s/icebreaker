@@ -126,12 +126,14 @@ const Home = () => {
   };
 
 
+  const hasResults = matches.length > 0 || featuredUsers.length > 0;
+
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* AI Search Section */}
-          <div className="mb-12">
+          {/* AI Search Section - Centered when no results, top when results */}
+          <div className={`transition-all duration-500 ${hasResults ? 'mb-12' : 'min-h-[60vh] flex flex-col justify-center'}`}>
             <div className="text-center mb-6">
               <h1 className="text-3xl font-bold text-foreground mb-2">
                 Find Your Perfect Match
@@ -147,16 +149,15 @@ const Home = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="flex-1 h-12 text-base"
+                className="flex-1 h-12 text-base placeholder:text-muted-foreground/50"
               />
               <Button 
                 onClick={handleSearch} 
                 disabled={loading}
-                size="lg"
-                className="h-12"
+                size="icon"
+                className="h-12 w-12 rounded-full transition-transform duration-200 hover:scale-90"
               >
-                <Search className="w-4 h-4 mr-2" />
-                {loading ? 'Searching...' : 'Search'}
+                <Search className="w-5 h-5" />
               </Button>
             </div>
 
@@ -165,6 +166,7 @@ const Home = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
+                className="transition-transform duration-200 hover:scale-95"
                 onClick={() => { 
                   setSearchQuery("friendly meeting"); 
                   setTimeout(handleSearch, 100);
@@ -176,6 +178,7 @@ const Home = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
+                className="transition-transform duration-200 hover:scale-95"
                 onClick={() => { 
                   setSearchQuery("mentor"); 
                   setTimeout(handleSearch, 100);
@@ -187,6 +190,7 @@ const Home = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
+                className="transition-transform duration-200 hover:scale-95"
                 onClick={() => { 
                   setSearchQuery("co-founder"); 
                   setTimeout(handleSearch, 100);
@@ -198,6 +202,7 @@ const Home = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
+                className="transition-transform duration-200 hover:scale-95"
                 onClick={() => { 
                   setSearchQuery("surprise me"); 
                   setTimeout(handleSearch, 100);
@@ -276,7 +281,7 @@ const Home = () => {
                       <Button
                         variant="outline"
                         size="lg"
-                        className="flex-1 h-12"
+                        className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
                         onClick={() => navigate(`/user/${match.user_id}`)}
                       >
                         <Eye className="w-5 h-5 mr-2" />
@@ -284,7 +289,7 @@ const Home = () => {
                       </Button>
                       <Button
                         size="lg"
-                        className="flex-1 h-12"
+                        className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
                         onClick={() => console.log("Schedule meeting", match.user_id)}
                       >
                         <Calendar className="w-5 h-5 mr-2" />
@@ -352,7 +357,7 @@ const Home = () => {
                       <Button
                         variant="outline"
                         size="lg"
-                        className="flex-1 h-12"
+                        className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
                         onClick={() => navigate(`/user/${user.user_id}`)}
                       >
                         <Eye className="w-5 h-5 mr-2" />
@@ -360,7 +365,7 @@ const Home = () => {
                       </Button>
                       <Button
                         size="lg"
-                        className="flex-1 h-12"
+                        className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
                         onClick={() => console.log("Connect", user.user_id)}
                       >
                         <Calendar className="w-5 h-5 mr-2" />
