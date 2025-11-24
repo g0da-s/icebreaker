@@ -49,7 +49,34 @@ serve(async (req) => {
       .select('id, full_name, email')
       .in('id', userIds);
 
+    // Get availability for all users
+    const { data: availabilities } = await supabase
+      .from('user_availability')
+      .select('user_id, day_of_week, start_time, end_time')
+      .in('user_id', userIds)
+      .order('day_of_week', { ascending: true })
+      .order('start_time', { ascending: true });
+
     const profilesMap = new Map(profiles?.map((p: any) => [p.id, p]) || []);
+    
+    // Group availabilities by user
+    const availabilityMap = new Map();
+    availabilities?.forEach((avail: any) => {
+      if (!availabilityMap.has(avail.user_id)) {
+        availabilityMap.set(avail.user_id, []);
+      }
+      availabilityMap.get(avail.user_id).push(avail);
+    });
+
+    // Helper to format earliest availability
+    const getEarliestAvailability = (userId: string) => {
+      const userAvail = availabilityMap.get(userId);
+      if (!userAvail || userAvail.length === 0) return null;
+      
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const earliest = userAvail[0];
+      return `${days[earliest.day_of_week]} at ${earliest.start_time}`;
+    };
 
     // Use AI to find the best matches
     const prompt = `Based on this search: "${searchQuery}"
@@ -96,15 +123,18 @@ Return ONLY valid JSON array, no markdown or explanation.`;
       matches = [];
     }
 
-    // Enrich matches with user details
+    // Enrich matches with user details and availability
     const enrichedMatches = matches.map((match: any) => {
       const user = allUsers.find((u: any) => u.user_id === match.user_id);
       const profile = profilesMap.get(match.user_id);
+      const earliestAvailable = getEarliestAvailability(match.user_id);
+      
       return {
         ...match,
         full_name: profile?.full_name || 'Unknown',
         email: profile?.email || '',
         tags: user?.tags || [],
+        earliest_available: earliestAvailable,
       };
     });
 
