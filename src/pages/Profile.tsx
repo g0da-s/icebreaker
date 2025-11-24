@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LogOut, Edit } from "lucide-react";
+import { format } from "date-fns";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -117,6 +118,26 @@ const Profile = () => {
           <Separator className="my-4" />
 
           <div className="space-y-4">
+            {profile.birth_date && (
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-2">
+                  Birth Date
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {format(new Date(profile.birth_date), "PPP")}
+                </p>
+              </div>
+            )}
+
+            {profile.location && (
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-2">
+                  Location
+                </h3>
+                <p className="text-sm text-muted-foreground">{profile.location}</p>
+              </div>
+            )}
+
             {interests?.bio && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-2">
@@ -136,6 +157,26 @@ const Profile = () => {
                     <Badge key={index} variant="outline">
                       {tag}
                     </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {profile.availability && Object.keys(profile.availability).some((day: string) => profile.availability[day]?.active) && (
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-2">
+                  Availability
+                </h3>
+                <div className="space-y-2">
+                  {Object.entries(profile.availability).map(([day, schedule]: [string, any]) => (
+                    schedule?.active && (
+                      <div key={day} className="text-sm">
+                        <span className="capitalize font-medium">{day}:</span>{" "}
+                        <span className="text-muted-foreground">
+                          {schedule.start} - {schedule.end}
+                        </span>
+                      </div>
+                    )
                   ))}
                 </div>
               </div>

@@ -18,6 +18,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { BottomNav } from "@/components/BottomNav";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const STUDY_OPTIONS = ["Bachelor's", "Master's", "PhD", "Executive", "Alumni", "Faculty Member"];
 
@@ -46,11 +52,22 @@ const ProfileSetup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [studies, setStudies] = useState("");
-  const [age, setAge] = useState("");
+  const [birthDate, setBirthDate] = useState<Date>();
   const [location, setLocation] = useState("");
   const [avatarType, setAvatarType] = useState<"upload" | "mascot">("mascot");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [selectedMascot, setSelectedMascot] = useState("");
+
+  // Step 4: Availability
+  const [availability, setAvailability] = useState({
+    monday: { active: false, start: "09:00", end: "17:00" },
+    tuesday: { active: false, start: "09:00", end: "17:00" },
+    wednesday: { active: false, start: "09:00", end: "17:00" },
+    thursday: { active: false, start: "09:00", end: "17:00" },
+    friday: { active: false, start: "09:00", end: "17:00" },
+    saturday: { active: false, start: "09:00", end: "17:00" },
+    sunday: { active: false, start: "09:00", end: "17:00" },
+  });
 
   // Step 2: AI Chat
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -62,7 +79,7 @@ const ProfileSetup = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
-  const progress = (step / 3) * 100;
+  const progress = (step / 4) * 100;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -83,7 +100,7 @@ const ProfileSetup = () => {
 
   const handleNext = () => {
     if (step === 1) {
-      if (!firstName || !lastName || !studies || !age || !location) {
+      if (!firstName || !lastName || !studies || !birthDate || !location) {
         toast({
           title: "Complete all fields",
           description: "Please fill in all required fields",
@@ -122,7 +139,7 @@ const ProfileSetup = () => {
       // All questions answered
       setTimeout(() => {
         setStep(3);
-      }, 1000);
+      }, 500);
     }
   };
 
@@ -167,17 +184,18 @@ const ProfileSetup = () => {
         question4: chatAnswers[3] || "",
       };
 
-      // Update profile
+      // Update profile (not insert - the profile already exists from signup)
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
           full_name: `${firstName} ${lastName}`,
           studies,
-          age: parseInt(age),
+          birth_date: birthDate ? format(birthDate, "yyyy-MM-dd") : null,
           location,
           avatar_type: avatarType,
           avatar_url: avatarType === "mascot" ? selectedMascot : null,
           onboarding_answers: onboardingAnswers,
+          availability: availability,
         })
         .eq('id', session.user.id);
 
@@ -236,7 +254,7 @@ const ProfileSetup = () => {
           <div className="space-y-2">
             <CardTitle>Build Your Profile</CardTitle>
             <CardDescription>
-              Step {step} of 3 - Let's get to know you
+              Step {step} of 4 - Let's get to know you
             </CardDescription>
             <Progress value={progress} className="h-2" />
           </div>
@@ -284,14 +302,33 @@ const ProfileSetup = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="age">Age *</Label>
-                  <Input
-                    id="age"
-                    type="number"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    placeholder="25"
-                  />
+                  <Label htmlFor="birthDate">Birth Date *</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !birthDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {birthDate ? format(birthDate, "PPP") : <span>Pick a date</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={birthDate}
+                        onSelect={setBirthDate}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="location">Location *</Label>
@@ -456,6 +493,82 @@ const ProfileSetup = () => {
                     ))}
                   </div>
                 </div>
+              </div>
+
+              <div className="flex justify-between gap-2">
+                <Button variant="outline" onClick={() => setStep(step - 1)}>
+                  Back
+                </Button>
+                <Button onClick={handleNext}>Next</Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Availability Scheduler */}
+          {step === 4 && (
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Set Your Availability</h3>
+                <p className="text-sm text-muted-foreground">
+                  Choose the days and times you're available to meet
+                </p>
+
+                {(Object.keys(availability) as Array<keyof typeof availability>).map((day) => (
+                  <div key={day} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={day} className="text-base capitalize">
+                        {day}
+                      </Label>
+                      <Switch
+                        id={day}
+                        checked={availability[day].active}
+                        onCheckedChange={(checked) =>
+                          setAvailability({
+                            ...availability,
+                            [day]: { ...availability[day], active: checked },
+                          })
+                        }
+                      />
+                    </div>
+
+                    {availability[day].active && (
+                      <div className="grid grid-cols-2 gap-4 pt-2">
+                        <div className="space-y-2">
+                          <Label htmlFor={`${day}-start`} className="text-sm">
+                            Start Time
+                          </Label>
+                          <Input
+                            id={`${day}-start`}
+                            type="time"
+                            value={availability[day].start}
+                            onChange={(e) =>
+                              setAvailability({
+                                ...availability,
+                                [day]: { ...availability[day], start: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`${day}-end`} className="text-sm">
+                            End Time
+                          </Label>
+                          <Input
+                            id={`${day}-end`}
+                            type="time"
+                            value={availability[day].end}
+                            onChange={(e) =>
+                              setAvailability({
+                                ...availability,
+                                [day]: { ...availability[day], end: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
 
               <div className="flex justify-between gap-2">
