@@ -48,6 +48,7 @@ export const ScheduleMeetingModal = ({
 }: ScheduleMeetingModalProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [loadingSlots, setLoadingSlots] = useState(false);
   const [currentUserAvailability, setCurrentUserAvailability] = useState<WeekAvailability | null>(null);
   const [overlappingSlots, setOverlappingSlots] = useState<TimeSlot[]>([]);
 
@@ -73,10 +74,46 @@ export const ScheduleMeetingModal = ({
   }, [open]);
 
   useEffect(() => {
-    if (currentUserAvailability && recipientAvailability) {
-      const slots = calculateOverlappingSlots(currentUserAvailability, recipientAvailability);
-      setOverlappingSlots(slots);
-    }
+    const fetchAISuggestions = async () => {
+      if (!currentUserAvailability || !recipientAvailability) return;
+      
+      setLoadingSlots(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('suggest-meeting-times', {
+          body: {
+            requesterAvailability: currentUserAvailability,
+            recipientAvailability: recipientAvailability,
+          }
+        });
+
+        if (error) throw error;
+
+        if (data?.suggestions && data.suggestions.length > 0) {
+          // Convert AI suggestions to TimeSlot format
+          const aiSlots: TimeSlot[] = data.suggestions.map((s: any) => ({
+            day: s.day.charAt(0).toUpperCase() + s.day.slice(1),
+            date: new Date(s.date),
+            startTime: s.startTime,
+            endTime: s.endTime,
+            displayTime: s.reason,
+          }));
+          setOverlappingSlots(aiSlots);
+        } else {
+          // Fallback to basic calculation if AI fails
+          const slots = calculateOverlappingSlots(currentUserAvailability, recipientAvailability);
+          setOverlappingSlots(slots);
+        }
+      } catch (error) {
+        console.error('Error fetching AI suggestions:', error);
+        // Fallback to basic calculation
+        const slots = calculateOverlappingSlots(currentUserAvailability, recipientAvailability);
+        setOverlappingSlots(slots);
+      } finally {
+        setLoadingSlots(false);
+      }
+    };
+
+    fetchAISuggestions();
   }, [currentUserAvailability, recipientAvailability]);
 
   const calculateOverlappingSlots = (
@@ -103,8 +140,8 @@ export const ScheduleMeetingModal = ({
         if (overlapEnd - overlapStart >= 60) {
           const date = addDays(startOfThisWeek, index);
           
-          for (let time = overlapStart; time + 60 <= overlapEnd; time += 60) {
-            if (slots.length >= 3) break;
+            for (let time = overlapStart; time + 60 <= overlapEnd; time += 60) {
+              if (slots.length >= 8) break;
             
             const startTimeStr = minutesToTime(time);
             const endTimeStr = minutesToTime(time + 60);
@@ -120,10 +157,10 @@ export const ScheduleMeetingModal = ({
         }
       }
 
-      if (slots.length >= 3) return;
+      if (slots.length >= 8) return;
     });
 
-    return slots.slice(0, 3);
+    return slots.slice(0, 8);
   };
 
   const timeToMinutes = (time: string): number => {
@@ -192,7 +229,16 @@ export const ScheduleMeetingModal = ({
         </DialogHeader>
 
         <div className="space-y-3 mt-4">
-          {overlappingSlots.length === 0 ? (
+          {loadingSlots ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <div className="animate-pulse space-y-3">
+                <div className="h-16 bg-muted rounded-lg"></div>
+                <div className="h-16 bg-muted rounded-lg"></div>
+                <div className="h-16 bg-muted rounded-lg"></div>
+              </div>
+              <p className="text-sm mt-4">AI is finding the best meeting times...</p>
+            </div>
+          ) : overlappingSlots.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>No overlapping availability found.</p>
@@ -203,9 +249,10 @@ export const ScheduleMeetingModal = ({
           ) : (
             <>
               <p className="text-sm text-muted-foreground mb-4">
-                Here are the best time slots based on your mutual availability:
+                AI-suggested meeting times based on your mutual availability:
               </p>
-              {overlappingSlots.map((slot, index) => (
+              <div className="max-h-[400px] overflow-y-auto space-y-2 pr-2">
+                {overlappingSlots.map((slot, index) => (
                 <Button
                   key={index}
                   variant="outline"
@@ -213,22 +260,28 @@ export const ScheduleMeetingModal = ({
                   onClick={() => handleScheduleMeeting(slot)}
                   disabled={loading}
                 >
-                  <div className="flex items-center gap-3 w-full">
-                    <div className="flex-shrink-0">
-                      <Badge variant="secondary" className="px-2 py-1">
-                        {slot.day}
-                      </Badge>
-                    </div>
-                    <div className="flex-1 text-left">
-                      <div className="font-medium">{format(slot.date, 'MMMM d, yyyy')}</div>
-                      <div className="text-sm opacity-80 flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {slot.startTime} - {slot.endTime}
+                    <div className="flex items-center gap-3 w-full">
+                      <div className="flex-shrink-0">
+                        <Badge variant="secondary" className="px-2 py-1">
+                          {slot.day}
+                        </Badge>
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="font-medium">{format(slot.date, 'MMMM d, yyyy')}</div>
+                        <div className="text-sm opacity-80 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {slot.startTime} - {slot.endTime}
+                        </div>
+                        {slot.displayTime && (
+                          <div className="text-xs opacity-60 mt-1">
+                            {slot.displayTime}
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
-                </Button>
-              ))}
+                  </Button>
+                ))}
+              </div>
             </>
           )}
         </div>

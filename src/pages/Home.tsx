@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BottomNav } from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { QuickScheduleModal } from "@/components/QuickScheduleModal";
 
 interface Match {
   user_id: string;
@@ -33,6 +34,8 @@ const Home = () => {
   const [featuredUsers, setFeaturedUsers] = useState<Match[]>([]);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string>("");
+  const [quickScheduleOpen, setQuickScheduleOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -294,7 +297,10 @@ const Home = () => {
                       <Button
                         size="lg"
                         className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
-                        onClick={() => console.log("Schedule meeting", match.user_id)}
+                        onClick={() => {
+                          setSelectedUser({ id: match.user_id, name: match.full_name });
+                          setQuickScheduleOpen(true);
+                        }}
                       >
                         <Calendar className="w-5 h-5 mr-2" />
                         Connect
@@ -380,7 +386,10 @@ const Home = () => {
                       <Button
                         size="lg"
                         className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
-                        onClick={() => console.log("Connect", user.user_id)}
+                        onClick={() => {
+                          setSelectedUser({ id: user.user_id, name: user.full_name });
+                          setQuickScheduleOpen(true);
+                        }}
                       >
                         <Calendar className="w-5 h-5 mr-2" />
                         Connect
@@ -394,6 +403,15 @@ const Home = () => {
 
         </div>
       </div>
+
+      {selectedUser && (
+        <QuickScheduleModal
+          open={quickScheduleOpen}
+          onOpenChange={setQuickScheduleOpen}
+          recipientId={selectedUser.id}
+          recipientName={selectedUser.name}
+        />
+      )}
 
       <BottomNav />
     </div>

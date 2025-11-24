@@ -1,1 +1,4 @@
 project_id = "ulomnesokzzflfslgrbf"
+
+[functions.suggest-meeting-times]
+verify_jwt = false
