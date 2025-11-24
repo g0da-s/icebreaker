@@ -79,7 +79,7 @@ const ProfileSetup = () => {
           skills: selectedSkills,
           linkedin_url: linkedinUrl || null,
           bio: bio || null,
-        })
+        } as any)
         .eq('id', user.id);
 
       if (error) throw error;
