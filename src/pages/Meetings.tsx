@@ -11,6 +11,8 @@ import { Calendar, Check, X, Clock, User, Inbox, CalendarDays, History as Histor
 import { format, isPast } from "date-fns";
 import { ScheduleMeetingModal } from "@/components/ScheduleMeetingModal";
 import { MeetingNotifications } from "@/components/MeetingNotifications";
+import { MeetingCountdown } from "@/components/MeetingCountdown";
+import { Clock as ClockComponent } from "@/components/Clock";
 
 type Meeting = {
   id: string;
@@ -247,6 +249,7 @@ const Meetings = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
+      <ClockComponent />
       <MeetingNotifications />
       
       <div className="container max-w-screen-sm mx-auto px-4 py-6">
@@ -431,11 +434,14 @@ const Meetings = () => {
                     </div>
 
                     <div className="bg-primary/5 rounded-lg p-3 mb-3">
-                      <div className="flex items-center gap-2 text-sm mb-1">
-                        <Calendar className="w-4 h-4 text-primary" />
-                        <span className="font-medium">
-                          {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d, yyyy')}
-                        </span>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Calendar className="w-4 h-4 text-primary" />
+                          <span className="font-medium">
+                            {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d, yyyy')}
+                          </span>
+                        </div>
+                        <MeetingCountdown scheduledAt={meeting.scheduled_at} />
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground ml-6">
                         <Clock className="w-4 h-4" />
