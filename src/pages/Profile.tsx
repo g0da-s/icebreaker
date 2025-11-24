@@ -109,7 +109,7 @@ const Profile = () => {
               </div>
             </div>
             <Button variant="ghost" size="icon" asChild>
-              <Link to="/profile-setup">
+              <Link to="/edit-profile">
                 <Edit className="w-5 h-5" />
               </Link>
             </Button>
