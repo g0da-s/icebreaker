@@ -18,7 +18,6 @@ type UserProfileData = {
   studies: string;
   role: string;
   location: string;
-  birth_date: string | null;
   avatar_url: string | null;
   avatar_type: string | null;
   availability: any;
@@ -65,7 +64,6 @@ const UserProfile = () => {
           studies: profileData.studies || 'Not specified',
           role: profileData.role,
           location: profileData.location || 'Not specified',
-          birth_date: profileData.birth_date,
           avatar_url: profileData.avatar_url,
           avatar_type: profileData.avatar_type,
           availability: profileData.availability,

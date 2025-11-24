@@ -52,9 +52,6 @@ const ProfileSetup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [studies, setStudies] = useState("");
-  const [birthDay, setBirthDay] = useState("");
-  const [birthMonth, setBirthMonth] = useState("");
-  const [birthYear, setBirthYear] = useState("");
   const [location, setLocation] = useState("");
   const [avatarType, setAvatarType] = useState<"upload" | "mascot">("mascot");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -116,13 +113,6 @@ const ProfileSetup = () => {
           setStudies(profileData.studies || '');
           setLocation(profileData.location || '');
           
-          if (profileData.birth_date) {
-            const date = new Date(profileData.birth_date);
-            setBirthDay(date.getDate().toString());
-            setBirthMonth((date.getMonth() + 1).toString());
-            setBirthYear(date.getFullYear().toString());
-          }
-          
           if (profileData.avatar_type === 'upload' || profileData.avatar_type === 'mascot') {
             setAvatarType(profileData.avatar_type);
           }
@@ -182,7 +172,7 @@ const ProfileSetup = () => {
 
   const handleNext = () => {
     if (step === 1) {
-      if (!firstName || !lastName || !studies || !birthDay || !birthMonth || !birthYear || !location) {
+      if (!firstName || !lastName || !studies || !location) {
         toast({
           title: "Complete all fields",
           description: "Please fill in all required fields",
@@ -273,10 +263,6 @@ const ProfileSetup = () => {
         profileUpdate.full_name = `${firstName} ${lastName}`;
       }
       if (studies) profileUpdate.studies = studies;
-      if (birthDay && birthMonth && birthYear) {
-        const date = new Date(parseInt(birthYear), parseInt(birthMonth) - 1, parseInt(birthDay));
-        profileUpdate.birth_date = format(date, "yyyy-MM-dd");
-      }
       if (location) profileUpdate.location = location;
       
       profileUpdate.avatar_type = avatarType;
@@ -401,46 +387,14 @@ const ProfileSetup = () => {
                 </Select>
               </div>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Birth Date *</Label>
-                  <div className="grid grid-cols-3 gap-2">
-                    <Input
-                      type="number"
-                      placeholder="Day"
-                      value={birthDay}
-                      onChange={(e) => setBirthDay(e.target.value)}
-                      min="1"
-                      max="31"
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Month"
-                      value={birthMonth}
-                      onChange={(e) => setBirthMonth(e.target.value)}
-                      min="1"
-                      max="12"
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Year"
-                      value={birthYear}
-                      onChange={(e) => setBirthYear(e.target.value)}
-                      min="1900"
-                      max={new Date().getFullYear()}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location *</Label>
-                  <Input
-                    id="location"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Vilnius, Lithuania"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Location *</Label>
+                <Input
+                  id="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Vilnius, Lithuania"
+                />
               </div>
 
               <div className="space-y-4">
