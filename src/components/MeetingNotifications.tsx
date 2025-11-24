@@ -19,7 +19,10 @@ type Notification = {
 export const MeetingNotifications = () => {
   const { toast } = useToast();
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [shownNotifications, setShownNotifications] = useState<Set<string>>(new Set());
+  const [shownNotifications, setShownNotifications] = useState<Set<string>>(() => {
+    const stored = localStorage.getItem('shownNotifications');
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  });
 
   useEffect(() => {
     const checkForNotifications = async () => {
@@ -163,6 +166,7 @@ export const MeetingNotifications = () => {
         setShownNotifications(prev => {
           const newSet = new Set(prev);
           newNotifs.forEach(n => newSet.add(n.id));
+          localStorage.setItem('shownNotifications', JSON.stringify(Array.from(newSet)));
           return newSet;
         });
       }
