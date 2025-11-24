@@ -67,9 +67,9 @@ const Auth = () => {
     } else {
       toast({
         title: "Success!",
-        description: "Account created successfully. Let's set up your profile!",
+        description: "Account created successfully.",
       });
-      navigate("/profile-setup");
+      navigate("/dashboard");
     }
     
     setIsLoading(false);
@@ -99,7 +99,7 @@ const Auth = () => {
         title: "Welcome back!",
         description: "Signed in successfully.",
       });
-      navigate("/profile-setup");
+      navigate("/dashboard");
     }
     
     setIsLoading(false);

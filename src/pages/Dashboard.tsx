@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Users, Lightbulb, Sparkles, Calendar, LogOut, User as UserIcon } from "lucide-react";
+import { Heart, Users, Lightbulb, Sparkles, Calendar, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -44,16 +44,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-foreground">ISM Connect</h2>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground hidden sm:inline">{user?.email}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/profile")}
-                className="gap-2"
-              >
-                <UserIcon className="w-4 h-4" />
-                <span className="hidden sm:inline">My Profile</span>
-              </Button>
+              <span className="text-sm text-muted-foreground">{user?.email}</span>
               <Button
                 variant="outline"
                 size="sm"
@@ -61,7 +52,7 @@ const Dashboard = () => {
                 className="gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">Logout</span>
+                Logout
               </Button>
             </div>
           </div>
