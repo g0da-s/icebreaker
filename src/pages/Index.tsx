@@ -16,20 +16,20 @@ const Index = () => {
               <span className="text-sm font-medium text-foreground">ISM University Exclusive</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
               Connect Without the
               <span className="text-primary"> Pressure</span>
             </h1>
             
-            <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
               AI-powered matching for ISM students. Find friends, mentors, and co-founders based on shared interests—not appearances.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="text-base">
+            <div className="flex flex-col gap-3 justify-center max-w-xs mx-auto sm:max-w-none sm:flex-row sm:gap-4">
+              <Button asChild size="lg" className="text-base h-12">
                 <Link to="/auth">Get Started</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-base">
+              <Button asChild variant="outline" size="lg" className="text-base h-12">
                 <Link to="/install">Install App</Link>
               </Button>
             </div>
