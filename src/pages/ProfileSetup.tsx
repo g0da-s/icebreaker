@@ -82,13 +82,90 @@ const ProfileSetup = () => {
   const progress = (step / 4) * 100;
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuthAndLoadProfile = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         navigate("/auth");
+        return;
+      }
+
+      // Fetch existing profile data
+      try {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profileError) throw profileError;
+
+        // Fetch existing interests
+        const { data: interestsData } = await supabase
+          .from('user_interests')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+
+        // Pre-fill form fields with existing data
+        if (profileData) {
+          const nameParts = profileData.full_name?.split(' ') || [];
+          setFirstName(nameParts[0] || '');
+          setLastName(nameParts.slice(1).join(' ') || '');
+          setStudies(profileData.studies || '');
+          setLocation(profileData.location || '');
+          
+          if (profileData.birth_date) {
+            setBirthDate(new Date(profileData.birth_date));
+          }
+          
+          if (profileData.avatar_type === 'upload' || profileData.avatar_type === 'mascot') {
+            setAvatarType(profileData.avatar_type);
+          }
+          setSelectedMascot(profileData.avatar_url || '');
+          
+          // Parse and set availability
+          if (profileData.availability && typeof profileData.availability === 'object' && !Array.isArray(profileData.availability)) {
+            const availData = profileData.availability as any;
+            const newAvailability = { ...availability };
+            
+            for (const day in newAvailability) {
+              if (availData[day]) {
+                newAvailability[day as keyof typeof availability] = {
+                  active: availData[day].active || false,
+                  start: availData[day].start || '09:00',
+                  end: availData[day].end || '17:00',
+                };
+              }
+            }
+            setAvailability(newAvailability);
+          }
+          
+          // Parse onboarding answers if they exist
+          if (profileData.onboarding_answers && typeof profileData.onboarding_answers === 'object') {
+            const answers = profileData.onboarding_answers as any;
+            const answersArray = [
+              answers.question1 || '',
+              answers.question2 || '',
+              answers.question3 || '',
+              answers.question4 || ''
+            ].filter((a: string) => a);
+            
+            if (answersArray.length > 0) {
+              setChatAnswers(answersArray);
+            }
+          }
+        }
+
+        // Pre-fill interests
+        if (interestsData?.tags) {
+          setSelectedInterests(interestsData.tags);
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
       }
     };
-    checkAuth();
+    
+    checkAuthAndLoadProfile();
   }, [navigate]);
 
   // Initialize chat when entering step 2
@@ -184,51 +261,67 @@ const ProfileSetup = () => {
         question4: chatAnswers[3] || "",
       };
 
+      // Prepare update object - only include fields that have values
+      const profileUpdate: any = {};
+      
+      if (firstName && lastName) {
+        profileUpdate.full_name = `${firstName} ${lastName}`;
+      }
+      if (studies) profileUpdate.studies = studies;
+      if (birthDate) profileUpdate.birth_date = format(birthDate, "yyyy-MM-dd");
+      if (location) profileUpdate.location = location;
+      
+      profileUpdate.avatar_type = avatarType;
+      profileUpdate.avatar_url = avatarType === "mascot" ? selectedMascot : null;
+      
+      if (Object.keys(onboardingAnswers).some(key => onboardingAnswers[key as keyof typeof onboardingAnswers])) {
+        profileUpdate.onboarding_answers = onboardingAnswers;
+      }
+      
+      // Only update availability if at least one day is active
+      const hasActiveAvailability = Object.values(availability).some(day => day.active);
+      if (hasActiveAvailability) {
+        profileUpdate.availability = availability;
+      }
+
       // Update profile (not insert - the profile already exists from signup)
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({
-          full_name: `${firstName} ${lastName}`,
-          studies,
-          birth_date: birthDate ? format(birthDate, "yyyy-MM-dd") : null,
-          location,
-          avatar_type: avatarType,
-          avatar_url: avatarType === "mascot" ? selectedMascot : null,
-          onboarding_answers: onboardingAnswers,
-          availability: availability,
-        })
+        .update(profileUpdate)
         .eq('id', session.user.id);
 
       if (profileError) throw profileError;
 
-      // Create or update user interests
-      const { data: existingInterests } = await supabase
-        .from('user_interests')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
+      // Create or update user interests (only if interests are selected)
+      if (selectedInterests.length > 0) {
+        const { data: existingInterests } = await supabase
+          .from('user_interests')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
 
-      if (existingInterests) {
-        const { error: updateError } = await supabase
-          .from('user_interests')
-          .update({ tags: selectedInterests })
-          .eq('user_id', session.user.id);
-        if (updateError) throw updateError;
-      } else {
-        const { error: insertError } = await supabase
-          .from('user_interests')
-          .insert({
-            user_id: session.user.id,
-            tags: selectedInterests,
-          });
-        if (insertError) throw insertError;
+        if (existingInterests) {
+          const { error: updateError } = await supabase
+            .from('user_interests')
+            .update({ tags: selectedInterests })
+            .eq('user_id', session.user.id);
+          if (updateError) throw updateError;
+        } else {
+          const { error: insertError } = await supabase
+            .from('user_interests')
+            .insert({
+              user_id: session.user.id,
+              tags: selectedInterests,
+            });
+          if (insertError) throw insertError;
+        }
       }
 
       toast({
-        title: "Profile Created!",
-        description: "Welcome to the community",
+        title: "Profile Updated!",
+        description: "Your changes have been saved",
       });
-      navigate("/home");
+      navigate("/profile");
     } catch (error: any) {
       toast({
         title: "Error",
