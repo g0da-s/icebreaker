@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ProfileSetup from "./pages/ProfileSetup";
 import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
 import Match from "./pages/Match";
 import Matches from "./pages/Matches";
 import Messages from "./pages/Messages";
@@ -28,6 +29,11 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/install" element={<Install />} />
+          <Route path="/home" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          } />
           <Route path="/profile-setup" element={
             <ProtectedRoute>
               <AuthenticatedLayout>
