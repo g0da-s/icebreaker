@@ -12,6 +12,7 @@ import Match from "./pages/Match";
 import Matches from "./pages/Matches";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -56,6 +57,11 @@ const App = () => (
           <Route path="/match/:type" element={
             <ProtectedRoute>
               <Match />
+            </ProtectedRoute>
+          } />
+          <Route path="/user/:id" element={
+            <ProtectedRoute>
+              <UserProfile />
             </ProtectedRoute>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
