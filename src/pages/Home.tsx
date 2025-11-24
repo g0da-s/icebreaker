@@ -71,36 +71,6 @@ const Home = () => {
     }
   };
 
-  const meetingTypes = [
-    {
-      icon: Heart,
-      title: "Friendly Meetings",
-      description: "Meet someone with shared hobbies and interests",
-      color: "text-pink-500",
-      path: "/match/friendly"
-    },
-    {
-      icon: Users,
-      title: "Mentoring",
-      description: "Get guidance from experienced students or alumni",
-      color: "text-blue-500",
-      path: "/match/mentor"
-    },
-    {
-      icon: Lightbulb,
-      title: "Co-founding",
-      description: "Find potential business partners with complementary skills",
-      color: "text-yellow-500",
-      path: "/match/cofounder"
-    },
-    {
-      icon: Sparkles,
-      title: "I Am Not Sure",
-      description: "Let AI suggest diverse matches for you",
-      color: "text-purple-500",
-      path: "/match/explore"
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -246,30 +216,6 @@ const Home = () => {
             </div>
           )}
 
-          {/* Meeting Type Cards */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-4 text-center">
-              Or Choose Your Connection Type
-            </h2>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              {meetingTypes.map((type) => (
-                <Card 
-                  key={type.path}
-                  className="hover:shadow-md transition-all cursor-pointer group"
-                  onClick={() => navigate(type.path)}
-                >
-                  <CardHeader>
-                    <div className={`${type.color} mb-2 group-hover:scale-110 transition-transform`}>
-                      <type.icon className="w-10 h-10" />
-                    </div>
-                    <CardTitle className="text-lg">{type.title}</CardTitle>
-                    <CardDescription className="text-sm">{type.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 

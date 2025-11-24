@@ -8,171 +8,222 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Upload, Search } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { BottomNav } from "@/components/BottomNav";
 
-const INTERESTS = [
-  "Sports", "Music", "Art", "Technology", "Reading", "Travel",
-  "Cooking", "Photography", "Gaming", "Film", "Fashion", "Fitness"
+const STUDY_OPTIONS = ["Bachelor's", "Master's", "PhD", "Executive", "Alumni", "Faculty Member"];
+
+const CREATIVE_INTERESTS = [
+  "Photography", "Music", "Art", "Design", "Writing", "Dance", "Theater", "Cooking", "Crafts", "Fashion"
 ];
 
-const EXPERTISE = [
-  "Marketing", "Finance", "Programming", "Design", "Sales", "Strategy",
-  "Data Analysis", "Product Management", "Operations", "HR", "Legal", "Research"
+const LIFESTYLE_INTERESTS = [
+  "Sports", "Fitness", "Travel", "Gaming", "Reading", "Hiking", "Yoga", "Running", "Cycling", "Swimming"
 ];
 
-const SKILLS = [
-  "Leadership", "Communication", "Problem Solving", "Creativity", "Teamwork",
-  "Technical Writing", "Public Speaking", "Project Management", "Negotiation"
+const AI_QUESTIONS = [
+  "What brings you here today?",
+  "If tomorrow felt completely free, what would you love to spend it doing?",
+  "What's your short-term goal?",
+  "What's your long-term goal?"
 ];
 
 const ProfileSetup = () => {
   const [step, setStep] = useState(1);
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [bio, setBio] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const progress = (step / 4) * 100;
+  // Step 1: Basic Identity
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [studies, setStudies] = useState("");
+  const [age, setAge] = useState("");
+  const [location, setLocation] = useState("");
+  const [avatarType, setAvatarType] = useState<"upload" | "mascot">("mascot");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [selectedMascot, setSelectedMascot] = useState("");
 
-  // Check if user is editing existing profile
+  // Step 2: AI Chat
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [chatAnswers, setChatAnswers] = useState<string[]>([]);
+  const [currentAnswer, setCurrentAnswer] = useState("");
+  const [chatHistory, setChatHistory] = useState<Array<{role: "ai" | "user", text: string}>>([]);
+
+  // Step 3: Interests
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+
+  const progress = (step / 3) * 100;
+
   useEffect(() => {
-    const checkExistingProfile = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-          navigate("/auth");
-          return;
-        }
-
-        const { data: interests } = await supabase
-          .from('user_interests')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-
-        if (interests) {
-          setIsEditing(true);
-          setSelectedInterests(interests.tags?.slice(0, INTERESTS.length) || []);
-          setSelectedExpertise(interests.tags?.slice(INTERESTS.length, INTERESTS.length + EXPERTISE.length) || []);
-          setSelectedSkills(interests.tags?.slice(INTERESTS.length + EXPERTISE.length) || []);
-          setLinkedinUrl(interests.linkedin_url || "");
-          setBio(interests.bio || "");
-        }
-      } catch (error: any) {
-        console.error("Error checking profile:", error);
-      } finally {
-        setLoading(false);
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
       }
     };
-
-    checkExistingProfile();
+    checkAuth();
   }, [navigate]);
 
-  const toggleTag = (tag: string, list: string[], setter: (tags: string[]) => void) => {
-    if (list.includes(tag)) {
-      setter(list.filter(t => t !== tag));
+  // Initialize chat when entering step 2
+  useEffect(() => {
+    if (step === 2 && chatHistory.length === 0) {
+      setChatHistory([{ role: "ai", text: AI_QUESTIONS[0] }]);
+    }
+  }, [step, chatHistory.length]);
+
+  const handleNext = () => {
+    if (step === 1) {
+      if (!firstName || !lastName || !studies || !age || !location) {
+        toast({
+          title: "Complete all fields",
+          description: "Please fill in all required fields",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (avatarType === "mascot" && !selectedMascot) {
+        toast({
+          title: "Select an avatar",
+          description: "Please choose a mascot avatar",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    setStep(step + 1);
+  };
+
+  const handleChatSubmit = () => {
+    if (!currentAnswer.trim()) return;
+
+    const newHistory = [...chatHistory, { role: "user" as const, text: currentAnswer }];
+    const newAnswers = [...chatAnswers, currentAnswer];
+    setChatAnswers(newAnswers);
+    setChatHistory(newHistory);
+    setCurrentAnswer("");
+
+    if (currentQuestion < AI_QUESTIONS.length - 1) {
+      const nextQuestion = currentQuestion + 1;
+      setCurrentQuestion(nextQuestion);
+      setTimeout(() => {
+        setChatHistory([...newHistory, { role: "ai", text: AI_QUESTIONS[nextQuestion] }]);
+      }, 500);
     } else {
-      setter([...list, tag]);
+      // All questions answered
+      setTimeout(() => {
+        setStep(3);
+      }, 1000);
     }
   };
 
-  const handleNext = () => {
-    if (step === 1 && selectedInterests.length === 0) {
+  const toggleInterest = (interest: string) => {
+    if (selectedInterests.includes(interest)) {
+      setSelectedInterests(selectedInterests.filter(i => i !== interest));
+    } else {
+      setSelectedInterests([...selectedInterests, interest]);
+    }
+  };
+
+  const filteredCreative = CREATIVE_INTERESTS.filter(i => 
+    i.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const filteredLifestyle = LIFESTYLE_INTERESTS.filter(i => 
+    i.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleComplete = async () => {
+    if (selectedInterests.length === 0) {
       toast({
         title: "Select at least one interest",
-        description: "This helps us find better matches for you",
+        description: "Please choose interests that match you",
         variant: "destructive",
       });
       return;
     }
-    if (step < 4) {
-      setStep(step + 1);
-    }
-  };
 
-  const handleComplete = async () => {
+    setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      
       if (!session) {
-        toast({
-          title: "Error",
-          description: "Please log in first",
-          variant: "destructive",
-        });
         navigate("/auth");
         return;
       }
 
-      // Combine all tags into one array
-      const allTags = [...selectedInterests, ...selectedExpertise, ...selectedSkills];
+      // Prepare onboarding answers
+      const onboardingAnswers = {
+        question1: chatAnswers[0] || "",
+        question2: chatAnswers[1] || "",
+        question3: chatAnswers[2] || "",
+        question4: chatAnswers[3] || "",
+      };
 
-      if (isEditing) {
-        // Update existing profile
-        const { error } = await supabase
+      // Update profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          full_name: `${firstName} ${lastName}`,
+          studies,
+          age: parseInt(age),
+          location,
+          avatar_type: avatarType,
+          avatar_url: avatarType === "mascot" ? selectedMascot : null,
+          onboarding_answers: onboardingAnswers,
+        })
+        .eq('id', session.user.id);
+
+      if (profileError) throw profileError;
+
+      // Create or update user interests
+      const { data: existingInterests } = await supabase
+        .from('user_interests')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (existingInterests) {
+        const { error: updateError } = await supabase
           .from('user_interests')
-          .update({
-            tags: allTags,
-            bio: bio || null,
-            linkedin_url: linkedinUrl || null,
-          })
+          .update({ tags: selectedInterests })
           .eq('user_id', session.user.id);
-
-        if (error) {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Profile Updated!",
-            description: "Your profile has been updated successfully",
-          });
-          navigate("/profile");
-        }
+        if (updateError) throw updateError;
       } else {
-        // Insert new profile
-        const { error } = await supabase
+        const { error: insertError } = await supabase
           .from('user_interests')
           .insert({
             user_id: session.user.id,
-            tags: allTags,
-            bio: bio || null,
-            linkedin_url: linkedinUrl || null,
+            tags: selectedInterests,
           });
-
-        if (error) {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Profile Created!",
-            description: "Let's find your first match",
-          });
-          navigate("/home");
-        }
+        if (insertError) throw insertError;
       }
-    } catch (error) {
+
+      toast({
+        title: "Profile Created!",
+        description: "Welcome to the community",
+      });
+      navigate("/home");
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to save profile",
+        description: error.message,
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4 pb-24">
       <div className="absolute top-4 left-4">
         <Link to="/home" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-5 h-5" />
@@ -180,178 +231,230 @@ const ProfileSetup = () => {
         </Link>
       </div>
       
-      {loading ? (
-        <Card className="w-full max-w-2xl">
-          <CardContent className="p-8">
-            <p className="text-center text-muted-foreground">Loading...</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="w-full max-w-2xl">
-          <CardHeader>
-            <div className="space-y-2">
-              <CardTitle>{isEditing ? "Edit Your Profile" : "Build Your Profile"}</CardTitle>
-              <CardDescription>
-                Step {step} of 4 - This helps us find the perfect matches for you
-              </CardDescription>
-              <Progress value={progress} className="h-2" />
-            </div>
-          </CardHeader>
+      <Card className="w-full max-w-2xl">
+        <CardHeader>
+          <div className="space-y-2">
+            <CardTitle>Build Your Profile</CardTitle>
+            <CardDescription>
+              Step {step} of 3 - Let's get to know you
+            </CardDescription>
+            <Progress value={progress} className="h-2" />
+          </div>
+        </CardHeader>
         <CardContent>
+          {/* Step 1: Basic Identity */}
           {step === 1 && (
             <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Interests & Hobbies
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Select topics you're passionate about (for friendly meetings)
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {INTERESTS.map(interest => (
-                    <Badge
-                      key={interest}
-                      variant={selectedInterests.includes(interest) ? "default" : "outline"}
-                      className="cursor-pointer"
-                      onClick={() => toggleTag(interest, selectedInterests, setSelectedInterests)}
-                    >
-                      {interest}
-                    </Badge>
-                  ))}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name *</Label>
+                  <Input
+                    id="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="John"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name *</Label>
+                  <Input
+                    id="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Doe"
+                  />
                 </div>
               </div>
-              <div className="flex justify-end gap-2">
+
+              <div className="space-y-2">
+                <Label htmlFor="studies">Studies *</Label>
+                <Select value={studies} onValueChange={setStudies}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your study level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STUDY_OPTIONS.map(option => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="age">Age *</Label>
+                  <Input
+                    id="age"
+                    type="number"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                    placeholder="25"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location *</Label>
+                  <Input
+                    id="location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="Vilnius, Lithuania"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Label>Profile Picture *</Label>
+                <div className="flex gap-2 mb-4">
+                  <Button
+                    type="button"
+                    variant={avatarType === "upload" ? "default" : "outline"}
+                    onClick={() => setAvatarType("upload")}
+                    className="flex-1"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload Photo
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={avatarType === "mascot" ? "default" : "outline"}
+                    onClick={() => setAvatarType("mascot")}
+                    className="flex-1"
+                  >
+                    Choose Avatar
+                  </Button>
+                </div>
+
+                {avatarType === "upload" ? (
+                  <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+                      className="max-w-xs mx-auto"
+                    />
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-4 gap-4">
+                    {["mascot-1", "mascot-2", "mascot-3", "mascot-4"].map((mascot) => (
+                      <div
+                        key={mascot}
+                        onClick={() => setSelectedMascot(mascot)}
+                        className={`aspect-square rounded-lg border-2 cursor-pointer flex items-center justify-center text-4xl ${
+                          selectedMascot === mascot
+                            ? "border-primary bg-primary/10"
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        🧊
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end">
                 <Button onClick={handleNext}>Next</Button>
               </div>
             </div>
           )}
 
+          {/* Step 2: AI Chat Interface */}
           {step === 2 && (
             <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Expertise Areas
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  What can you mentor others in? (Optional but helpful)
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {EXPERTISE.map(skill => (
-                    <Badge
-                      key={skill}
-                      variant={selectedExpertise.includes(skill) ? "default" : "outline"}
-                      className="cursor-pointer"
-                      onClick={() => toggleTag(skill, selectedExpertise, setSelectedExpertise)}
+              <div className="h-96 overflow-y-auto space-y-4 p-4 bg-muted/30 rounded-lg">
+                {chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === "ai" ? "justify-start" : "justify-end"}`}
+                  >
+                    <div
+                      className={`max-w-[80%] p-3 rounded-lg ${
+                        msg.role === "ai"
+                          ? "bg-primary/10 text-foreground"
+                          : "bg-primary text-primary-foreground"
+                      }`}
                     >
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bio">Bio (Optional)</Label>
-                <Input
-                  id="bio"
-                  placeholder="Tell us about yourself"
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="linkedin">LinkedIn Profile (Optional)</Label>
-                <Input
-                  id="linkedin"
-                  type="url"
-                  placeholder="https://linkedin.com/in/yourprofile"
-                  value={linkedinUrl}
-                  onChange={(e) => setLinkedinUrl(e.target.value)}
-                />
-              </div>
-              <div className="flex justify-between gap-2">
-                <Button variant="outline" onClick={() => setStep(step - 1)}>
-                  Back
-                </Button>
-                <Button onClick={handleNext}>Next</Button>
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Skills & Goals
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Select skills relevant for co-founding opportunities
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {SKILLS.map(skill => (
-                    <Badge
-                      key={skill}
-                      variant={selectedSkills.includes(skill) ? "default" : "outline"}
-                      className="cursor-pointer"
-                      onClick={() => toggleTag(skill, selectedSkills, setSelectedSkills)}
-                    >
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-between gap-2">
-                <Button variant="outline" onClick={() => setStep(step - 1)}>
-                  Back
-                </Button>
-                <Button onClick={handleNext}>Next</Button>
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">
-                  Review Your Profile
-                </h3>
-                
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2">Interests</p>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedInterests.map(tag => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
-                      ))}
+                      {msg.text}
                     </div>
                   </div>
+                ))}
+              </div>
 
-                  {selectedExpertise.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Expertise</p>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedExpertise.map(tag => (
-                          <Badge key={tag} variant="secondary">{tag}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              <div className="flex gap-2">
+                <Textarea
+                  value={currentAnswer}
+                  onChange={(e) => setCurrentAnswer(e.target.value)}
+                  placeholder="Type your answer..."
+                  className="min-h-[60px]"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleChatSubmit();
+                    }
+                  }}
+                />
+                <Button onClick={handleChatSubmit} disabled={!currentAnswer.trim()}>
+                  Send
+                </Button>
+              </div>
 
-                  {selectedSkills.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">Skills</p>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedSkills.map(tag => (
-                          <Badge key={tag} variant="secondary">{tag}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              {currentQuestion === AI_QUESTIONS.length - 1 && chatAnswers.length === AI_QUESTIONS.length && (
+                <div className="flex justify-between">
+                  <Button variant="outline" onClick={() => setStep(step - 1)}>
+                    Back
+                  </Button>
+                  <Button onClick={() => setStep(3)}>Next</Button>
+                </div>
+              )}
+            </div>
+          )}
 
-                  {linkedinUrl && (
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">LinkedIn</p>
-                      <p className="text-sm text-foreground">{linkedinUrl}</p>
-                    </div>
-                  )}
+          {/* Step 3: Interests & Skills */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search interests..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-semibold mb-3">Creative & Personal Interests</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {filteredCreative.map(interest => (
+                      <Badge
+                        key={interest}
+                        variant={selectedInterests.includes(interest) ? "default" : "outline"}
+                        className="cursor-pointer"
+                        onClick={() => toggleInterest(interest)}
+                      >
+                        {interest}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-semibold mb-3">Activity & Lifestyle</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {filteredLifestyle.map(interest => (
+                      <Badge
+                        key={interest}
+                        variant={selectedInterests.includes(interest) ? "default" : "outline"}
+                        className="cursor-pointer"
+                        onClick={() => toggleInterest(interest)}
+                      >
+                        {interest}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -359,15 +462,16 @@ const ProfileSetup = () => {
                 <Button variant="outline" onClick={() => setStep(step - 1)}>
                   Back
                 </Button>
-                <Button onClick={handleComplete}>
-                  {isEditing ? "Update Profile" : "Complete Profile"}
+                <Button onClick={handleComplete} disabled={loading}>
+                  {loading ? "Saving..." : "Finish"}
                 </Button>
               </div>
             </div>
           )}
         </CardContent>
       </Card>
-      )}
+
+      <BottomNav />
     </div>
   );
 };
