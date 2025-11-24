@@ -18,11 +18,24 @@ const Auth = () => {
 
   // Redirect if already logged in
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkSessionAndProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate("/dashboard");
+        // Check if user has completed profile setup
+        const { data: interests } = await supabase
+          .from('user_interests')
+          .select('id')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+        
+        if (interests) {
+          navigate("/dashboard");
+        } else {
+          navigate("/profile-setup");
+        }
       }
-    });
+    };
+    checkSessionAndProfile();
   }, [navigate]);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -69,7 +82,7 @@ const Auth = () => {
         title: "Success!",
         description: "Account created successfully.",
       });
-      navigate("/dashboard");
+      navigate("/profile-setup");
     }
     
     setIsLoading(false);
