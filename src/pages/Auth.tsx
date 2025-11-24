@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,15 @@ const Auth = () => {
   const navigate = useNavigate();
 
   const allowedDomains = ['@ism.lt', '@stud.ism.lt', '@faculty.ism.lt'];
+
+  // Redirect if already logged in
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/dashboard");
+      }
+    });
+  }, [navigate]);
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -58,9 +67,9 @@ const Auth = () => {
     } else {
       toast({
         title: "Success!",
-        description: "Account created successfully. You can now sign in.",
+        description: "Account created successfully.",
       });
-      navigate("/");
+      navigate("/dashboard");
     }
     
     setIsLoading(false);
@@ -90,7 +99,7 @@ const Auth = () => {
         title: "Welcome back!",
         description: "Signed in successfully.",
       });
-      navigate("/");
+      navigate("/dashboard");
     }
     
     setIsLoading(false);
