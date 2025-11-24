@@ -234,12 +234,12 @@ const Home = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center justify-between gap-2">
                           <h3 className="font-semibold text-foreground text-lg">
                             {match.full_name}
                           </h3>
                           {match.match_score && (
-                            <Badge variant="default">
+                            <Badge variant="default" className="shrink-0">
                               {match.match_score}% match
                             </Badge>
                           )}
@@ -248,6 +248,11 @@ const Home = () => {
                           <p className="text-sm text-muted-foreground">
                             {match.studies || match.role}
                           </p>
+                        )}
+                        {match.role && match.studies && (
+                          <Badge variant="outline" className="mt-1">
+                            {match.role}
+                          </Badge>
                         )}
                       </div>
                     </div>
@@ -260,20 +265,11 @@ const Home = () => {
 
                     {match.tags && match.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {match.tags.map((tag, idx) => (
+                        {match.tags.slice(0, 5).map((tag, idx) => (
                           <Badge key={idx} variant="secondary" className="text-xs">
                             {tag}
                           </Badge>
                         ))}
-                      </div>
-                    )}
-
-                    {match.earliest_available && (
-                      <div className="flex items-center gap-2 text-sm mb-4">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">
-                          {match.earliest_available}
-                        </span>
                       </div>
                     )}
 
