@@ -24,7 +24,7 @@ const Index = () => {
             </h1>
             
             <p className="text-base sm:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              AI-powered matching for ISM students. Find friends, mentors, and co-founders based on shared interests—not appearances.
+              AI-powered matching for ISM students. Find friends, mentors, and co-founders based on shared interests-not appearances.
             </p>
             
             <div className="flex flex-col gap-3 justify-center max-w-xs mx-auto sm:max-w-none sm:flex-row sm:gap-4">
