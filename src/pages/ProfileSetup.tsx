@@ -52,7 +52,9 @@ const ProfileSetup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [studies, setStudies] = useState("");
-  const [birthDate, setBirthDate] = useState<Date>();
+  const [birthDay, setBirthDay] = useState("");
+  const [birthMonth, setBirthMonth] = useState("");
+  const [birthYear, setBirthYear] = useState("");
   const [location, setLocation] = useState("");
   const [avatarType, setAvatarType] = useState<"upload" | "mascot">("mascot");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -115,7 +117,10 @@ const ProfileSetup = () => {
           setLocation(profileData.location || '');
           
           if (profileData.birth_date) {
-            setBirthDate(new Date(profileData.birth_date));
+            const date = new Date(profileData.birth_date);
+            setBirthDay(date.getDate().toString());
+            setBirthMonth((date.getMonth() + 1).toString());
+            setBirthYear(date.getFullYear().toString());
           }
           
           if (profileData.avatar_type === 'upload' || profileData.avatar_type === 'mascot') {
@@ -177,7 +182,7 @@ const ProfileSetup = () => {
 
   const handleNext = () => {
     if (step === 1) {
-      if (!firstName || !lastName || !studies || !birthDate || !location) {
+      if (!firstName || !lastName || !studies || !birthDay || !birthMonth || !birthYear || !location) {
         toast({
           title: "Complete all fields",
           description: "Please fill in all required fields",
@@ -268,7 +273,10 @@ const ProfileSetup = () => {
         profileUpdate.full_name = `${firstName} ${lastName}`;
       }
       if (studies) profileUpdate.studies = studies;
-      if (birthDate) profileUpdate.birth_date = format(birthDate, "yyyy-MM-dd");
+      if (birthDay && birthMonth && birthYear) {
+        const date = new Date(parseInt(birthYear), parseInt(birthMonth) - 1, parseInt(birthDay));
+        profileUpdate.birth_date = format(date, "yyyy-MM-dd");
+      }
       if (location) profileUpdate.location = location;
       
       profileUpdate.avatar_type = avatarType;
@@ -393,36 +401,37 @@ const ProfileSetup = () => {
                 </Select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="birthDate">Birth Date *</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !birthDate && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {birthDate ? format(birthDate, "PPP") : <span>Pick a date</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={birthDate}
-                        onSelect={setBirthDate}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                        className="pointer-events-auto"
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <Label>Birth Date *</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <Input
+                      type="number"
+                      placeholder="Day"
+                      value={birthDay}
+                      onChange={(e) => setBirthDay(e.target.value)}
+                      min="1"
+                      max="31"
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Month"
+                      value={birthMonth}
+                      onChange={(e) => setBirthMonth(e.target.value)}
+                      min="1"
+                      max="12"
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Year"
+                      value={birthYear}
+                      onChange={(e) => setBirthYear(e.target.value)}
+                      min="1900"
+                      max={new Date().getFullYear()}
+                    />
+                  </div>
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="location">Location *</Label>
                   <Input
