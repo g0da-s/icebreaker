@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Search, Check } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { BottomNav } from "@/components/BottomNav";
@@ -88,6 +88,10 @@ const EditProfile = () => {
   const [bio, setBio] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   
+  // Avatar
+  const [selectedMascot, setSelectedMascot] = useState<string | null>(null);
+  const [avatarType, setAvatarType] = useState<string | null>(null);
+  
   // Interests
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
@@ -149,6 +153,12 @@ const EditProfile = () => {
           }
           
           setLocation(profileData.location || '');
+          
+          // Set avatar
+          setAvatarType(profileData.avatar_type);
+          if (profileData.avatar_type === 'mascot' && profileData.avatar_url) {
+            setSelectedMascot(profileData.avatar_url);
+          }
           
           // Parse availability
           if (profileData.availability && typeof profileData.availability === 'object' && !Array.isArray(profileData.availability)) {
@@ -255,6 +265,12 @@ const EditProfile = () => {
       
       if (location) profileUpdate.location = location;
       
+      // Update avatar if mascot is selected
+      if (selectedMascot) {
+        profileUpdate.avatar_type = 'mascot';
+        profileUpdate.avatar_url = selectedMascot;
+      }
+      
       const hasActiveAvailability = Object.values(availability).some(day => day.active);
       if (hasActiveAvailability) {
         profileUpdate.availability = availability;
@@ -336,8 +352,26 @@ const EditProfile = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Edit Profile</CardTitle>
-            <CardDescription>Update your profile information</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Edit Profile</CardTitle>
+                <CardDescription>Update your profile information</CardDescription>
+              </div>
+              {/* Avatar Preview */}
+              <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-primary/20 flex items-center justify-center bg-muted">
+                {selectedMascot ? (
+                  <img 
+                    src={selectedMascot} 
+                    alt="Selected avatar" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-2xl font-bold text-muted-foreground">
+                    {firstName ? firstName.charAt(0) : '?'}
+                  </span>
+                )}
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Basic Information */}
@@ -432,6 +466,47 @@ const EditProfile = () => {
                   placeholder="https://linkedin.com/in/yourprofile"
                 />
               </div>
+            </div>
+
+            {/* Avatar Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Choose your Avatar</h3>
+              <div className="grid grid-cols-4 gap-4">
+                {[1, 2, 3, 4].map((num) => {
+                  const avatarPath = `/avatar-${num}.png`;
+                  const isSelected = selectedMascot === avatarPath;
+                  
+                  return (
+                    <div
+                      key={num}
+                      onClick={() => setSelectedMascot(avatarPath)}
+                      className={cn(
+                        "relative aspect-square rounded-full overflow-hidden cursor-pointer transition-all duration-200",
+                        "border-4 hover:scale-105",
+                        isSelected 
+                          ? "border-primary shadow-lg shadow-primary/50" 
+                          : "border-border hover:border-primary/50"
+                      )}
+                    >
+                      <img 
+                        src={avatarPath} 
+                        alt={`Avatar ${num}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {isSelected && (
+                        <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                            <Check className="w-5 h-5" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Select one of the avatars to represent you on the platform
+              </p>
             </div>
 
             {/* Interests */}
