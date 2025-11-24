@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import MobileLayout from "@/components/MobileLayout";
+import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, Edit, ArrowLeft } from "lucide-react";
+import { LogOut, Edit } from "lucide-react";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -65,31 +65,29 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <MobileLayout>
+      <div className="min-h-screen bg-background pb-24">
         <div className="container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-muted-foreground">Loading...</p>
         </div>
-      </MobileLayout>
+        <BottomNav />
+      </div>
     );
   }
 
   if (!profile) {
     return (
-      <MobileLayout>
+      <div className="min-h-screen bg-background pb-24">
         <div className="container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-muted-foreground">Profile not found</p>
         </div>
-      </MobileLayout>
+        <BottomNav />
+      </div>
     );
   }
 
   return (
-    <MobileLayout>
+    <div className="min-h-screen bg-background pb-24">
       <div className="container max-w-screen-sm mx-auto px-4 py-6">
-        <Link to="/home" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 transition-colors">
-          <ArrowLeft className="w-5 h-5" />
-          <span>Back</span>
-        </Link>
         {/* Profile Header */}
         <Card className="p-6 mb-4">
           <div className="flex items-start justify-between mb-4">
@@ -175,7 +173,9 @@ const Profile = () => {
           </Button>
         </div>
       </div>
-    </MobileLayout>
+
+      <BottomNav />
+    </div>
   );
 };
 

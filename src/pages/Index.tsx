@@ -53,12 +53,9 @@ const Index = () => {
                 </Button>
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-4">
-                <p className="text-lg text-foreground font-medium">Welcome back!</p>
-                <Button asChild size="lg" className="text-base h-12">
-                  <Link to="/profile">Edit My Profile</Link>
-                </Button>
-              </div>
+              <Button asChild size="lg" className="text-base h-14 px-12">
+                <Link to="/home">Connect</Link>
+              </Button>
             )}
           </div>
         </div>
