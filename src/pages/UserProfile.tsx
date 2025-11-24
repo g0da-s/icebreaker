@@ -19,6 +19,8 @@ const LIFESTYLE_INTERESTS = [
   "Sports", "Fitness", "Travel", "Gaming", "Reading", "Hiking", "Yoga", "Running", "Cycling", "Swimming"
 ];
 
+const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
 type UserProfileData = {
   id: string;
   full_name: string;
@@ -224,16 +226,17 @@ const UserProfile = () => {
                   Weekly Availability
                 </h3>
                 <div className="space-y-2 bg-muted/30 rounded-lg p-3">
-                  {Object.entries(profile.availability).map(([day, schedule]: [string, any]) => (
-                    schedule?.active && (
+                  {DAY_ORDER.map((day) => {
+                    const schedule = profile.availability[day];
+                    return schedule?.active && (
                       <div key={day} className="text-sm flex justify-between">
                         <span className="capitalize font-medium">{day}</span>
                         <span className="text-muted-foreground">
                           {schedule.start} - {schedule.end}
                         </span>
                       </div>
-                    )
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}

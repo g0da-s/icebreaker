@@ -23,6 +23,16 @@ interface AvailabilitySchedulerProps {
   onChange: (availability: WeekAvailability) => void;
 }
 
+const DAY_ORDER: Array<keyof WeekAvailability> = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday'
+];
+
 export const AvailabilityScheduler = ({ availability, onChange }: AvailabilitySchedulerProps) => {
   return (
     <div className="space-y-4">
@@ -33,7 +43,7 @@ export const AvailabilityScheduler = ({ availability, onChange }: AvailabilitySc
         </p>
       </div>
 
-      {(Object.keys(availability) as Array<keyof WeekAvailability>).map((day) => (
+      {DAY_ORDER.map((day) => (
         <div key={day} className="border rounded-lg p-4 space-y-3">
           <div className="flex items-center justify-between">
             <Label htmlFor={day} className="text-base capitalize">
