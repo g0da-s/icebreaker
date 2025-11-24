@@ -11,9 +11,7 @@ import EditProfile from "./pages/EditProfile";
 import Home from "./pages/Home";
 import Match from "./pages/Match";
 import Matches from "./pages/Matches";
-import Messages from "./pages/Messages";
-import Invitations from "./pages/Invitations";
-import UpcomingMeetings from "./pages/UpcomingMeetings";
+import Meetings from "./pages/Meetings";
 import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
 import Install from "./pages/Install";
@@ -52,19 +50,9 @@ const App = () => (
               <Matches />
             </ProtectedRoute>
           } />
-          <Route path="/messages" element={
+          <Route path="/meetings" element={
             <ProtectedRoute>
-              <Messages />
-            </ProtectedRoute>
-          } />
-          <Route path="/invitations" element={
-            <ProtectedRoute>
-              <Invitations />
-            </ProtectedRoute>
-          } />
-          <Route path="/upcoming-meetings" element={
-            <ProtectedRoute>
-              <UpcomingMeetings />
+              <Meetings />
             </ProtectedRoute>
           } />
           <Route path="/profile" element={
