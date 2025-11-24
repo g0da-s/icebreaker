@@ -140,7 +140,17 @@ const Matches = () => {
                     <h3 className="font-semibold text-foreground text-lg">
                       {match.full_name}
                     </h3>
-                    <p className="text-sm text-muted-foreground">{match.studies}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {match.studies?.includes(' - ')
+                        ? match.studies.split(' - ')[1]  // Show program
+                        : match.studies
+                      }
+                    </p>
+                    {match.studies?.includes(' - ') && (
+                      <p className="text-xs text-muted-foreground">
+                        {match.studies.split(' - ')[0]}  {/* Show study level */}
+                      </p>
+                    )}
                     <Badge variant="outline" className="mt-1">
                       {match.role}
                     </Badge>

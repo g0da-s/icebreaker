@@ -18,7 +18,36 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AvailabilityScheduler } from "@/components/AvailabilityScheduler";
 
-const STUDY_OPTIONS = ["Bachelor's", "Master's", "PhD", "Executive", "Alumni", "Faculty Member"];
+const STUDY_LEVELS = ["Bachelor's", "Master's", "Executive", "Alumni", "Faculty Member"];
+
+const BACHELORS_PROGRAMS = [
+  "Economics and Politics",
+  "Economics and Data Analytics",
+  "Finance",
+  "Entrepreneurship and Innovation",
+  "International Business and Communication",
+  "Business Management and Marketing"
+];
+
+const MASTERS_PROGRAMS = [
+  "International Marketing and Management",
+  "Financial Economics",
+  "Business Sustainability Management",
+  "Innovation and Technology Management",
+  "Global Leadership and Strategy"
+];
+
+const EXECUTIVE_PROGRAMS = [
+  "Executive MBA",
+  "Master of Management",
+  "LAB 4 Leaders"
+];
+
+const ALL_PROGRAMS = [
+  ...BACHELORS_PROGRAMS,
+  ...MASTERS_PROGRAMS,
+  ...EXECUTIVE_PROGRAMS
+];
 
 const CREATIVE_INTERESTS = [
   "Photography", "Music", "Art", "Design", "Writing", "Dance", "Theater", "Cooking", "Crafts", "Fashion"
@@ -53,6 +82,7 @@ const EditProfile = () => {
   // Form fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [studyLevel, setStudyLevel] = useState("");
   const [studies, setStudies] = useState("");
   const [location, setLocation] = useState("");
   const [bio, setBio] = useState("");
@@ -103,7 +133,21 @@ const EditProfile = () => {
           const nameParts = profileData.full_name?.split(' ') || [];
           setFirstName(nameParts[0] || '');
           setLastName(nameParts.slice(1).join(' ') || '');
-          setStudies(profileData.studies || '');
+          
+          // Parse studies to extract level and program
+          const studiesValue = profileData.studies || '';
+          if (studiesValue.includes(' - ')) {
+            const [level, program] = studiesValue.split(' - ');
+            setStudyLevel(level);
+            setStudies(program);
+          } else if (STUDY_LEVELS.includes(studiesValue)) {
+            setStudyLevel(studiesValue);
+            setStudies('');
+          } else {
+            setStudyLevel('');
+            setStudies(studiesValue);
+          }
+          
           setLocation(profileData.location || '');
           
           // Parse availability
@@ -153,7 +197,22 @@ const EditProfile = () => {
     }
   };
 
-  const filteredCreative = CREATIVE_INTERESTS.filter(i => 
+  const getAvailablePrograms = () => {
+    switch (studyLevel) {
+      case "Bachelor's":
+        return BACHELORS_PROGRAMS;
+      case "Master's":
+        return MASTERS_PROGRAMS;
+      case "Executive":
+        return EXECUTIVE_PROGRAMS;
+      case "Alumni":
+        return ALL_PROGRAMS;
+      default:
+        return [];
+    }
+  };
+
+  const filteredCreative = CREATIVE_INTERESTS.filter(i =>
     i.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const filteredLifestyle = LIFESTYLE_INTERESTS.filter(i => 
@@ -183,7 +242,17 @@ const EditProfile = () => {
         full_name: `${firstName} ${lastName}`,
       };
       
-      if (studies) profileUpdate.studies = studies;
+      // Combine study level and program for storage
+      if (studyLevel) {
+        if (studyLevel === "Faculty Member") {
+          profileUpdate.studies = studyLevel;
+        } else if (studies) {
+          profileUpdate.studies = `${studyLevel} - ${studies}`;
+        } else {
+          profileUpdate.studies = studyLevel;
+        }
+      }
+      
       if (location) profileUpdate.location = location;
       
       const hasActiveAvailability = Object.values(availability).some(day => day.active);
@@ -297,13 +366,16 @@ const EditProfile = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="studies">Studies</Label>
-                <Select value={studies} onValueChange={setStudies}>
+                <Label htmlFor="studyLevel">Study Level</Label>
+                <Select value={studyLevel} onValueChange={(value) => {
+                  setStudyLevel(value);
+                  setStudies("");
+                }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your study level" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {STUDY_OPTIONS.map(option => (
+                  <SelectContent className="bg-background z-50">
+                    {STUDY_LEVELS.map(option => (
                       <SelectItem key={option} value={option}>
                         {option}
                       </SelectItem>
@@ -311,6 +383,24 @@ const EditProfile = () => {
                   </SelectContent>
                 </Select>
               </div>
+
+              {studyLevel && studyLevel !== "Faculty Member" && (
+                <div className="space-y-2">
+                  <Label htmlFor="studies">Program</Label>
+                  <Select value={studies} onValueChange={setStudies}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={`Select your ${studyLevel} program`} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background z-50 max-h-[300px] overflow-y-auto">
+                      {getAvailablePrograms().map(program => (
+                        <SelectItem key={program} value={program}>
+                          {program}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>
