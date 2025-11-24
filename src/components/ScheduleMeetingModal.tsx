@@ -158,7 +158,7 @@ export const ScheduleMeetingModal = ({
         requester_id: session.user.id,
         recipient_id: recipientId,
         scheduled_at: scheduledDateTime.toISOString(),
-        meeting_type: 'scheduled',
+        meeting_type: 'friendly',
         status: 'pending',
       });
 

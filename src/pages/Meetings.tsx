@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, Check, X, Clock, User, Inbox, CalendarDays, History as HistoryIcon } from "lucide-react";
 import { format, isPast } from "date-fns";
 import { ScheduleMeetingModal } from "@/components/ScheduleMeetingModal";
+import { MeetingNotifications } from "@/components/MeetingNotifications";
 
 type Meeting = {
   id: string;
@@ -129,7 +130,7 @@ const Meetings = () => {
           }
         } else if (meeting.status === 'confirmed' && !isInPast) {
           upcoming.push(enrichedMeeting);
-        } else if (meeting.status === 'declined' || isInPast) {
+        } else if (meeting.status === 'cancelled' || meeting.status === 'completed' || isInPast) {
           history.push(enrichedMeeting);
         }
       });
@@ -179,7 +180,7 @@ const Meetings = () => {
     try {
       const { error } = await supabase
         .from('meetings')
-        .update({ status: 'declined' })
+        .update({ status: 'cancelled' })
         .eq('id', meetingId);
 
       if (error) throw error;
@@ -213,7 +214,7 @@ const Meetings = () => {
     try {
       const { error } = await supabase
         .from('meetings')
-        .update({ status: 'declined' })
+        .update({ status: 'cancelled' })
         .eq('id', meetingId);
 
       if (error) throw error;
@@ -246,6 +247,8 @@ const Meetings = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
+      <MeetingNotifications />
+      
       <div className="container max-w-screen-sm mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold text-foreground mb-6">Meetings</h1>
 
@@ -487,8 +490,8 @@ const Meetings = () => {
                           {format(new Date(meeting.scheduled_at), 'MMMM d, yyyy')} at {format(new Date(meeting.scheduled_at), 'h:mm a')}
                         </p>
                       </div>
-                      <Badge variant={meeting.status === 'declined' ? 'destructive' : 'secondary'}>
-                        {meeting.status === 'declined' ? 'Declined' : 'Past'}
+                      <Badge variant={meeting.status === 'cancelled' ? 'destructive' : 'secondary'}>
+                        {meeting.status === 'cancelled' ? 'Cancelled' : meeting.status === 'completed' ? 'Completed' : 'Past'}
                       </Badge>
                     </div>
                   </Card>
