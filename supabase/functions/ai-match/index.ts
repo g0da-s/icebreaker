@@ -86,15 +86,18 @@ Current user interests: ${currentUser?.tags?.join(', ') || 'none'}
 Available users and their interests:
 ${allUsers.map((u: any, i: number) => {
   const profile = profilesMap.get(u.user_id);
-  return `${i + 1}. ${profile?.full_name || 'User'} - Interests: ${u.tags?.join(', ') || 'none'} - Bio: ${u.bio || 'none'}`;
+  return `User Index ${i}: ${profile?.full_name || 'User'} (ID: ${u.user_id}) - Interests: ${u.tags?.join(', ') || 'none'} - Bio: ${u.bio || 'none'}`;
 }).join('\n')}
 
-Please analyze and return the top 3-5 best matches as a JSON array. Each match should include:
-- user_id (from the list above)
-- match_score (0-100)
+Please analyze and return the top 3-5 best matches as a JSON array. Each match MUST include:
+- user_index (the index number from the list above, as a number)
+- match_score (0-100, as a number)
 - reason (why they match - keep it brief, 1-2 sentences)
 
-Return ONLY valid JSON array, no markdown or explanation.`;
+CRITICAL: Use the exact user_index number (0, 1, 2, etc.) from the list above, NOT the user's name or ID.
+
+Return ONLY valid JSON array, no markdown or explanation. Example format:
+[{"user_index": 0, "match_score": 95, "reason": "Great match because..."}]`;
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -125,20 +128,32 @@ Return ONLY valid JSON array, no markdown or explanation.`;
 
     // Enrich matches with user details and availability
     const enrichedMatches = matches.map((match: any) => {
-      const user = allUsers.find((u: any) => u.user_id === match.user_id);
-      const profile = profilesMap.get(match.user_id);
-      const earliestAvailable = getEarliestAvailability(match.user_id);
+      const userIndex = typeof match.user_index === 'number' ? match.user_index : parseInt(match.user_index);
+      
+      if (userIndex < 0 || userIndex >= allUsers.length) {
+        console.error(`Invalid user_index: ${userIndex}`);
+        return null;
+      }
+      
+      const user = allUsers[userIndex];
+      const profile = profilesMap.get(user.user_id);
+      const earliestAvailable = getEarliestAvailability(user.user_id);
       
       return {
-        ...match,
+        user_id: user.user_id,
+        match_score: match.match_score,
+        reason: match.reason,
         full_name: profile?.full_name || 'Unknown',
         email: profile?.email || '',
+        studies: profile?.studies || null,
+        role: profile?.role || null,
         avatar_url: profile?.avatar_url || null,
         avatar_type: profile?.avatar_type || null,
         tags: user?.tags || [],
+        bio: user?.bio || null,
         earliest_available: earliestAvailable,
       };
-    });
+    }).filter(Boolean);
 
     return new Response(JSON.stringify({ matches: enrichedMatches }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
