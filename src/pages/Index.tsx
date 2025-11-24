@@ -29,10 +29,10 @@ const Index = () => {
             
             <div className="flex flex-col gap-3 justify-center max-w-xs mx-auto sm:max-w-none sm:flex-row sm:gap-4">
               <Button asChild size="lg" className="text-base h-12">
-                <Link to="/auth">Get Started</Link>
+                <Link to="/auth?mode=signup">Register</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="text-base h-12">
-                <Link to="/install">Install App</Link>
+                <Link to="/auth?mode=signin">Sign In</Link>
               </Button>
             </div>
           </div>
@@ -118,7 +118,7 @@ const Index = () => {
             Join your fellow ISM students and start building your network today
           </p>
           <Button asChild size="lg" className="text-base">
-            <Link to="/auth">Join Now with ISM Email</Link>
+            <Link to="/auth?mode=signup">Join Now with ISM Email</Link>
           </Button>
         </div>
       </section>

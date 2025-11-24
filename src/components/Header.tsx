@@ -31,7 +31,7 @@ export const Header = () => {
         <div className="flex items-center gap-2">
           {!isAuthenticated && (
             <Button asChild className="hidden sm:flex">
-              <Link to="/auth">Sign Up for Early Access</Link>
+              <Link to="/auth?mode=signup">Sign Up for Early Access</Link>
             </Button>
           )}
           
@@ -61,7 +61,7 @@ export const Header = () => {
                 </Link>
                 {!isAuthenticated && (
                   <Button asChild className="mt-4">
-                    <Link to="/auth">Sign Up for Early Access</Link>
+                    <Link to="/auth?mode=signup">Sign Up for Early Access</Link>
                   </Button>
                 )}
               </nav>
