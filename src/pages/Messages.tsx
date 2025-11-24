@@ -1,7 +1,8 @@
 import MobileLayout from "@/components/MobileLayout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Messages = () => {
   // Mock data - will be replaced with real data
@@ -27,6 +28,10 @@ const Messages = () => {
   return (
     <MobileLayout>
       <div className="container max-w-screen-sm mx-auto px-4 py-6">
+        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 transition-colors">
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back to Home</span>
+        </Link>
         <h1 className="text-2xl font-bold text-foreground mb-6">Messages</h1>
 
         {conversations.length === 0 ? (
