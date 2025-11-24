@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Textarea } from "@/components/ui/textarea";
 
 const INTERESTS = [
   "Sports", "Music", "Art", "Technology", "Reading", "Travel",
@@ -29,6 +31,8 @@ const ProfileSetup = () => {
   const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [bio, setBio] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -56,13 +60,44 @@ const ProfileSetup = () => {
     }
   };
 
-  const handleComplete = () => {
-    // TODO: Save profile to database
-    toast({
-      title: "Profile Created!",
-      description: "Let's find your first match",
-    });
-    navigate("/dashboard");
+  const handleComplete = async () => {
+    setIsLoading(true);
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("No user found");
+      }
+
+      // Update profile with all collected data
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          interests: selectedInterests,
+          expertise: selectedExpertise,
+          skills: selectedSkills,
+          linkedin_url: linkedinUrl || null,
+          bio: bio || null,
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Profile Created!",
+        description: "Your profile has been saved successfully.",
+      });
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save profile",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -169,6 +204,16 @@ const ProfileSetup = () => {
                   ))}
                 </div>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="bio">About You (Optional)</Label>
+                <Textarea
+                  id="bio"
+                  placeholder="Tell us a bit about yourself..."
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  rows={4}
+                />
+              </div>
               <div className="flex justify-between gap-2">
                 <Button variant="outline" onClick={() => setStep(step - 1)}>
                   Back
@@ -230,7 +275,9 @@ const ProfileSetup = () => {
                 <Button variant="outline" onClick={() => setStep(step - 1)}>
                   Back
                 </Button>
-                <Button onClick={handleComplete}>Complete Profile</Button>
+                <Button onClick={handleComplete} disabled={isLoading}>
+                  {isLoading ? "Saving..." : "Complete & Save"}
+                </Button>
               </div>
             </div>
           )}
