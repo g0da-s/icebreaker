@@ -82,7 +82,7 @@ const Index = () => {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-                Why Students Love ISM Connect
+                Why Students Love icebeaker.ai
               </h2>
             </div>
 
