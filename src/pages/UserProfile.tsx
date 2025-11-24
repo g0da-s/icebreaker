@@ -11,6 +11,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { ScheduleMeetingModal } from "@/components/ScheduleMeetingModal";
 
+const CREATIVE_INTERESTS = [
+  "Photography", "Music", "Art", "Design", "Writing", "Dance", "Theater", "Cooking", "Crafts", "Fashion"
+];
+
+const LIFESTYLE_INTERESTS = [
+  "Sports", "Fitness", "Travel", "Gaming", "Reading", "Hiking", "Yoga", "Running", "Cycling", "Swimming"
+];
+
 type UserProfileData = {
   id: string;
   full_name: string;
@@ -160,23 +168,42 @@ const UserProfile = () => {
             {profile.bio && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-2">
-                  About
+                  Bio
                 </h3>
-                <p className="text-sm text-muted-foreground">{profile.bio}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{profile.bio}</p>
               </div>
             )}
 
-            {profile.tags.length > 0 && (
+            {profile.tags.filter(tag => CREATIVE_INTERESTS.includes(tag)).length > 0 && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-2">
-                  Interests & Skills
+                  Interests
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {profile.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
+                  {profile.tags
+                    .filter(tag => CREATIVE_INTERESTS.includes(tag))
+                    .map((tag, index) => (
+                      <Badge key={index} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {profile.tags.filter(tag => LIFESTYLE_INTERESTS.includes(tag)).length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-2">
+                  Skills
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {profile.tags
+                    .filter(tag => LIFESTYLE_INTERESTS.includes(tag))
+                    .map((tag, index) => (
+                      <Badge key={index} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
                 </div>
               </div>
             )}
