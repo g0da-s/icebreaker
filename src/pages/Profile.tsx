@@ -95,11 +95,19 @@ const Profile = () => {
         <Card className="p-6 mb-4">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-2xl font-bold text-primary">
-                  {profile.full_name?.charAt(0) || profile.email.charAt(0)}
-                </span>
-              </div>
+              {profile.avatar_url ? (
+                <img 
+                  src={profile.avatar_url} 
+                  alt={profile.full_name || profile.email}
+                  className="w-16 h-16 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-primary">
+                    {profile.full_name?.charAt(0) || profile.email.charAt(0)}
+                  </span>
+                </div>
+              )}
               <div>
                 <h2 className="text-xl font-bold text-foreground">
                   {profile.full_name || "No name"}
