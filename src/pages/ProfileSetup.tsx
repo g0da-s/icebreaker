@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 const INTERESTS = [
   "Sports", "Music", "Art", "Technology", "Reading", "Travel",
@@ -173,6 +174,13 @@ const ProfileSetup = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
+      <div className="absolute top-4 left-4">
+        <Link to="/dashboard" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back to Dashboard</span>
+        </Link>
+      </div>
+      
       {loading ? (
         <Card className="w-full max-w-2xl">
           <CardContent className="p-8">
