@@ -246,10 +246,18 @@ const Home = () => {
                         </div>
                         {(match.studies || match.role) && (
                           <p className="text-sm text-muted-foreground">
-                            {match.studies || match.role}
+                            {match.studies?.includes(' - ')
+                              ? match.studies.split(' - ')[1]  // Show program
+                              : match.studies || match.role
+                            }
                           </p>
                         )}
-                        {match.role && match.studies && (
+                        {match.studies?.includes(' - ') && (
+                          <p className="text-xs text-muted-foreground">
+                            {match.studies.split(' - ')[0]}  {/* Show study level */}
+                          </p>
+                        )}
+                        {match.role && (
                           <Badge variant="outline" className="mt-1">
                             {match.role}
                           </Badge>
@@ -325,7 +333,17 @@ const Home = () => {
                           {user.full_name}
                         </h3>
                         {user.studies && (
-                          <p className="text-sm text-muted-foreground">{user.studies}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {user.studies?.includes(' - ')
+                              ? user.studies.split(' - ')[1]  // Show program
+                              : user.studies
+                            }
+                          </p>
+                        )}
+                        {user.studies?.includes(' - ') && (
+                          <p className="text-xs text-muted-foreground">
+                            {user.studies.split(' - ')[0]}  {/* Show study level */}
+                          </p>
                         )}
                         {user.role && (
                           <Badge variant="outline" className="mt-1">

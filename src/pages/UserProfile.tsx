@@ -150,7 +150,17 @@ const UserProfile = () => {
             <h1 className="text-2xl font-bold text-foreground mb-1">
               {profile.full_name}
             </h1>
-            <p className="text-muted-foreground mb-2">{profile.studies}</p>
+            <p className="text-muted-foreground mb-2">
+              {profile.studies?.includes(' - ') 
+                ? profile.studies.split(' - ')[1]  // Show just the program name
+                : profile.studies
+              }
+            </p>
+            {profile.studies?.includes(' - ') && (
+              <p className="text-sm text-muted-foreground mb-2">
+                {profile.studies.split(' - ')[0]}  {/* Show the study level */}
+              </p>
+            )}
             <Badge variant="secondary">{profile.role}</Badge>
           </div>
 

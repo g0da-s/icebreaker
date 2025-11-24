@@ -118,6 +118,25 @@ const Profile = () => {
           <Separator className="my-4" />
 
           <div className="space-y-4">
+            {profile.studies && (
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-2">
+                  Studies
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {profile.studies?.includes(' - ') 
+                    ? profile.studies.split(' - ')[1]  // Show program name
+                    : profile.studies
+                  }
+                </p>
+                {profile.studies?.includes(' - ') && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {profile.studies.split(' - ')[0]}  {/* Show study level */}
+                  </p>
+                )}
+              </div>
+            )}
+
             {profile.location && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-2">
