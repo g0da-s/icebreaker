@@ -18,32 +18,32 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          meeting_time: string
           meeting_type: string
+          recipient_id: string
+          requester_id: string
+          scheduled_at: string
           status: string
           updated_at: string
-          user1_id: string
-          user2_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          meeting_time: string
           meeting_type: string
+          recipient_id: string
+          requester_id: string
+          scheduled_at: string
           status?: string
           updated_at?: string
-          user1_id: string
-          user2_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          meeting_time?: string
           meeting_type?: string
+          recipient_id?: string
+          requester_id?: string
+          scheduled_at?: string
           status?: string
           updated_at?: string
-          user1_id?: string
-          user2_id?: string
         }
         Relationships: []
       }
