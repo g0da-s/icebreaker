@@ -23,6 +23,9 @@ export const MeetingNotifications = () => {
     const stored = localStorage.getItem('shownNotifications');
     return stored ? new Set(JSON.parse(stored)) : new Set();
   });
+  const [lastCheckTime, setLastCheckTime] = useState<string>(() => {
+    return localStorage.getItem('lastNotificationCheck') || new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  });
 
   useEffect(() => {
     const checkForNotifications = async () => {
@@ -32,13 +35,13 @@ export const MeetingNotifications = () => {
       const now = new Date();
       const newNotifs: Notification[] = [];
 
-      // Check for cancelled meetings
+      // Check for cancelled meetings (only those cancelled after last check)
       const { data: cancelledMeetings } = await supabase
         .from('meetings')
         .select('id, recipient_id, scheduled_at, created_at, updated_at')
         .eq('requester_id', session.user.id)
         .eq('status', 'cancelled')
-        .gt('updated_at', new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString());
+        .gt('updated_at', lastCheckTime);
 
       if (cancelledMeetings && cancelledMeetings.length > 0) {
         const recipientIds = cancelledMeetings.map(m => m.recipient_id);
@@ -170,13 +173,18 @@ export const MeetingNotifications = () => {
           return newSet;
         });
       }
+      
+      // Update last check time
+      const newCheckTime = now.toISOString();
+      setLastCheckTime(newCheckTime);
+      localStorage.setItem('lastNotificationCheck', newCheckTime);
     };
 
     checkForNotifications();
     const interval = setInterval(checkForNotifications, 30000);
 
     return () => clearInterval(interval);
-  }, [toast, shownNotifications]);
+  }, [toast, shownNotifications, lastCheckTime]);
 
   const dismissNotification = (id: string) => {
     setNotifications(notifications.filter(n => n.id !== id));
