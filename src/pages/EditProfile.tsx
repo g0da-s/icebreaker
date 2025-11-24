@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AvailabilityScheduler } from "@/components/AvailabilityScheduler";
+import { LocationSelector } from "@/components/LocationSelector";
 
 const STUDY_LEVELS = ["Bachelor's", "Master's", "Executive", "Alumni", "Faculty Member"];
 
@@ -436,15 +437,10 @@ const EditProfile = () => {
                 </div>
               )}
 
-              <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Input
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Vilnius, Lithuania"
-                />
-              </div>
+              <LocationSelector
+                value={location}
+                onChange={setLocation}
+              />
 
               <div className="space-y-2">
                 <Label htmlFor="bio">Bio</Label>
