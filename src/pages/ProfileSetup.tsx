@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -29,10 +31,48 @@ const ProfileSetup = () => {
   const [selectedExpertise, setSelectedExpertise] = useState<string[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [bio, setBio] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const progress = (step / 4) * 100;
+
+  // Check if user is editing existing profile
+  useEffect(() => {
+    const checkExistingProfile = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          navigate("/auth");
+          return;
+        }
+
+        const { data: interests } = await supabase
+          .from('user_interests')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+
+        if (interests) {
+          setIsEditing(true);
+          setSelectedInterests(interests.tags?.slice(0, INTERESTS.length) || []);
+          setSelectedExpertise(interests.tags?.slice(INTERESTS.length, INTERESTS.length + EXPERTISE.length) || []);
+          setSelectedSkills(interests.tags?.slice(INTERESTS.length + EXPERTISE.length) || []);
+          setLinkedinUrl(interests.linkedin_url || "");
+          setBio(interests.bio || "");
+        }
+      } catch (error: any) {
+        console.error("Error checking profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkExistingProfile();
+  }, [navigate]);
 
   const toggleTag = (tag: string, list: string[], setter: (tags: string[]) => void) => {
     if (list.includes(tag)) {
@@ -56,27 +96,100 @@ const ProfileSetup = () => {
     }
   };
 
-  const handleComplete = () => {
-    // TODO: Save profile to database
-    toast({
-      title: "Profile Created!",
-      description: "Let's find your first match",
-    });
-    navigate("/dashboard");
+  const handleComplete = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "Error",
+          description: "Please log in first",
+          variant: "destructive",
+        });
+        navigate("/auth");
+        return;
+      }
+
+      // Combine all tags into one array
+      const allTags = [...selectedInterests, ...selectedExpertise, ...selectedSkills];
+
+      if (isEditing) {
+        // Update existing profile
+        const { error } = await supabase
+          .from('user_interests')
+          .update({
+            tags: allTags,
+            bio: bio || null,
+            linkedin_url: linkedinUrl || null,
+          })
+          .eq('user_id', session.user.id);
+
+        if (error) {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Profile Updated!",
+            description: "Your profile has been updated successfully",
+          });
+          navigate("/profile");
+        }
+      } else {
+        // Insert new profile
+        const { error } = await supabase
+          .from('user_interests')
+          .insert({
+            user_id: session.user.id,
+            tags: allTags,
+            bio: bio || null,
+            linkedin_url: linkedinUrl || null,
+          });
+
+        if (error) {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Profile Created!",
+            description: "Let's find your first match",
+          });
+          navigate("/dashboard");
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save profile",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <div className="space-y-2">
-            <CardTitle>Build Your Profile</CardTitle>
-            <CardDescription>
-              Step {step} of 4 - This helps us find the perfect matches for you
-            </CardDescription>
-            <Progress value={progress} className="h-2" />
-          </div>
-        </CardHeader>
+      {loading ? (
+        <Card className="w-full max-w-2xl">
+          <CardContent className="p-8">
+            <p className="text-center text-muted-foreground">Loading...</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="w-full max-w-2xl">
+          <CardHeader>
+            <div className="space-y-2">
+              <CardTitle>{isEditing ? "Edit Your Profile" : "Build Your Profile"}</CardTitle>
+              <CardDescription>
+                Step {step} of 4 - This helps us find the perfect matches for you
+              </CardDescription>
+              <Progress value={progress} className="h-2" />
+            </div>
+          </CardHeader>
         <CardContent>
           {step === 1 && (
             <div className="space-y-6">
@@ -127,6 +240,15 @@ const ProfileSetup = () => {
                     </Badge>
                   ))}
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bio">Bio (Optional)</Label>
+                <Input
+                  id="bio"
+                  placeholder="Tell us about yourself"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="linkedin">LinkedIn Profile (Optional)</Label>
@@ -230,12 +352,15 @@ const ProfileSetup = () => {
                 <Button variant="outline" onClick={() => setStep(step - 1)}>
                   Back
                 </Button>
-                <Button onClick={handleComplete}>Complete Profile</Button>
+                <Button onClick={handleComplete}>
+                  {isEditing ? "Update Profile" : "Complete Profile"}
+                </Button>
               </div>
             </div>
           )}
         </CardContent>
       </Card>
+      )}
     </div>
   );
 };
