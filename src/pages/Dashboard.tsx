@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Users, Lightbulb, Sparkles, Calendar, LogOut, User } from "lucide-react";
+import { Heart, Users, Lightbulb, Sparkles, Calendar, LogOut, User, ArrowLeft } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -42,7 +42,12 @@ const Dashboard = () => {
       <nav className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-foreground">ISM Connect</h2>
+            <div className="flex items-center gap-4">
+              <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+                <ArrowLeft className="w-5 h-5" />
+              </Link>
+              <h2 className="text-lg font-semibold text-foreground">ISM Connect</h2>
+            </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">{user?.email}</span>
               <Link to="/profile">

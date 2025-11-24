@@ -2,8 +2,24 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Users, Heart, Lightbulb, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -27,14 +43,23 @@ const Index = () => {
               AI-powered matching for ISM students. Find friends, mentors, and co-founders based on shared interests-not appearances.
             </p>
             
-            <div className="flex flex-col gap-3 justify-center max-w-xs mx-auto sm:max-w-none sm:flex-row sm:gap-4">
-              <Button asChild size="lg" className="text-base h-12">
-                <Link to="/auth?mode=signup">Register</Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="text-base h-12">
-                <Link to="/auth?mode=signin">Sign In</Link>
-              </Button>
-            </div>
+            {!isAuthenticated ? (
+              <div className="flex flex-col gap-3 justify-center max-w-xs mx-auto sm:max-w-none sm:flex-row sm:gap-4">
+                <Button asChild size="lg" className="text-base h-12">
+                  <Link to="/auth?mode=signup">Register</Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="text-base h-12">
+                  <Link to="/auth?mode=signin">Sign In</Link>
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-lg text-foreground font-medium">Welcome back!</p>
+                <Button asChild size="lg" className="text-base h-12">
+                  <Link to="/profile">Edit My Profile</Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </section>
