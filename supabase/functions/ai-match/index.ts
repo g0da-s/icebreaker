@@ -46,7 +46,7 @@ serve(async (req) => {
     const userIds = allUsers.map((u: any) => u.user_id);
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, full_name, email')
+      .select('id, full_name, email, avatar_url, avatar_type')
       .in('id', userIds);
 
     // Get availability for all users
@@ -133,6 +133,8 @@ Return ONLY valid JSON array, no markdown or explanation.`;
         ...match,
         full_name: profile?.full_name || 'Unknown',
         email: profile?.email || '',
+        avatar_url: profile?.avatar_url || null,
+        avatar_type: profile?.avatar_type || null,
         tags: user?.tags || [],
         earliest_available: earliestAvailable,
       };

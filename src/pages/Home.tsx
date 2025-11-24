@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BottomNav } from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +14,8 @@ interface Match {
   user_id: string;
   full_name: string;
   email: string;
+  avatar_url?: string | null;
+  avatar_type?: string | null;
   tags: string[];
   match_score: number;
   reason: string;
@@ -165,7 +168,13 @@ const Home = () => {
                 {matches.map((match) => (
                   <Card key={match.user_id} className="hover:shadow-lg transition-shadow">
                     <CardHeader>
-                      <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between gap-4">
+                        <Avatar className="h-16 w-16 flex-shrink-0">
+                          <AvatarImage src={match.avatar_url || undefined} alt={match.full_name} />
+                          <AvatarFallback className="text-lg">
+                            {match.full_name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <CardTitle className="text-xl">{match.full_name}</CardTitle>
