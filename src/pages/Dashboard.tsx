@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Users, Lightbulb, Sparkles, Calendar } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Heart, Users, Lightbulb, Sparkles, Calendar, ArrowLeft } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -10,6 +10,10 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
+          <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Home</span>
+          </Link>
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">
               Welcome back! 👋
