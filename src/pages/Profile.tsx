@@ -118,17 +118,6 @@ const Profile = () => {
           <Separator className="my-4" />
 
           <div className="space-y-4">
-            {profile.birth_date && (
-              <div>
-                <h3 className="text-sm font-semibold text-foreground mb-2">
-                  Birth Date
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {format(new Date(profile.birth_date), "PPP")}
-                </p>
-              </div>
-            )}
-
             {profile.location && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-2">
