@@ -10,6 +10,8 @@ import { Separator } from "@/components/ui/separator";
 import { LogOut, Edit } from "lucide-react";
 import { format } from "date-fns";
 
+const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
 const Profile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -176,16 +178,17 @@ const Profile = () => {
                   Availability
                 </h3>
                 <div className="space-y-2">
-                  {Object.entries(profile.availability).map(([day, schedule]: [string, any]) => (
-                    schedule?.active && (
+                  {DAY_ORDER.map((day) => {
+                    const schedule = profile.availability[day];
+                    return schedule?.active && (
                       <div key={day} className="text-sm">
                         <span className="capitalize font-medium">{day}:</span>{" "}
                         <span className="text-muted-foreground">
                           {schedule.start} - {schedule.end}
                         </span>
                       </div>
-                    )
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
