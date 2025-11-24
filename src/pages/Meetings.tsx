@@ -292,13 +292,11 @@ const Meetings = () => {
                       <div className="flex items-start gap-3 mb-4">
                         <Avatar className="h-12 w-12">
                           <AvatarImage
-                            src={meeting.otherUser.avatar_type === 'upload' ? meeting.otherUser.avatar_url || undefined : undefined}
+                            src={meeting.otherUser.avatar_url || undefined}
                             alt={meeting.otherUser.full_name}
                           />
                           <AvatarFallback>
-                            {meeting.otherUser.avatar_type === 'mascot' 
-                              ? '🧊' 
-                              : meeting.otherUser.full_name.split(' ').map(n => n[0]).join('')}
+                            {meeting.otherUser.full_name.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
@@ -370,13 +368,11 @@ const Meetings = () => {
                       <div className="flex items-start gap-3">
                         <Avatar className="h-12 w-12">
                           <AvatarImage
-                            src={meeting.otherUser.avatar_type === 'upload' ? meeting.otherUser.avatar_url || undefined : undefined}
+                            src={meeting.otherUser.avatar_url || undefined}
                             alt={meeting.otherUser.full_name}
                           />
                           <AvatarFallback>
-                            {meeting.otherUser.avatar_type === 'mascot' 
-                              ? '🧊' 
-                              : meeting.otherUser.full_name.split(' ').map(n => n[0]).join('')}
+                            {meeting.otherUser.full_name.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
@@ -412,13 +408,11 @@ const Meetings = () => {
                     <div className="flex items-start gap-3 mb-3">
                       <Avatar className="h-12 w-12">
                         <AvatarImage
-                          src={meeting.otherUser.avatar_type === 'upload' ? meeting.otherUser.avatar_url || undefined : undefined}
+                          src={meeting.otherUser.avatar_url || undefined}
                           alt={meeting.otherUser.full_name}
                         />
                         <AvatarFallback>
-                          {meeting.otherUser.avatar_type === 'mascot' 
-                            ? '🧊' 
-                            : meeting.otherUser.full_name.split(' ').map(n => n[0]).join('')}
+                          {meeting.otherUser.full_name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
@@ -479,7 +473,7 @@ const Meetings = () => {
                     <div className="flex items-start gap-3">
                       <Avatar className="h-12 w-12">
                         <AvatarImage
-                          src={meeting.otherUser.avatar_type === 'upload' ? meeting.otherUser.avatar_url || undefined : undefined}
+                          src={meeting.otherUser.avatar_url || undefined}
                           alt={meeting.otherUser.full_name}
                         />
                         <AvatarFallback>

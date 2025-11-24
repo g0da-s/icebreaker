@@ -229,11 +229,11 @@ const Home = () => {
                     <div className="flex items-start gap-3 mb-4">
                       <Avatar className="h-12 w-12">
                         <AvatarImage 
-                          src={match.avatar_type === 'upload' ? match.avatar_url || undefined : undefined} 
+                          src={match.avatar_url || undefined} 
                           alt={match.full_name} 
                         />
                         <AvatarFallback className="text-lg">
-                          {match.avatar_type === 'mascot' ? '🧊' : match.full_name.split(' ').map(n => n[0]).join('')}
+                          {match.full_name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
@@ -327,11 +327,11 @@ const Home = () => {
                     <div className="flex items-start gap-3 mb-4">
                       <Avatar className="h-12 w-12">
                         <AvatarImage 
-                          src={user.avatar_type === 'upload' ? user.avatar_url || undefined : undefined} 
+                          src={user.avatar_url || undefined} 
                           alt={user.full_name} 
                         />
                         <AvatarFallback className="text-lg">
-                          {user.avatar_type === 'mascot' ? '🧊' : user.full_name.split(' ').map(n => n[0]).join('')}
+                          {user.full_name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">

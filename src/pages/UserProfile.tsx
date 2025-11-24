@@ -142,11 +142,11 @@ const UserProfile = () => {
           <div className="flex flex-col items-center text-center mb-6">
             <Avatar className="h-24 w-24 mb-4">
               <AvatarImage 
-                src={profile.avatar_type === 'upload' ? profile.avatar_url || undefined : undefined} 
+                src={profile.avatar_url || undefined} 
                 alt={profile.full_name} 
               />
               <AvatarFallback className="text-3xl">
-                {profile.avatar_type === 'mascot' ? '🧊' : profile.full_name.split(' ').map(n => n[0]).join('')}
+                {profile.full_name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
             <h1 className="text-2xl font-bold text-foreground mb-1">
