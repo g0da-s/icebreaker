@@ -49,27 +49,45 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age: number | null
+          avatar_type: string | null
+          avatar_url: string | null
           created_at: string
           email: string
           full_name: string | null
           id: string
+          location: string | null
+          onboarding_answers: Json | null
           role: string
+          studies: string | null
           updated_at: string
         }
         Insert: {
+          age?: number | null
+          avatar_type?: string | null
+          avatar_url?: string | null
           created_at?: string
           email: string
           full_name?: string | null
           id: string
+          location?: string | null
+          onboarding_answers?: Json | null
           role: string
+          studies?: string | null
           updated_at?: string
         }
         Update: {
+          age?: number | null
+          avatar_type?: string | null
+          avatar_url?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
           id?: string
+          location?: string | null
+          onboarding_answers?: Json | null
           role?: string
+          studies?: string | null
           updated_at?: string
         }
         Relationships: []
