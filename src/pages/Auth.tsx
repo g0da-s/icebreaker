@@ -6,10 +6,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const allowedDomains = ['@ism.lt', '@stud.ism.lt', '@faculty.ism.lt'];
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,23 +22,47 @@ const Auth = () => {
     
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const fullName = formData.get("name") as string;
     
-    // Validate ISM email
-    if (!email.endsWith("@ism.lt")) {
+    // Validate allowed domains
+    const isValidDomain = allowedDomains.some(domain => email.endsWith(domain));
+    
+    if (!isValidDomain) {
       toast({
-        title: "Invalid Email",
-        description: "Please use your ISM University email address (@ism.lt)",
+        title: "Access Restricted",
+        description: "Please use your official university email (@ism.lt, @stud.ism.lt, or @faculty.ism.lt).",
         variant: "destructive",
       });
       setIsLoading(false);
       return;
     }
 
-    // TODO: Implement actual signup with Supabase
-    toast({
-      title: "Success!",
-      description: "Check your email to verify your account.",
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+        emailRedirectTo: `${window.location.origin}/`,
+      },
     });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success!",
+        description: "Account created successfully. You can now sign in.",
+      });
+      navigate("/");
+    }
+    
     setIsLoading(false);
   };
 
@@ -41,11 +70,29 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // TODO: Implement actual login with Supabase
-    toast({
-      title: "Welcome back!",
-      description: "You'll be redirected shortly.",
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Welcome back!",
+        description: "Signed in successfully.",
+      });
+      navigate("/");
+    }
+    
     setIsLoading(false);
   };
 
@@ -82,16 +129,16 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">ISM Email</Label>
+                  <Label htmlFor="signup-email">University Email</Label>
                   <Input
                     id="signup-email"
                     name="email"
                     type="email"
-                    placeholder="your.name@ism.lt"
+                    placeholder="your.name@stud.ism.lt"
                     required
                   />
                   <p className="text-xs text-muted-foreground">
-                    Must be a valid @ism.lt email address
+                    Enter your student, faculty, or staff email.
                   </p>
                 </div>
                 <div className="space-y-2">
