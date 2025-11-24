@@ -3,7 +3,24 @@ import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/logo.png";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
 export const Header = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
@@ -12,9 +29,11 @@ export const Header = () => {
         </Link>
 
         <div className="flex items-center gap-2">
-          <Button asChild className="hidden sm:flex">
-            <Link to="/auth">Sign Up for Early Access</Link>
-          </Button>
+          {!isAuthenticated && (
+            <Button asChild className="hidden sm:flex">
+              <Link to="/auth">Sign Up for Early Access</Link>
+            </Button>
+          )}
           
           {/* Hamburger Menu */}
           <Sheet>
@@ -40,9 +59,11 @@ export const Header = () => {
                 <Link to="/dashboard" className="text-sm font-medium text-foreground hover:text-primary transition-colors py-2">
                   Dashboard
                 </Link>
-                <Button asChild className="mt-4">
-                  <Link to="/auth">Sign Up for Early Access</Link>
-                </Button>
+                {!isAuthenticated && (
+                  <Button asChild className="mt-4">
+                    <Link to="/auth">Sign Up for Early Access</Link>
+                  </Button>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
