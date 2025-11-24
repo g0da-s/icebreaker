@@ -160,7 +160,7 @@ const ProfileSetup = () => {
             title: "Profile Created!",
             description: "Let's find your first match",
           });
-          navigate("/dashboard");
+          navigate("/home");
         }
       }
     } catch (error) {
@@ -175,9 +175,9 @@ const ProfileSetup = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
       <div className="absolute top-4 left-4">
-        <Link to="/dashboard" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+        <Link to="/home" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-5 h-5" />
-          <span>Back to Dashboard</span>
+          <span>Back</span>
         </Link>
       </div>
       

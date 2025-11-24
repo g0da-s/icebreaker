@@ -116,7 +116,7 @@ const Auth = () => {
         title: "Welcome back!",
         description: "Signed in successfully.",
       });
-      navigate("/dashboard");
+      navigate("/home");
     }
     
     setIsLoading(false);

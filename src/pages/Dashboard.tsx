@@ -46,7 +46,7 @@ const Dashboard = () => {
               <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
                 <ArrowLeft className="w-5 h-5" />
               </Link>
-              <h2 className="text-lg font-semibold text-foreground">ISM Connect</h2>
+              <h2 className="text-lg font-semibold text-foreground">Dashboard</h2>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">{user?.email}</span>
