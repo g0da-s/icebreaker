@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ProfileSetup from "./pages/ProfileSetup";
-import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Match from "./pages/Match";
 import Matches from "./pages/Matches";
@@ -15,7 +14,6 @@ import Profile from "./pages/Profile";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthenticatedLayout } from "./components/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
 
@@ -36,44 +34,27 @@ const App = () => (
           } />
           <Route path="/profile-setup" element={
             <ProtectedRoute>
-              <AuthenticatedLayout>
-                <ProfileSetup />
-              </AuthenticatedLayout>
-            </ProtectedRoute>
-          } />
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <AuthenticatedLayout>
-                <Dashboard />
-              </AuthenticatedLayout>
+              <ProfileSetup />
             </ProtectedRoute>
           } />
           <Route path="/matches" element={
             <ProtectedRoute>
-              <AuthenticatedLayout>
-                <Matches />
-              </AuthenticatedLayout>
+              <Matches />
             </ProtectedRoute>
           } />
           <Route path="/messages" element={
             <ProtectedRoute>
-              <AuthenticatedLayout>
-                <Messages />
-              </AuthenticatedLayout>
+              <Messages />
             </ProtectedRoute>
           } />
           <Route path="/profile" element={
             <ProtectedRoute>
-              <AuthenticatedLayout>
-                <Profile />
-              </AuthenticatedLayout>
+              <Profile />
             </ProtectedRoute>
           } />
           <Route path="/match/:type" element={
             <ProtectedRoute>
-              <AuthenticatedLayout>
-                <Match />
-              </AuthenticatedLayout>
+              <Match />
             </ProtectedRoute>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
