@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ProfileSetup from "./pages/ProfileSetup";
+import EditProfile from "./pages/EditProfile";
 import Home from "./pages/Home";
 import Match from "./pages/Match";
 import Matches from "./pages/Matches";
@@ -37,6 +38,11 @@ const App = () => (
           <Route path="/profile-setup" element={
             <ProtectedRoute>
               <ProfileSetup />
+            </ProtectedRoute>
+          } />
+          <Route path="/edit-profile" element={
+            <ProtectedRoute>
+              <EditProfile />
             </ProtectedRoute>
           } />
           <Route path="/matches" element={
