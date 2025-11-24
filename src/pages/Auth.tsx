@@ -4,13 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, ArrowLeft } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Sparkles, ArrowLeft, Award } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showAchievement, setShowAchievement] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -78,11 +80,11 @@ const Auth = () => {
         variant: "destructive",
       });
     } else {
-      toast({
-        title: "Success!",
-        description: "Account created successfully.",
-      });
-      navigate("/profile-setup");
+      setShowAchievement(true);
+      setTimeout(() => {
+        setShowAchievement(false);
+        navigate("/profile-setup");
+      }, 3000);
     }
     
     setIsLoading(false);
@@ -119,11 +121,28 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-      <Link to="/" className="absolute top-4 left-4 text-muted-foreground hover:text-foreground transition-colors">
-        <ArrowLeft className="w-5 h-5" />
-      </Link>
-      <Card className="w-full max-w-md">
+    <>
+      <Dialog open={showAchievement} onOpenChange={setShowAchievement}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex justify-center mb-4">
+              <div className="bg-primary/10 p-4 rounded-full">
+                <Award className="w-12 h-12 text-primary" />
+              </div>
+            </div>
+            <DialogTitle className="text-2xl text-center">Achievement Unlocked</DialogTitle>
+            <DialogDescription className="text-center text-lg font-semibold">
+              New on Ice
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
+        <Link to="/" className="absolute top-4 left-4 text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="w-5 h-5" />
+        </Link>
+        <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <div className="bg-primary/10 p-3 rounded-full">
@@ -213,6 +232,7 @@ const Auth = () => {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 };
 
