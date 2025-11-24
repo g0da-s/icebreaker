@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, Edit } from "lucide-react";
+import { LogOut, Edit, Calendar } from "lucide-react";
 import { format } from "date-fns";
 
 const Profile = () => {
@@ -203,6 +203,28 @@ const Profile = () => {
 
         {/* Settings Actions */}
         <div className="space-y-2">
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full h-12 justify-start"
+            asChild
+          >
+            <Link to="/invitations">
+              <Calendar className="w-5 h-5 mr-3" />
+              Meeting Invitations
+            </Link>
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full h-12 justify-start"
+            asChild
+          >
+            <Link to="/upcoming-meetings">
+              <Calendar className="w-5 h-5 mr-3" />
+              Upcoming Meetings
+            </Link>
+          </Button>
           <Button
             variant="outline"
             size="lg"

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Calendar } from "lucide-react";
+import { ScheduleMeetingModal } from "@/components/ScheduleMeetingModal";
 
 type UserProfileData = {
   id: string;
@@ -31,6 +32,7 @@ const UserProfile = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<UserProfileData | null>(null);
+  const [scheduleMeetingOpen, setScheduleMeetingOpen] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -205,12 +207,24 @@ const UserProfile = () => {
 
         {/* Action Buttons */}
         <div className="space-y-2">
-          <Button size="lg" className="w-full h-12">
+          <Button 
+            size="lg" 
+            className="w-full h-12"
+            onClick={() => setScheduleMeetingOpen(true)}
+          >
             <Calendar className="w-5 h-5 mr-2" />
             Schedule a Meeting
           </Button>
         </div>
       </div>
+
+      <ScheduleMeetingModal
+        open={scheduleMeetingOpen}
+        onOpenChange={setScheduleMeetingOpen}
+        recipientId={profile.id}
+        recipientName={profile.full_name}
+        recipientAvailability={profile.availability}
+      />
 
       <BottomNav />
     </div>
