@@ -237,6 +237,65 @@ const IceBreaker = () => {
     }
   };
 
+  const checkAndGrantAchievements = async (userId: string) => {
+    try {
+      // Count total completed meetings for this user
+      const { count } = await supabase
+        .from('meetings')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'completed')
+        .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`);
+
+      const totalCompleted = count || 0;
+
+      // Define achievement thresholds
+      const milestones = [
+        { threshold: 1, slug: 'meeting_1', title: 'Ice Cracker' },
+        { threshold: 5, slug: 'meeting_5', title: 'Arctic Explorer' },
+        { threshold: 15, slug: 'meeting_15', title: 'Glacier Guide' },
+        { threshold: 30, slug: 'meeting_30', title: 'Grand Ice Master' },
+      ];
+
+      for (const milestone of milestones) {
+        if (totalCompleted >= milestone.threshold) {
+          // Get achievement definition
+          const { data: achievementDef } = await supabase
+            .from('achievement_definitions')
+            .select('id')
+            .eq('slug', milestone.slug)
+            .single();
+
+          if (!achievementDef) continue;
+
+          // Check if user already has this achievement
+          const { data: existing } = await supabase
+            .from('user_achievements')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('achievement_id', achievementDef.id)
+            .maybeSingle();
+
+          // Grant achievement if not already owned
+          if (!existing) {
+            await supabase
+              .from('user_achievements')
+              .insert({ user_id: userId, achievement_id: achievementDef.id });
+
+            // Only show toast for the current user
+            if (userId === currentUserId) {
+              toast({
+                title: `Achievement Unlocked: ${milestone.title}! 🏆`,
+                description: `You've completed ${milestone.threshold} meeting${milestone.threshold > 1 ? 's' : ''}!`,
+              });
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error checking achievements:', error);
+    }
+  };
+
   const handleMarkCompleted = async () => {
     if (!meeting) return;
     
@@ -271,6 +330,10 @@ const IceBreaker = () => {
           .eq('id', id);
 
         if (statusError) throw statusError;
+
+        // Check and grant achievements for BOTH users
+        await checkAndGrantAchievements(meeting.requester_id);
+        await checkAndGrantAchievements(meeting.recipient_id);
 
         toast({
           title: "Meeting Completed!",

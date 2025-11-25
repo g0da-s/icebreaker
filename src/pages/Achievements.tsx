@@ -27,6 +27,7 @@ interface AchievementDisplay extends AchievementDefinition {
 export default function Achievements() {
   const [achievements, setAchievements] = useState<AchievementDisplay[]>([]);
   const [loading, setLoading] = useState(true);
+  const [completedMeetings, setCompletedMeetings] = useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -72,7 +73,27 @@ export default function Achievements() {
         unlockedAt: achievementMap.get(def.id),
       }));
 
+      // Sort: unlocked first, then locked
+      displayAchievements.sort((a, b) => {
+        if (a.isUnlocked && !b.isUnlocked) return -1;
+        if (!a.isUnlocked && b.isUnlocked) return 1;
+        return 0;
+      });
+
       setAchievements(displayAchievements);
+
+      // Fetch completed meetings count
+      const { count, error: countError } = await supabase
+        .from("meetings")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "completed")
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+
+      if (countError) {
+        console.error("Error counting completed meetings:", countError);
+      } else {
+        setCompletedMeetings(count || 0);
+      }
     } catch (error) {
       console.error("Error fetching achievements:", error);
       toast({
@@ -102,6 +123,15 @@ export default function Achievements() {
             Track your progress and unlock badges as you connect with others
           </p>
         </div>
+
+        <Card className="mb-8 border-primary/20 bg-primary/5">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-1">Successful Meetings</p>
+              <p className="text-4xl font-bold text-primary">{completedMeetings}</p>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {achievements.map((achievement) => (
