@@ -72,15 +72,29 @@ export default function Achievements() {
       if (userError) throw userError;
 
       // STEP B: Auto-Sync - Check and grant missing milestone badges
+      const userAchievementIds = new Set(userAchievements?.map(ua => ua.achievement_id) || []);
+      let newlyUnlocked = false;
+      
+      // Check 1: Welcome badge (always grant if missing)
+      const welcomeDef = definitions?.find(def => def.slug === 'welcome');
+      if (welcomeDef && !userAchievementIds.has(welcomeDef.id)) {
+        const { error: insertError } = await supabase
+          .from('user_achievements')
+          .insert({ user_id: user.id, achievement_id: welcomeDef.id });
+
+        if (!insertError) {
+          newlyUnlocked = true;
+          userAchievementIds.add(welcomeDef.id);
+        }
+      }
+
+      // Check 2: Meeting milestone badges
       const milestones = [
         { threshold: 1, slug: 'meeting_1', title: 'Ice Cracker' },
         { threshold: 5, slug: 'meeting_5', title: 'Arctic Explorer' },
         { threshold: 15, slug: 'meeting_15', title: 'Glacier Guide' },
         { threshold: 30, slug: 'meeting_30', title: 'Grand Ice Master' },
       ];
-
-      const userAchievementIds = new Set(userAchievements?.map(ua => ua.achievement_id) || []);
-      let newlyUnlocked = false;
 
       for (const milestone of milestones) {
         if (totalCompleted >= milestone.threshold) {
