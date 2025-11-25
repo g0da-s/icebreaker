@@ -21,7 +21,9 @@ export type Database = {
           current_stage: number | null
           id: string
           meeting_type: string
+          recipient_completed: boolean | null
           recipient_id: string
+          requester_completed: boolean | null
           requester_id: string
           scheduled_at: string
           status: string
@@ -33,7 +35,9 @@ export type Database = {
           current_stage?: number | null
           id?: string
           meeting_type: string
+          recipient_completed?: boolean | null
           recipient_id: string
+          requester_completed?: boolean | null
           requester_id: string
           scheduled_at: string
           status?: string
@@ -45,7 +49,9 @@ export type Database = {
           current_stage?: number | null
           id?: string
           meeting_type?: string
+          recipient_completed?: boolean | null
           recipient_id?: string
+          requester_completed?: boolean | null
           requester_id?: string
           scheduled_at?: string
           status?: string

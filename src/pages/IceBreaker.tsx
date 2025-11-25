@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Sparkles, MessageCircle, Target } from "lucide-react";
+import { ArrowRight, ArrowLeft, Sparkles, MessageCircle, Target } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { formatDisplayName } from "@/lib/utils";
@@ -39,6 +39,9 @@ const IceBreaker = () => {
   const [commonTags, setCommonTags] = useState<string[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string>("");
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [waitingForOther, setWaitingForOther] = useState(false);
+  const [isRequester, setIsRequester] = useState(false);
 
   useEffect(() => {
     fetchMeetingData();
@@ -90,6 +93,9 @@ const IceBreaker = () => {
 
       if (meetingError) throw meetingError;
       setMeeting(meetingData);
+
+      // Determine if current user is the requester
+      setIsRequester(meetingData.requester_id === session.user.id);
 
       // Set stage from database
       setStage(meetingData.current_stage as Stage);
@@ -201,12 +207,88 @@ const IceBreaker = () => {
       }
 
       setStage(nextStage);
-    } else {
-      navigate("/meetings");
+    }
+  };
+
+  const handleBack = async () => {
+    if (stage > 1) {
+      const prevStage = (stage - 1) as Stage;
+      
+      // Update stage in database for real-time sync
+      const { error } = await supabase
+        .from('meetings')
+        .update({ current_stage: prevStage })
+        .eq('id', id);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setStage(prevStage);
+    }
+  };
+
+  const handleMarkCompleted = async () => {
+    if (!meeting) return;
+    
+    setIsCompleting(true);
+    
+    try {
+      const columnToUpdate = isRequester ? 'requester_completed' : 'recipient_completed';
+      
+      // Update the user's completion status
+      const { error: updateError } = await supabase
+        .from('meetings')
+        .update({ [columnToUpdate]: true })
+        .eq('id', id);
+
+      if (updateError) throw updateError;
+
+      // Fetch the updated meeting to check both statuses
+      const { data: updatedMeeting, error: fetchError } = await supabase
+        .from('meetings')
+        .select('requester_completed, recipient_completed')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Check if both users have completed
+      if (updatedMeeting.requester_completed && updatedMeeting.recipient_completed) {
+        // Both completed - mark meeting as completed
+        const { error: statusError } = await supabase
+          .from('meetings')
+          .update({ status: 'completed' })
+          .eq('id', id);
+
+        if (statusError) throw statusError;
+
+        toast({
+          title: "Meeting Completed!",
+          description: "Thanks for confirming. The meeting has been moved to history.",
+        });
+        navigate("/meetings");
+      } else {
+        // Waiting for other user
+        setWaitingForOther(true);
+        toast({
+          title: "Marked as Completed",
+          description: "Waiting for the other person to confirm...",
+        });
+      }
+    } catch (error: any) {
       toast({
-        title: "Great conversation starter!",
-        description: "Hope you have a meaningful meeting.",
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
       });
+    } finally {
+      setIsCompleting(false);
     }
   };
 
@@ -305,16 +387,39 @@ const IceBreaker = () => {
             </p>
           </div>
 
-          <Button onClick={handleNext} className="w-full h-12" size="lg">
+          <div className="flex gap-3">
+            {stage > 1 && (
+              <Button 
+                onClick={handleBack} 
+                variant="outline" 
+                size="lg" 
+                className="h-12"
+              >
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Back
+              </Button>
+            )}
+            
             {stage < 3 ? (
-              <>
+              <Button onClick={handleNext} className="flex-1 h-12" size="lg">
                 Next Question
                 <ArrowRight className="w-5 h-5 ml-2" />
-              </>
+              </Button>
+            ) : waitingForOther ? (
+              <Button disabled className="flex-1 h-12" size="lg">
+                Waiting for other person to confirm...
+              </Button>
             ) : (
-              "Finish & Return to Meetings"
+              <Button 
+                onClick={handleMarkCompleted} 
+                className="flex-1 h-12" 
+                size="lg"
+                disabled={isCompleting}
+              >
+                {isCompleting ? "Marking Completed..." : "Mark Meeting as Completed"}
+              </Button>
             )}
-          </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

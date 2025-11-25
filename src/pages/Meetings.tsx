@@ -479,30 +479,33 @@ const Meetings = () => {
                       </div>
                     </div>
 
-                    {/* Show Ice-Breaker button if within 48 hours of meeting */}
+                    {/* Show Ice-Breaker button if within 48 hours, always show Cancel */}
                     {(() => {
                       const now = new Date();
                       const meetingStart = new Date(meeting.scheduled_at);
                       const fortyEightHoursBefore = new Date(meetingStart.getTime() - 48 * 60 * 60 * 1000);
                       const canAccessIceBreaker = now >= fortyEightHoursBefore;
                       
-                      return canAccessIceBreaker ? (
-                        <Button
-                          size="sm"
-                          onClick={() => window.location.href = `/meeting/${meeting.id}/ice-breaker`}
-                          className="w-full mb-2"
-                        >
-                          Break the Ice 🧊
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleCancelMeeting(meeting.id, formatDisplayName(meeting.otherUser.full_name))}
-                          className="w-full"
-                        >
-                          Cancel Meeting
-                        </Button>
+                      return (
+                        <div className="space-y-2">
+                          {canAccessIceBreaker && (
+                            <Button
+                              size="sm"
+                              onClick={() => window.location.href = `/meeting/${meeting.id}/ice-breaker`}
+                              className="w-full"
+                            >
+                              Break the Ice 🧊
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleCancelMeeting(meeting.id, formatDisplayName(meeting.otherUser.full_name))}
+                            className="w-full"
+                          >
+                            Cancel Meeting
+                          </Button>
+                        </div>
                       );
                     })()}
                   </Card>
