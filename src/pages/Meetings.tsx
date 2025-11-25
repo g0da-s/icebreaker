@@ -162,9 +162,38 @@ const Meetings = () => {
 
   const handleConfirm = async (meetingId: string, requesterName: string) => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      // Get the meeting details
+      const { data: meetingData, error: meetingError } = await supabase
+        .from('meetings')
+        .select('requester_id, recipient_id')
+        .eq('id', meetingId)
+        .single();
+
+      if (meetingError) throw meetingError;
+
+      // Fetch both users' interests
+      const [requesterInterests, recipientInterests] = await Promise.all([
+        supabase.from('user_interests').select('tags').eq('user_id', meetingData.requester_id).maybeSingle(),
+        supabase.from('user_interests').select('tags').eq('user_id', meetingData.recipient_id).maybeSingle(),
+      ]);
+
+      const requesterTags = requesterInterests.data?.tags || [];
+      const recipientTags = recipientInterests.data?.tags || [];
+      const commonInterests = requesterTags.filter((tag: string) => recipientTags.includes(tag));
+
+      // Pick the first common interest or use a default
+      const connectedInterest = commonInterests.length > 0 ? commonInterests[0] : 'shared interests';
+
+      // Update meeting status and connected interest
       const { error } = await supabase
         .from('meetings')
-        .update({ status: 'confirmed' })
+        .update({ 
+          status: 'confirmed',
+          connected_interest: connectedInterest
+        })
         .eq('id', meetingId);
 
       if (error) throw error;

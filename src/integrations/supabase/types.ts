@@ -16,7 +16,9 @@ export type Database = {
     Tables: {
       meetings: {
         Row: {
+          connected_interest: string | null
           created_at: string
+          current_stage: number | null
           id: string
           meeting_type: string
           recipient_id: string
@@ -26,7 +28,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          connected_interest?: string | null
           created_at?: string
+          current_stage?: number | null
           id?: string
           meeting_type: string
           recipient_id: string
@@ -36,7 +40,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          connected_interest?: string | null
           created_at?: string
+          current_stage?: number | null
           id?: string
           meeting_type?: string
           recipient_id?: string

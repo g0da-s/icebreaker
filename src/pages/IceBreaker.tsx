@@ -14,6 +14,8 @@ type Meeting = {
   scheduled_at: string;
   requester_id: string;
   recipient_id: string;
+  connected_interest: string | null;
+  current_stage: number;
 };
 
 type UserProfile = {
@@ -35,10 +37,39 @@ const IceBreaker = () => {
   const [otherUser, setOtherUser] = useState<UserProfile | null>(null);
   const [commonTags, setCommonTags] = useState<string[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string>("");
+  const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
 
   useEffect(() => {
     fetchMeetingData();
   }, [id]);
+
+  // Subscribe to real-time stage updates
+  useEffect(() => {
+    if (!id) return;
+
+    const channel = supabase
+      .channel(`meeting-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'meetings',
+          filter: `id=eq.${id}`
+        },
+        (payload) => {
+          const newStage = payload.new.current_stage;
+          if (newStage && newStage !== stage) {
+            setStage(newStage as Stage);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [id, stage]);
 
   const fetchMeetingData = async () => {
     try {
@@ -58,6 +89,34 @@ const IceBreaker = () => {
 
       if (meetingError) throw meetingError;
       setMeeting(meetingData);
+
+      // Set stage from database
+      setStage(meetingData.current_stage as Stage);
+
+      // Generate random questions for this session if not already done
+      if (selectedQuestions.length === 0) {
+        const stage1Questions = [
+          "What's the story behind how you got into [interest]?",
+          "What first sparked your interest in [interest]?",
+          "Was there a moment when you realized you really enjoyed [interest]?"
+        ];
+        const stage2Questions = [
+          "What part of [interest] energizes you the most right now?",
+          "What part of [interest] keeps you coming back to it?",
+          "What's something about [interest] that genuinely excites you?"
+        ];
+        const stage3Questions = [
+          "Has anything you're learning or exploring in [interest] surprised you lately?",
+          "Have you changed your perspective on [interest] recently?",
+          "What's something unexpected you discovered while exploring [interest]?"
+        ];
+
+        const randomQ1 = stage1Questions[Math.floor(Math.random() * stage1Questions.length)];
+        const randomQ2 = stage2Questions[Math.floor(Math.random() * stage2Questions.length)];
+        const randomQ3 = stage3Questions[Math.floor(Math.random() * stage3Questions.length)];
+        
+        setSelectedQuestions([randomQ1, randomQ2, randomQ3]);
+      }
 
       // Determine other user
       const otherUserId = meetingData.requester_id === session.user.id 
@@ -97,33 +156,50 @@ const IceBreaker = () => {
   };
 
   const getQuestion = (): { icon: React.ReactNode; title: string; question: string } => {
-    const commonTag = commonTags[0] || "your interests";
+    const interest = meeting?.connected_interest || "your interests";
     
-    switch (stage) {
-      case 1:
-        return {
-          icon: <Sparkles className="w-6 h-6" />,
-          title: "Shared Interest",
-          question: `What do you both enjoy about ${commonTag}?`,
-        };
-      case 2:
-        return {
-          icon: <MessageCircle className="w-6 h-6" />,
-          title: "Deepening Connection",
-          question: "What's one thing you're excited to learn or explore together?",
-        };
-      case 3:
-        return {
-          icon: <Target className="w-6 h-6" />,
-          title: "Building Rapport",
-          question: "How can you support each other's goals or interests?",
-        };
-    }
+    const icons = [
+      <Sparkles className="w-6 h-6" />,
+      <MessageCircle className="w-6 h-6" />,
+      <Target className="w-6 h-6" />
+    ];
+
+    const titles = [
+      "Introductory",
+      "Deepening",
+      "Advanced Reflection"
+    ];
+
+    const questionTemplate = selectedQuestions[stage - 1] || "";
+    const question = questionTemplate.replace(/\[interest\]/g, interest);
+
+    return {
+      icon: icons[stage - 1],
+      title: titles[stage - 1],
+      question: question,
+    };
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (stage < 3) {
-      setStage((stage + 1) as Stage);
+      const nextStage = (stage + 1) as Stage;
+      
+      // Update stage in database for real-time sync
+      const { error } = await supabase
+        .from('meetings')
+        .update({ current_stage: nextStage })
+        .eq('id', id);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setStage(nextStage);
     } else {
       navigate("/meetings");
       toast({
@@ -208,18 +284,14 @@ const IceBreaker = () => {
             </CardContent>
           </Card>
 
-          {commonTags.length > 0 && stage === 1 && (
+          {meeting?.connected_interest && stage === 1 && (
             <div className="space-y-2">
               <p className="text-sm font-medium text-muted-foreground">
-                Common Interests:
+                Connected Interest:
               </p>
-              <div className="flex flex-wrap gap-2">
-                {commonTags.map((tag) => (
-                  <Badge key={tag} variant="outline">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
+              <Badge variant="default" className="text-base px-4 py-1">
+                {meeting.connected_interest}
+              </Badge>
             </div>
           )}
 
