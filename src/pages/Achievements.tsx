@@ -46,6 +46,15 @@ export default function Achievements() {
         return;
       }
 
+      // STEP A: Fetch total count of completed meetings for the user
+      const { count: meetingsCount } = await supabase
+        .from("meetings")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "completed")
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+
+      const totalCompleted = meetingsCount || 0;
+
       // Fetch all achievement definitions
       const { data: definitions, error: defError } = await supabase
         .from("achievement_definitions")
@@ -62,9 +71,53 @@ export default function Achievements() {
 
       if (userError) throw userError;
 
+      // STEP B: Auto-Sync - Check and grant missing milestone badges
+      const milestones = [
+        { threshold: 1, slug: 'meeting_1', title: 'Ice Cracker' },
+        { threshold: 5, slug: 'meeting_5', title: 'Arctic Explorer' },
+        { threshold: 15, slug: 'meeting_15', title: 'Glacier Guide' },
+        { threshold: 30, slug: 'meeting_30', title: 'Grand Ice Master' },
+      ];
+
+      const userAchievementIds = new Set(userAchievements?.map(ua => ua.achievement_id) || []);
+      let newlyUnlocked = false;
+
+      for (const milestone of milestones) {
+        if (totalCompleted >= milestone.threshold) {
+          const achievementDef = definitions?.find(def => def.slug === milestone.slug);
+          
+          if (achievementDef && !userAchievementIds.has(achievementDef.id)) {
+            // User has earned this badge but doesn't have it - grant it now
+            const { error: insertError } = await supabase
+              .from('user_achievements')
+              .insert({ user_id: user.id, achievement_id: achievementDef.id });
+
+            if (!insertError) {
+              newlyUnlocked = true;
+              toast({
+                title: `Achievement Unlocked: ${milestone.title}! 🏆`,
+                description: `You've completed ${milestone.threshold} meeting${milestone.threshold > 1 ? 's' : ''}!`,
+              });
+              // Add to the set so we don't try to unlock it again in this session
+              userAchievementIds.add(achievementDef.id);
+            }
+          }
+        }
+      }
+
+      // If we unlocked new badges, refetch user achievements to get the correct unlocked_at timestamps
+      let finalUserAchievements = userAchievements;
+      if (newlyUnlocked) {
+        const { data: refreshedAchievements } = await supabase
+          .from("user_achievements")
+          .select("achievement_id, unlocked_at")
+          .eq("user_id", user.id);
+        finalUserAchievements = refreshedAchievements || userAchievements;
+      }
+
       // Combine the data
       const achievementMap = new Map(
-        userAchievements?.map((ua: UserAchievement) => [ua.achievement_id, ua.unlocked_at]) || []
+        finalUserAchievements?.map((ua: UserAchievement) => [ua.achievement_id, ua.unlocked_at]) || []
       );
 
       const displayAchievements: AchievementDisplay[] = (definitions || []).map((def: AchievementDefinition) => ({
@@ -164,13 +217,13 @@ export default function Achievements() {
                     : "Keep meeting to unlock"}
                 </CardDescription>
               </CardHeader>
-              {achievement.isUnlocked && achievement.unlockedAt && (
-                <CardContent className="text-center">
+              <CardContent className="text-center">
+                {achievement.isUnlocked && achievement.unlockedAt && (
                   <p className="text-sm text-muted-foreground">
                     Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
                   </p>
-                </CardContent>
-              )}
+                )}
+              </CardContent>
             </Card>
           ))}
         </div>
