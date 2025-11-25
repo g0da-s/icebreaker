@@ -479,20 +479,20 @@ const Meetings = () => {
                       </div>
                     </div>
 
-                    {/* PHASE 3: Show Ice-Breaker button if meeting has started */}
+                    {/* Show Ice-Breaker button if within 48 hours of meeting */}
                     {(() => {
                       const now = new Date();
                       const meetingStart = new Date(meeting.scheduled_at);
-                      const meetingEnd = new Date(meetingStart.getTime() + 60 * 60 * 1000);
-                      const isActive = now >= meetingStart && now < meetingEnd;
+                      const fortyEightHoursBefore = new Date(meetingStart.getTime() - 48 * 60 * 60 * 1000);
+                      const canAccessIceBreaker = now >= fortyEightHoursBefore;
                       
-                      return isActive ? (
+                      return canAccessIceBreaker ? (
                         <Button
                           size="sm"
                           onClick={() => window.location.href = `/meeting/${meeting.id}/ice-breaker`}
                           className="w-full mb-2"
                         >
-                          Break the Ice? 🧊
+                          Break the Ice 🧊
                         </Button>
                       ) : (
                         <Button
