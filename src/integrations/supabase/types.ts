@@ -26,6 +26,7 @@ export type Database = {
           requester_completed: boolean | null
           requester_id: string
           scheduled_at: string
+          selected_questions: Json | null
           status: string
           updated_at: string
         }
@@ -40,6 +41,7 @@ export type Database = {
           requester_completed?: boolean | null
           requester_id: string
           scheduled_at: string
+          selected_questions?: Json | null
           status?: string
           updated_at?: string
         }
@@ -54,6 +56,7 @@ export type Database = {
           requester_completed?: boolean | null
           requester_id?: string
           scheduled_at?: string
+          selected_questions?: Json | null
           status?: string
           updated_at?: string
         }

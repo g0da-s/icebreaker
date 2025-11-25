@@ -101,32 +101,10 @@ const IceBreaker = () => {
       // Set stage from database
       setStage(meetingData.current_stage as Stage);
 
-      // Generate random questions for this session if not already done
-      if (selectedQuestions.length === 0) {
-        const stage1Questions = [
-          "How has your week been going so far? Anything interesting happen?",
-          "If you could teleport anywhere right now for 1 hour, where would you go?",
-          "What's a small habit you have that you're proud of?",
-          "Coffee, tea, or something else? What fuels your day?"
-        ];
-        const stage2Questions = [
-          "What's the story behind how you got into [interest]?",
-          "What part of [interest] energizes you the most right now?",
-          "Who has influenced your journey in [interest] the most?",
-          "What is the biggest misconception people have about [interest]?"
-        ];
-        const stage3Questions = [
-          "What is a piece of advice you received that completely changed your perspective?",
-          "What does 'success' authentically look like to you in 5 years?",
-          "If you could solve one major problem in the world, what would it be?",
-          "What brings you a sense of purpose outside of work or study?"
-        ];
-
-        const randomQ1 = stage1Questions[Math.floor(Math.random() * stage1Questions.length)];
-        const randomQ2 = stage2Questions[Math.floor(Math.random() * stage2Questions.length)];
-        const randomQ3 = stage3Questions[Math.floor(Math.random() * stage3Questions.length)];
-        
-        setSelectedQuestions([randomQ1, randomQ2, randomQ3]);
+      // Load pre-selected questions from database
+      if (selectedQuestions.length === 0 && meetingData.selected_questions) {
+        const questions = meetingData.selected_questions as { q1: string; q2: string; q3: string };
+        setSelectedQuestions([questions.q1, questions.q2, questions.q3]);
       }
 
       // Determine other user
