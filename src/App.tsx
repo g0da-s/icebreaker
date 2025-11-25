@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import Match from "./pages/Match";
 import Matches from "./pages/Matches";
 import Meetings from "./pages/Meetings";
+import IceBreaker from "./pages/IceBreaker";
 import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
 import Install from "./pages/Install";
@@ -53,6 +54,11 @@ const App = () => (
           <Route path="/meetings" element={
             <ProtectedRoute>
               <Meetings />
+            </ProtectedRoute>
+          } />
+          <Route path="/meeting/:id/ice-breaker" element={
+            <ProtectedRoute>
+              <IceBreaker />
             </ProtectedRoute>
           } />
           <Route path="/profile" element={

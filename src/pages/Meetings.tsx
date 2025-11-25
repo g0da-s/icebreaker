@@ -104,6 +104,7 @@ const Meetings = () => {
       const sent: Meeting[] = [];
       const upcoming: Meeting[] = [];
       const history: Meeting[] = [];
+      const now = new Date();
 
       meetingsData.forEach(meeting => {
         const isRequester = meeting.requester_id === session.user.id;
@@ -122,9 +123,14 @@ const Meetings = () => {
         };
 
         const meetingDate = new Date(meeting.scheduled_at);
+        const createdDate = new Date(meeting.created_at);
         const isInPast = isPast(meetingDate);
+        
+        // PHASE 1: Check if invitation is expired (>4 days old)
+        const daysSinceCreation = (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
+        const isExpired = daysSinceCreation > 4;
 
-        if (meeting.status === 'pending') {
+        if (meeting.status === 'pending' && !isExpired) {
           if (isRequester) {
             sent.push(enrichedMeeting);
           } else {
@@ -132,7 +138,7 @@ const Meetings = () => {
           }
         } else if (meeting.status === 'confirmed' && !isInPast) {
           upcoming.push(enrichedMeeting);
-        } else if (meeting.status === 'cancelled' || meeting.status === 'completed' || isInPast) {
+        } else if (meeting.status === 'cancelled' || meeting.status === 'completed' || isInPast || (meeting.status === 'pending' && isExpired)) {
           history.push(enrichedMeeting);
         }
       });
@@ -443,14 +449,32 @@ const Meetings = () => {
                       </div>
                     </div>
 
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleCancelMeeting(meeting.id, meeting.otherUser.full_name)}
-                      className="w-full"
-                    >
-                      Cancel Meeting
-                    </Button>
+                    {/* PHASE 3: Show Ice-Breaker button if meeting has started */}
+                    {(() => {
+                      const now = new Date();
+                      const meetingStart = new Date(meeting.scheduled_at);
+                      const meetingEnd = new Date(meetingStart.getTime() + 60 * 60 * 1000);
+                      const isActive = now >= meetingStart && now < meetingEnd;
+                      
+                      return isActive ? (
+                        <Button
+                          size="sm"
+                          onClick={() => window.location.href = `/meeting/${meeting.id}/ice-breaker`}
+                          className="w-full mb-2"
+                        >
+                          Break the Ice? 🧊
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleCancelMeeting(meeting.id, meeting.otherUser.full_name)}
+                          className="w-full"
+                        >
+                          Cancel Meeting
+                        </Button>
+                      );
+                    })()}
                   </Card>
                 ))}
               </div>
