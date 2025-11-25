@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Heart, Users, Lightbulb, Sparkles, Calendar, Eye } from "lucide-react";
+import { Heart, Users, Lightbulb, Sparkles, Calendar, Eye, Search } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -48,17 +48,18 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const fetchFeaturedUsers = async () => {
+    const fetchActiveCommunity = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) return;
 
-        // Fetch 4 random users excluding current user
+        // Fetch 8 recently active users excluding current user
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, full_name, studies, role, avatar_url, avatar_type, email')
+          .select('id, full_name, studies, role, avatar_url, avatar_type, email, updated_at')
           .neq('id', session.user.id)
-          .limit(4);
+          .order('updated_at', { ascending: false })
+          .limit(8);
 
         if (profilesError) throw profilesError;
 
@@ -70,7 +71,7 @@ const Home = () => {
           .in('user_id', userIds);
 
         // Combine data
-        const featured: Match[] = (profiles || []).map(profile => {
+        const community: Match[] = (profiles || []).map(profile => {
           const userInterest = interests?.find(i => i.user_id === profile.id);
           return {
             user_id: profile.id,
@@ -85,13 +86,13 @@ const Home = () => {
           };
         });
 
-        setFeaturedUsers(featured);
+        setFeaturedUsers(community);
       } catch (error: any) {
-        console.error('Error fetching featured users:', error);
+        console.error('Error fetching active community:', error);
       }
     };
 
-    fetchFeaturedUsers();
+    fetchActiveCommunity();
   }, []);
 
   // Real-time search effect
@@ -201,14 +202,16 @@ const Home = () => {
   }, [searchQuery, selectedCategory, userId, toast]);
 
 
+  // Determine if we're in search mode
+  const isSearchMode = searchQuery.trim().length > 0 || selectedCategory !== null;
   const hasResults = matches.length > 0 || featuredUsers.length > 0;
 
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* AI Search Section - Centered when no results, top when results */}
-          <div className={`transition-all duration-500 ${hasResults ? 'mb-12' : 'min-h-[60vh] flex flex-col justify-center'}`}>
+          {/* Search Section - Always at top */}
+          <div className="mb-12">
             <div className="text-center mb-6">
               <h1 className="text-3xl font-bold text-foreground mb-2">
                 Find Your Perfect Match
@@ -218,13 +221,29 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 mb-6">
-              <Input
-                placeholder="E.g., 'tech skills' or 'photography enthusiast'"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 text-base placeholder:text-muted-foreground/50"
-              />
+            <div className="flex flex-col gap-3">
+              {/* Search Input with Button */}
+              <div className="relative">
+                <Input
+                  placeholder="E.g., 'tech skills' or 'photography enthusiast'"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                    }
+                  }}
+                  className="w-full h-12 text-base placeholder:text-muted-foreground/50 pr-12"
+                />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute right-1 top-1 h-10 w-10"
+                  disabled={loading}
+                >
+                  <Search className="w-5 h-5" />
+                </Button>
+              </div>
               
               {/* Category Filter Chips */}
               <ToggleGroup 
@@ -269,12 +288,15 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Match Results */}
-          {matches.length > 0 && (
+          {/* STATE B: Search Results */}
+          {isSearchMode && matches.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-foreground mb-4">
-                Your Matches
+              <h2 className="text-2xl font-bold text-foreground mb-2">
+                Search Results
               </h2>
+              <p className="text-muted-foreground mb-4">
+                {matches.length} {matches.length === 1 ? 'match' : 'matches'} found
+              </p>
               <div className="space-y-4">
                 {matches.map((match) => (
                   <Card key={match.user_id} className="p-5">
@@ -364,14 +386,14 @@ const Home = () => {
             </div>
           )}
 
-          {/* Featured Users (shown when no search) */}
-          {matches.length === 0 && !loading && featuredUsers.length > 0 && (
+          {/* STATE A: Active Community (Default/Idle Mode) */}
+          {!isSearchMode && !loading && featuredUsers.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-foreground mb-2">
-                Featured Members
+                Active Community Members
               </h2>
               <p className="text-muted-foreground mb-4">
-                Connect with these active community members
+                Recently active members ready to connect
               </p>
               <div className="space-y-4">
                 {featuredUsers.map((user) => (
@@ -450,6 +472,16 @@ const Home = () => {
                   </Card>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* No Results Message for Search Mode */}
+          {isSearchMode && !loading && matches.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground text-lg mb-2">No matches found</p>
+              <p className="text-muted-foreground text-sm">
+                Try adjusting your search or filter criteria
+              </p>
             </div>
           )}
 
