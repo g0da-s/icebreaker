@@ -112,6 +112,7 @@ const ProfileSetup = () => {
   // Step 3: Interests
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [isStandardizing, setIsStandardizing] = useState(false);
 
   const progress = (step / 5) * 100;
 
@@ -346,12 +347,65 @@ const ProfileSetup = () => {
     }
   };
 
+  const handleAddCustomInterest = async () => {
+    const trimmedSearch = searchTerm.trim();
+    if (!trimmedSearch || isStandardizing) return;
+
+    // Check if it already exists in selected interests or predefined lists
+    const allInterests = [...CREATIVE_INTERESTS, ...LIFESTYLE_INTERESTS, ...selectedInterests];
+    if (allInterests.some(i => i.toLowerCase() === trimmedSearch.toLowerCase())) {
+      toast({
+        title: "Interest already exists",
+        description: "This interest is already in your list",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsStandardizing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('standardize-interest', {
+        body: { interest: trimmedSearch }
+      });
+
+      if (error) throw error;
+
+      const standardized = data.standardized;
+      setSelectedInterests([...selectedInterests, standardized]);
+      setSearchTerm("");
+      
+      toast({
+        title: "Interest added",
+        description: `Added "${standardized}" to your interests`,
+      });
+    } catch (error) {
+      console.error('Error standardizing interest:', error);
+      toast({
+        title: "Error",
+        description: "Could not add custom interest",
+        variant: "destructive",
+      });
+    } finally {
+      setIsStandardizing(false);
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddCustomInterest();
+    }
+  };
+
   const filteredCreative = CREATIVE_INTERESTS.filter(i => 
     i.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const filteredLifestyle = LIFESTYLE_INTERESTS.filter(i => 
     i.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const hasSearchResults = filteredCreative.length > 0 || filteredLifestyle.length > 0;
+  const canAddCustom = searchTerm.trim() && !hasSearchResults;
 
   const handleComplete = async () => {
     if (selectedInterests.length === 0) {
@@ -660,15 +714,50 @@ const ProfileSetup = () => {
           {/* Step 4: Interests & Skills */}
           {step === 4 && (
             <div className="space-y-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search interests..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+              <div className="space-y-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search or add custom interest..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={handleSearchKeyDown}
+                    className="pl-10"
+                    disabled={isStandardizing}
+                  />
+                </div>
+                {canAddCustom && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span>Press Enter to add "{searchTerm}"</span>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={handleAddCustomInterest}
+                      disabled={isStandardizing}
+                    >
+                      {isStandardizing ? "Adding..." : "Add"}
+                    </Button>
+                  </div>
+                )}
               </div>
+
+              {selectedInterests.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold mb-3">Your Selected Interests</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedInterests.map(interest => (
+                      <Badge
+                        key={interest}
+                        variant="default"
+                        className="cursor-pointer"
+                        onClick={() => toggleInterest(interest)}
+                      >
+                        {interest} ×
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-4">
                 <div>
