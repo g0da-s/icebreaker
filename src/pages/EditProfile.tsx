@@ -21,6 +21,7 @@ import { LocationSelector } from "@/components/LocationSelector";
 import { CalendarAvailability } from "@/components/CalendarAvailability";
 import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
 import { AIAvailabilityEditor } from "@/components/AIAvailabilityEditor";
+import { DateSpecificAvailability } from "@/components/DateSpecificAvailability";
 
 const STUDY_LEVELS = ["Bachelor's", "Master's", "Executive", "Alumni", "Faculty Member"];
 
@@ -110,6 +111,7 @@ const EditProfile = () => {
     saturday: { active: false, start: "09:00", end: "17:00" },
     sunday: { active: false, start: "09:00", end: "17:00" },
   });
+  const [dateSlots, setDateSlots] = useState<Array<{ date: Date; start: string; end: string }>>([]);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -563,6 +565,7 @@ const EditProfile = () => {
               
               <AIAvailabilityEditor 
                 onAvailabilityUpdated={(updated) => setAvailability(updated)}
+                onDateSlotsUpdated={(slots) => setDateSlots([...dateSlots, ...slots])}
               />
 
               <div className="relative">
@@ -583,6 +586,22 @@ const EditProfile = () => {
               <CalendarAvailability 
                 availability={availability}
                 onChange={setAvailability}
+              />
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Specific dates
+                  </span>
+                </div>
+              </div>
+
+              <DateSpecificAvailability 
+                dateSlots={dateSlots}
+                onChange={setDateSlots}
               />
             </div>
 
