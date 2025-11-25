@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { QuickScheduleModal } from "@/components/QuickScheduleModal";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { formatDisplayName } from "@/lib/utils";
 
 interface Match {
   user_id: string;
@@ -313,7 +314,7 @@ const Home = () => {
                       <div className="flex-1">
                         <div className="flex items-center justify-between gap-2">
                           <h3 className="font-semibold text-foreground text-lg">
-                            {match.full_name}
+                            {formatDisplayName(match.full_name)}
                           </h3>
                           {match.match_score && (
                             <Badge variant="default" className="shrink-0">
@@ -372,7 +373,7 @@ const Home = () => {
                         size="lg"
                         className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
                         onClick={() => {
-                          setSelectedUser({ id: match.user_id, name: match.full_name });
+                          setSelectedUser({ id: match.user_id, name: formatDisplayName(match.full_name) });
                           setQuickScheduleOpen(true);
                         }}
                       >
@@ -410,7 +411,7 @@ const Home = () => {
                       </Avatar>
                       <div className="flex-1">
                         <h3 className="font-semibold text-foreground text-lg">
-                          {user.full_name}
+                          {formatDisplayName(user.full_name)}
                         </h3>
                         {user.studies && (
                           <p className="text-sm text-muted-foreground">
@@ -461,7 +462,7 @@ const Home = () => {
                         size="lg"
                         className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
                         onClick={() => {
-                          setSelectedUser({ id: user.user_id, name: user.full_name });
+                          setSelectedUser({ id: user.user_id, name: formatDisplayName(user.full_name) });
                           setQuickScheduleOpen(true);
                         }}
                       >

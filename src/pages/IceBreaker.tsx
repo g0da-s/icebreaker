@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Sparkles, MessageCircle, Target } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
+import { formatDisplayName } from "@/lib/utils";
 
 type Meeting = {
   id: string;
@@ -246,7 +247,7 @@ const IceBreaker = () => {
           <div>
             <CardTitle className="text-2xl">Ice Breaker</CardTitle>
             <p className="text-sm text-muted-foreground mt-2">
-              Meeting with {otherUser.full_name}
+              Meeting with {formatDisplayName(otherUser.full_name)}
             </p>
             <p className="text-xs text-muted-foreground">
               {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d, h:mm a')}

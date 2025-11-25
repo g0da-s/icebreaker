@@ -13,6 +13,7 @@ import { ScheduleMeetingModal } from "@/components/ScheduleMeetingModal";
 import { MeetingNotifications } from "@/components/MeetingNotifications";
 import { MeetingCountdown } from "@/components/MeetingCountdown";
 import { Clock as ClockComponent } from "@/components/Clock";
+import { formatDisplayName } from "@/lib/utils";
 
 type Meeting = {
   id: string;
@@ -241,7 +242,7 @@ const Meetings = () => {
     setRescheduleModal({
       open: true,
       recipientId: meeting.otherUser.id,
-      recipientName: meeting.otherUser.full_name,
+      recipientName: formatDisplayName(meeting.otherUser.full_name),
       recipientAvailability: meeting.otherUser.availability,
       meetingId: meeting.id,
     });
@@ -336,7 +337,7 @@ const Meetings = () => {
                         </Avatar>
                         <div className="flex-1">
                           <h3 className="font-semibold text-foreground">
-                            {meeting.otherUser.full_name}
+                            {formatDisplayName(meeting.otherUser.full_name)}
                           </h3>
                           <p className="text-sm text-muted-foreground mt-1">
                             wants to meet with you
@@ -360,7 +361,7 @@ const Meetings = () => {
                       <div className="flex gap-2">
                         <Button
                           size="sm"
-                          onClick={() => handleConfirm(meeting.id, meeting.otherUser.full_name)}
+                          onClick={() => handleConfirm(meeting.id, formatDisplayName(meeting.otherUser.full_name))}
                           className="flex-1"
                         >
                           <Check className="w-4 h-4 mr-1" />
@@ -378,7 +379,7 @@ const Meetings = () => {
                         <Button
                           size="sm"
                           variant="destructive"
-                          onClick={() => handleDecline(meeting.id, meeting.otherUser.full_name)}
+                          onClick={() => handleDecline(meeting.id, formatDisplayName(meeting.otherUser.full_name))}
                         >
                           <X className="w-4 h-4" />
                         </Button>
@@ -412,7 +413,7 @@ const Meetings = () => {
                         </Avatar>
                         <div className="flex-1">
                           <h3 className="font-semibold text-foreground">
-                            {meeting.otherUser.full_name}
+                            {formatDisplayName(meeting.otherUser.full_name)}
                           </h3>
                           <p className="text-sm text-muted-foreground mt-1">
                             {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d')} at {format(new Date(meeting.scheduled_at), 'h:mm a')}
@@ -453,7 +454,7 @@ const Meetings = () => {
                       <div className="flex-1">
                         <h3 className="font-semibold text-foreground flex items-center gap-2">
                           <User className="w-4 h-4" />
-                          {meeting.otherUser.full_name}
+                          {formatDisplayName(meeting.otherUser.full_name)}
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1">
                           {meeting.meeting_type}
@@ -497,7 +498,7 @@ const Meetings = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleCancelMeeting(meeting.id, meeting.otherUser.full_name)}
+                          onClick={() => handleCancelMeeting(meeting.id, formatDisplayName(meeting.otherUser.full_name))}
                           className="w-full"
                         >
                           Cancel Meeting
@@ -537,7 +538,7 @@ const Meetings = () => {
                       </Avatar>
                       <div className="flex-1">
                         <h3 className="font-semibold text-foreground">
-                          {meeting.otherUser.full_name}
+                          {formatDisplayName(meeting.otherUser.full_name)}
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1">
                           {format(new Date(meeting.scheduled_at), 'MMMM d, yyyy')} at {format(new Date(meeting.scheduled_at), 'h:mm a')}

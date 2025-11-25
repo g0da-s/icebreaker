@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Heart, X, Lightbulb, Users, Calendar, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { formatDisplayName } from "@/lib/utils";
 
 type UserMatch = {
   id: string;
@@ -138,7 +139,7 @@ const Matches = () => {
                   </Avatar>
                   <div className="flex-1">
                     <h3 className="font-semibold text-foreground text-lg">
-                      {match.full_name}
+                      {formatDisplayName(match.full_name)}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {match.studies?.includes(' - ')
