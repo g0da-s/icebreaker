@@ -23,6 +23,8 @@ type Meeting = {
   status: string;
   meeting_type: string;
   created_at: string;
+  requester_completed: boolean | null;
+  recipient_completed: boolean | null;
   otherUser: {
     id: string;
     full_name: string;
@@ -485,6 +487,23 @@ const Meetings = () => {
                       const meetingStart = new Date(meeting.scheduled_at);
                       const fortyEightHoursBefore = new Date(meetingStart.getTime() - 48 * 60 * 60 * 1000);
                       const canAccessIceBreaker = now >= fortyEightHoursBefore;
+                      
+                      // Check if current user has completed
+                      const currentUserCompleted = meeting.isRequester 
+                        ? meeting.requester_completed 
+                        : meeting.recipient_completed;
+                      const otherUserCompleted = meeting.isRequester 
+                        ? meeting.recipient_completed 
+                        : meeting.requester_completed;
+
+                      // If current user completed but other hasn't, show waiting status
+                      if (currentUserCompleted && !otherUserCompleted) {
+                        return (
+                          <Badge variant="secondary" className="w-full justify-center py-2">
+                            Waiting for partner to finish... ⏳
+                          </Badge>
+                        );
+                      }
                       
                       return (
                         <div className="space-y-2">

@@ -26,7 +26,7 @@ type UserProfile = {
   avatar_type: string | null;
 };
 
-type Stage = 1 | 2 | 3;
+type Stage = 1 | 2 | 3 | 4;
 
 const IceBreaker = () => {
   const { id } = useParams<{ id: string }>();
@@ -42,6 +42,7 @@ const IceBreaker = () => {
   const [isCompleting, setIsCompleting] = useState(false);
   const [waitingForOther, setWaitingForOther] = useState(false);
   const [isRequester, setIsRequester] = useState(false);
+  const [currentEndlessTopic, setCurrentEndlessTopic] = useState<string>("Keep the conversation going!");
 
   useEffect(() => {
     fetchMeetingData();
@@ -162,6 +163,28 @@ const IceBreaker = () => {
     }
   };
 
+  const endlessTopics = [
+    "What is your biggest non-academic dream?",
+    "What's the best piece of advice you've ever received?",
+    "If you could master any skill instantly, what would it be and why?",
+    "What's a belief you held strongly that you've changed your mind about?",
+    "What's your favorite memory related to [interest]?",
+    "If you could have dinner with anyone (living or dead), who would it be?",
+    "What's something you're proud of that most people don't know about?",
+    "What does a perfect day look like for you?",
+    "What's a risk you took that paid off?",
+    "What's something about [interest] that you wish more people understood?",
+    "What motivates you to keep going when things get tough?",
+    "What's a hobby or interest you've always wanted to explore?",
+  ];
+
+  const handleGenerateNewTopic = () => {
+    const interest = meeting?.connected_interest || "your interests";
+    const randomTopic = endlessTopics[Math.floor(Math.random() * endlessTopics.length)];
+    const formattedTopic = randomTopic.replace(/\[interest\]/g, interest);
+    setCurrentEndlessTopic(formattedTopic);
+  };
+
   const getQuestion = (): { icon: React.ReactNode; title: string; question: string } => {
     const interest = meeting?.connected_interest || "your interests";
     
@@ -188,7 +211,7 @@ const IceBreaker = () => {
   };
 
   const handleNext = async () => {
-    if (stage < 3) {
+    if (stage < 4) {
       const nextStage = (stage + 1) as Stage;
       
       // Update stage in database for real-time sync
@@ -336,7 +359,7 @@ const IceBreaker = () => {
             </p>
           </div>
           <div className="flex justify-center gap-2">
-            {[1, 2, 3].map((s) => (
+            {[1, 2, 3, 4].map((s) => (
               <div
                 key={s}
                 className={`h-2 w-12 rounded-full transition-colors ${
@@ -348,24 +371,53 @@ const IceBreaker = () => {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <Card className="bg-primary/5 border-primary/20">
-            <CardContent className="pt-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-full bg-primary/10 text-primary">
-                  {questionData.icon}
+          {stage < 4 ? (
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="pt-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-full bg-primary/10 text-primary">
+                    {questionData.icon}
+                  </div>
+                  <div>
+                    <Badge variant="secondary" className="mb-2">
+                      Stage {stage} of 4
+                    </Badge>
+                    <h3 className="text-lg font-semibold">{questionData.title}</h3>
+                  </div>
                 </div>
-                <div>
-                  <Badge variant="secondary" className="mb-2">
-                    Stage {stage} of 3
-                  </Badge>
-                  <h3 className="text-lg font-semibold">{questionData.title}</h3>
+                <p className="text-lg text-foreground leading-relaxed">
+                  {questionData.question}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="bg-primary/5 border-primary/20">
+              <CardContent className="pt-6 space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-full bg-primary/10 text-primary">
+                    <MessageCircle className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <Badge variant="secondary" className="mb-2">
+                      Stage 4 of 4
+                    </Badge>
+                    <h3 className="text-lg font-semibold">Endless Conversation</h3>
+                  </div>
                 </div>
-              </div>
-              <p className="text-lg text-foreground leading-relaxed">
-                {questionData.question}
-              </p>
-            </CardContent>
-          </Card>
+                <p className="text-xl text-foreground leading-relaxed font-medium text-center py-8">
+                  {currentEndlessTopic}
+                </p>
+                <Button 
+                  onClick={handleGenerateNewTopic} 
+                  variant="outline" 
+                  className="w-full h-12"
+                  size="lg"
+                >
+                  Generate New Topic 🎲
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           {meeting?.connected_interest && stage === 1 && (
             <div className="space-y-2">
@@ -378,48 +430,70 @@ const IceBreaker = () => {
             </div>
           )}
 
-          <div className="bg-muted/30 rounded-lg p-4 space-y-2">
-            <p className="text-sm font-medium">💡 Tip</p>
-            <p className="text-sm text-muted-foreground">
-              {stage === 1 && "Start with something you both care about to create common ground."}
-              {stage === 2 && "Share your curiosity and be open to their perspective."}
-              {stage === 3 && "Think about how you can mutually benefit from this connection."}
-            </p>
-          </div>
+          {stage < 4 && (
+            <div className="bg-muted/30 rounded-lg p-4 space-y-2">
+              <p className="text-sm font-medium">💡 Tip</p>
+              <p className="text-sm text-muted-foreground">
+                {stage === 1 && "Start with something you both care about to create common ground."}
+                {stage === 2 && "Share your curiosity and be open to their perspective."}
+                {stage === 3 && "Think about how you can mutually benefit from this connection."}
+              </p>
+            </div>
+          )}
 
-          <div className="flex gap-3">
-            {stage > 1 && (
-              <Button 
-                onClick={handleBack} 
-                variant="outline" 
-                size="lg" 
-                className="h-12"
-              >
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                Back
-              </Button>
-            )}
-            
-            {stage < 3 ? (
+          {stage < 4 ? (
+            <div className="flex gap-3">
+              {stage > 1 && (
+                <Button 
+                  onClick={handleBack} 
+                  variant="outline" 
+                  size="lg" 
+                  className="h-12"
+                >
+                  <ArrowLeft className="w-5 h-5 mr-2" />
+                  Back
+                </Button>
+              )}
+              
               <Button onClick={handleNext} className="flex-1 h-12" size="lg">
                 Next Question
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
-            ) : waitingForOther ? (
-              <Button disabled className="flex-1 h-12" size="lg">
+            </div>
+          ) : waitingForOther ? (
+            <div className="space-y-3">
+              <Button disabled className="w-full h-12" size="lg">
                 Waiting for other person to confirm...
               </Button>
-            ) : (
+              <Button 
+                onClick={() => navigate("/meetings")} 
+                variant="outline" 
+                className="w-full h-12" 
+                size="lg"
+              >
+                Back to Meetings List
+              </Button>
+            </div>
+          ) : (
+            <div className="flex gap-3">
+              <Button 
+                onClick={() => navigate("/meetings")} 
+                variant="outline" 
+                className="flex-1 h-12" 
+                size="lg"
+              >
+                Return to Dashboard
+              </Button>
               <Button 
                 onClick={handleMarkCompleted} 
                 className="flex-1 h-12" 
                 size="lg"
                 disabled={isCompleting}
               >
-                {isCompleting ? "Marking Completed..." : "Mark Meeting as Completed"}
+                {isCompleting ? "Marking..." : "Finish Meeting"}
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
