@@ -140,11 +140,35 @@ export default function Achievements() {
         unlockedAt: achievementMap.get(def.id),
       }));
 
-      // Sort: unlocked first, then locked
+      // Priority Sort Order:
+      // 1. Welcome badge (slug: 'welcome') - always first
+      // 2. Other unlocked badges - sorted by unlock date (newest first)
+      // 3. Locked badges - sorted by required meeting count (ascending)
       displayAchievements.sort((a, b) => {
+        // Welcome badge always first
+        if (a.slug === 'welcome') return -1;
+        if (b.slug === 'welcome') return 1;
+
+        // Both unlocked - sort by unlock date (newest first)
+        if (a.isUnlocked && b.isUnlocked) {
+          const dateA = new Date(a.unlockedAt || 0).getTime();
+          const dateB = new Date(b.unlockedAt || 0).getTime();
+          return dateB - dateA;
+        }
+
+        // One unlocked, one locked - unlocked first
         if (a.isUnlocked && !b.isUnlocked) return -1;
         if (!a.isUnlocked && b.isUnlocked) return 1;
-        return 0;
+
+        // Both locked - sort by meeting threshold (ascending)
+        const getMeetingThreshold = (slug: string) => {
+          if (slug === 'meeting_1') return 1;
+          if (slug === 'meeting_5') return 5;
+          if (slug === 'meeting_15') return 15;
+          if (slug === 'meeting_30') return 30;
+          return 999;
+        };
+        return getMeetingThreshold(a.slug) - getMeetingThreshold(b.slug);
       });
 
       setAchievements(displayAchievements);
