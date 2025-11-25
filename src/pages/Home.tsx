@@ -53,20 +53,48 @@ const Home = () => {
       const welcomeShown = localStorage.getItem('welcome_achievement_shown');
       if (welcomeShown) return;
 
-      // Check if user has the welcome achievement
-      const { data: achievement } = await supabase
-        .from('user_achievements')
-        .select('achievement_id, achievement_definitions(slug, title)')
-        .eq('user_id', user.id)
-        .eq('achievement_definitions.slug', 'welcome_newcomer')
-        .single();
+      try {
+        // Check if user has the welcome achievement
+        const { data: existingAchievement } = await supabase
+          .from('user_achievements')
+          .select('achievement_id')
+          .eq('user_id', user.id)
+          .eq('achievement_definitions.slug', 'welcome_newcomer')
+          .maybeSingle();
 
-      if (achievement) {
+        // If user doesn't have the achievement, grant it
+        if (!existingAchievement) {
+          // Get the welcome achievement definition
+          const { data: achievementDef } = await supabase
+            .from('achievement_definitions')
+            .select('id')
+            .eq('slug', 'welcome_newcomer')
+            .single();
+
+          if (achievementDef) {
+            // Grant the achievement to the user
+            const { error: insertError } = await supabase
+              .from('user_achievements')
+              .insert({
+                user_id: user.id,
+                achievement_id: achievementDef.id
+              });
+
+            if (insertError) {
+              console.error('Error granting welcome achievement:', insertError);
+              return;
+            }
+          }
+        }
+
+        // Show the toast notification (for both new and retroactive grants)
         toast({
           title: "Achievement Unlocked: Welcome Aboard! 🏆",
           description: "You joined the community.",
         });
         localStorage.setItem('welcome_achievement_shown', 'true');
+      } catch (error) {
+        console.error('Error checking/granting welcome achievement:', error);
       }
     };
 
