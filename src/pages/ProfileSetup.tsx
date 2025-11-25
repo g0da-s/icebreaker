@@ -108,6 +108,8 @@ const ProfileSetup = () => {
   const [chatAnswers, setChatAnswers] = useState<string[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [chatHistory, setChatHistory] = useState<Array<{role: "ai" | "user", text: string}>>([]);
+  const [typingText, setTypingText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
   // Step 3: Interests
   const [searchTerm, setSearchTerm] = useState("");
@@ -215,7 +217,24 @@ const ProfileSetup = () => {
   // Initialize chat when entering step 3
   useEffect(() => {
     if (step === 3 && chatHistory.length === 0) {
-      setChatHistory([{ role: "ai", text: AI_QUESTIONS[0] }]);
+      setIsTyping(true);
+      const text = AI_QUESTIONS[0];
+      let index = 0;
+      setTypingText("");
+      
+      const typingInterval = setInterval(() => {
+        if (index < text.length) {
+          setTypingText(text.slice(0, index + 1));
+          index++;
+        } else {
+          clearInterval(typingInterval);
+          setIsTyping(false);
+          setChatHistory([{ role: "ai", text }]);
+          setTypingText("");
+        }
+      }, 30);
+      
+      return () => clearInterval(typingInterval);
     }
   }, [step, chatHistory.length]);
 
@@ -284,7 +303,7 @@ const ProfileSetup = () => {
   };
 
   const handleChatSubmit = () => {
-    if (!currentAnswer.trim()) return;
+    if (!currentAnswer.trim() || isTyping) return;
 
     const newHistory = [...chatHistory, { role: "user" as const, text: currentAnswer }];
     const newAnswers = [...chatAnswers, currentAnswer];
@@ -296,7 +315,22 @@ const ProfileSetup = () => {
       const nextQuestion = currentQuestion + 1;
       setCurrentQuestion(nextQuestion);
       setTimeout(() => {
-        setChatHistory([...newHistory, { role: "ai", text: AI_QUESTIONS[nextQuestion] }]);
+        setIsTyping(true);
+        const text = AI_QUESTIONS[nextQuestion];
+        let index = 0;
+        setTypingText("");
+        
+        const typingInterval = setInterval(() => {
+          if (index < text.length) {
+            setTypingText(text.slice(0, index + 1));
+            index++;
+          } else {
+            clearInterval(typingInterval);
+            setIsTyping(false);
+            setChatHistory([...newHistory, { role: "ai", text }]);
+            setTypingText("");
+          }
+        }, 30);
       }, 500);
     } else {
       // All questions answered
@@ -441,7 +475,7 @@ const ProfileSetup = () => {
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <div className="space-y-2">
-            <CardTitle>Build Your Profile</CardTitle>
+            <CardTitle>{step === 3 ? "Let's get to know you" : "Build Your Profile"}</CardTitle>
             <CardDescription>
               Step {step} of 5 - Let's get to know you
             </CardDescription>
@@ -585,6 +619,14 @@ const ProfileSetup = () => {
                     </div>
                   </div>
                 ))}
+                {isTyping && typingText && (
+                  <div className="flex justify-start">
+                    <div className="max-w-[80%] p-3 rounded-lg bg-primary/10 text-foreground">
+                      {typingText}
+                      <span className="inline-block w-1 h-4 ml-1 bg-foreground animate-pulse" />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">
@@ -599,8 +641,9 @@ const ProfileSetup = () => {
                       handleChatSubmit();
                     }
                   }}
+                  disabled={isTyping}
                 />
-                <Button onClick={handleChatSubmit} disabled={!currentAnswer.trim()}>
+                <Button onClick={handleChatSubmit} disabled={!currentAnswer.trim() || isTyping}>
                   Send
                 </Button>
               </div>
