@@ -113,6 +113,13 @@ const ProfileSetup = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [isStandardizing, setIsStandardizing] = useState(false);
+  const [suggestedInterests, setSuggestedInterests] = useState<string[]>([]);
+  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
+  
+  // Step 5: AI Availability
+  const [availabilityText, setAvailabilityText] = useState("");
+  const [isParsing, setIsParsing] = useState(false);
+  const [showManualCalendar, setShowManualCalendar] = useState(false);
 
   const progress = (step / 5) * 100;
 
@@ -236,6 +243,79 @@ const ProfileSetup = () => {
       return () => clearInterval(typingInterval);
     }
   }, [step, chatHistory.length]);
+
+  const generateInterestSuggestions = async () => {
+    setIsGeneratingSuggestions(true);
+    try {
+      const profileData = {
+        name: `${firstName} ${lastName}`,
+        studies,
+        location,
+        answers: {
+          question1: chatAnswers[0],
+          question2: chatAnswers[1],
+          question3: chatAnswers[2],
+          question4: chatAnswers[3]
+        }
+      };
+
+      const { data, error } = await supabase.functions.invoke('generate-interest-suggestions', {
+        body: { profileData }
+      });
+
+      if (error) throw error;
+      
+      setSuggestedInterests(data.suggestions || []);
+      toast({
+        title: "Suggestions generated",
+        description: "AI has created personalized interest suggestions for you",
+      });
+    } catch (error) {
+      console.error('Error generating suggestions:', error);
+      toast({
+        title: "Error",
+        description: "Could not generate suggestions. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingSuggestions(false);
+    }
+  };
+
+  const parseAvailability = async () => {
+    if (!availabilityText.trim()) {
+      toast({
+        title: "Enter availability",
+        description: "Please describe your availability first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsParsing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('parse-availability', {
+        body: { text: availabilityText }
+      });
+
+      if (error) throw error;
+      
+      setAvailability(data.availability);
+      toast({
+        title: "Availability set",
+        description: "Your schedule has been updated based on your description",
+      });
+    } catch (error) {
+      console.error('Error parsing availability:', error);
+      toast({
+        title: "Error",
+        description: "Could not parse availability. Please try manual entry.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsParsing(false);
+    }
+  };
 
   const handleNext = async () => {
     if (step === 1) {
@@ -714,6 +794,43 @@ const ProfileSetup = () => {
           {/* Step 4: Interests & Skills */}
           {step === 4 && (
             <div className="space-y-6">
+              {chatAnswers.length > 0 && (
+                <Card className="bg-primary/5 border-primary/20">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="font-semibold mb-1">AI-Powered Suggestions</h3>
+                        <p className="text-sm text-muted-foreground">Based on your profile answers</p>
+                      </div>
+                      <Button 
+                        size="sm"
+                        onClick={generateInterestSuggestions}
+                        disabled={isGeneratingSuggestions}
+                      >
+                        {isGeneratingSuggestions ? "Generating..." : suggestedInterests.length > 0 ? "Regenerate" : "Generate"}
+                      </Button>
+                    </div>
+                    {isGeneratingSuggestions && (
+                      <p className="text-sm text-muted-foreground">Generating personalized interests...</p>
+                    )}
+                    {suggestedInterests.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {suggestedInterests.map(interest => (
+                          <Badge
+                            key={interest}
+                            variant={selectedInterests.includes(interest) ? "default" : "secondary"}
+                            className="cursor-pointer"
+                            onClick={() => toggleInterest(interest)}
+                          >
+                            {interest}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
               <div className="space-y-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -815,15 +932,59 @@ const ProfileSetup = () => {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-background px-2 text-muted-foreground">
+                    Or describe your availability
+                  </span>
+                </div>
+              </div>
+
+              <Card className="bg-secondary/5">
+                <CardContent className="pt-6 space-y-4">
+                  <Label htmlFor="availability-text">
+                    Describe your typical availability in your own words
+                  </Label>
+                  <Textarea
+                    id="availability-text"
+                    placeholder="E.g., 'Free all next week', 'Available Tuesday and Thursday evenings after 6 PM', 'I am free all the time'"
+                    value={availabilityText}
+                    onChange={(e) => setAvailabilityText(e.target.value)}
+                    className="min-h-[100px]"
+                    disabled={isParsing}
+                  />
+                  <Button 
+                    onClick={parseAvailability}
+                    disabled={isParsing || !availabilityText.trim()}
+                    className="w-full"
+                  >
+                    {isParsing ? "Analyzing..." : "Analyze & Set Availability (AI)"}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
                     Or set manually
                   </span>
                 </div>
               </div>
 
-              <CalendarAvailability 
-                availability={availability}
-                onChange={setAvailability}
-              />
+              <Button 
+                variant="outline" 
+                onClick={() => setShowManualCalendar(!showManualCalendar)}
+                className="w-full"
+              >
+                {showManualCalendar ? "Hide" : "Show"} Manual Calendar
+              </Button>
+
+              {showManualCalendar && (
+                <CalendarAvailability 
+                  availability={availability}
+                  onChange={setAvailability}
+                />
+              )}
 
               <div className="flex justify-between gap-2">
                 <Button variant="outline" onClick={() => setStep(step - 1)}>
