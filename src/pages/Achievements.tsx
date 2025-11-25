@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BottomNav } from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Lock } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface AchievementDefinition {
   id: string;
@@ -117,19 +117,12 @@ export default function Achievements() {
                 <div className="flex justify-center mb-4">
                   <div className="relative w-32 h-32">
                     <img
-                      src={
-                        achievement.isUnlocked
-                          ? achievement.image_unlocked_url
-                          : achievement.image_locked_url
-                      }
+                      src={achievement.image_unlocked_url}
                       alt={achievement.isUnlocked ? achievement.title : "Locked achievement"}
-                      className="w-full h-full object-contain rounded-full"
+                      className={`w-full h-full object-contain rounded-full transition-all duration-300 ${
+                        !achievement.isUnlocked ? 'grayscale opacity-50' : ''
+                      }`}
                     />
-                    {!achievement.isUnlocked && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-background/60 rounded-full backdrop-blur-sm">
-                        <Lock className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                    )}
                   </div>
                 </div>
                 <CardTitle className="text-xl">

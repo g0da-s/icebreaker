@@ -59,7 +59,7 @@ const Home = () => {
           .from('user_achievements')
           .select('achievement_id')
           .eq('user_id', user.id)
-          .eq('achievement_definitions.slug', 'welcome_newcomer')
+          .eq('achievement_definitions.slug', 'welcome')
           .maybeSingle();
 
         // If user doesn't have the achievement, grant it
@@ -68,7 +68,7 @@ const Home = () => {
           const { data: achievementDef } = await supabase
             .from('achievement_definitions')
             .select('id')
-            .eq('slug', 'welcome_newcomer')
+            .eq('slug', 'welcome')
             .single();
 
           if (achievementDef) {
