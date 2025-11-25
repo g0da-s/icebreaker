@@ -18,6 +18,9 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AvailabilityScheduler } from "@/components/AvailabilityScheduler";
 import { LocationSelector } from "@/components/LocationSelector";
+import { CalendarAvailability } from "@/components/CalendarAvailability";
+import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
+import { AIAvailabilityEditor } from "@/components/AIAvailabilityEditor";
 
 const STUDY_LEVELS = ["Bachelor's", "Master's", "Executive", "Alumni", "Faculty Member"];
 
@@ -557,7 +560,27 @@ const EditProfile = () => {
             {/* Availability */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Availability</h3>
-              <AvailabilityScheduler 
+              
+              <AIAvailabilityEditor 
+                onAvailabilityUpdated={(updated) => setAvailability(updated)}
+              />
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or use other methods
+                  </span>
+                </div>
+              </div>
+
+              <GoogleCalendarConnect 
+                onAvailabilityImported={(imported) => setAvailability(imported)}
+              />
+
+              <CalendarAvailability 
                 availability={availability}
                 onChange={setAvailability}
               />

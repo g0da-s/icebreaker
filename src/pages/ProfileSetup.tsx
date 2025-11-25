@@ -25,6 +25,8 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LocationSelector } from "@/components/LocationSelector";
+import { CalendarAvailability } from "@/components/CalendarAvailability";
+import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
 
 const STUDY_LEVELS = ["Bachelor's", "Master's", "Executive", "Alumni", "Faculty Member"];
 
@@ -671,69 +673,25 @@ const ProfileSetup = () => {
           {/* Step 5: Availability Scheduler */}
           {step === 5 && (
             <div className="space-y-6">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Set Your Availability</h3>
-                <p className="text-sm text-muted-foreground">
-                  Choose the days and times you're available to meet
-                </p>
-
-                {(Object.keys(availability) as Array<keyof typeof availability>).map((day) => (
-                  <div key={day} className="border rounded-lg p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor={day} className="text-base capitalize">
-                        {day}
-                      </Label>
-                      <Switch
-                        id={day}
-                        checked={availability[day].active}
-                        onCheckedChange={(checked) =>
-                          setAvailability({
-                            ...availability,
-                            [day]: { ...availability[day], active: checked },
-                          })
-                        }
-                      />
-                    </div>
-
-                    {availability[day].active && (
-                      <div className="grid grid-cols-2 gap-4 pt-2">
-                        <div className="space-y-2">
-                          <Label htmlFor={`${day}-start`} className="text-sm">
-                            Start Time
-                          </Label>
-                          <Input
-                            id={`${day}-start`}
-                            type="time"
-                            value={availability[day].start}
-                            onChange={(e) =>
-                              setAvailability({
-                                ...availability,
-                                [day]: { ...availability[day], start: e.target.value },
-                              })
-                            }
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor={`${day}-end`} className="text-sm">
-                            End Time
-                          </Label>
-                          <Input
-                            id={`${day}-end`}
-                            type="time"
-                            value={availability[day].end}
-                            onChange={(e) =>
-                              setAvailability({
-                                ...availability,
-                                [day]: { ...availability[day], end: e.target.value },
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+              <GoogleCalendarConnect 
+                onAvailabilityImported={(imported) => setAvailability(imported)}
+              />
+              
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or set manually
+                  </span>
+                </div>
               </div>
+
+              <CalendarAvailability 
+                availability={availability}
+                onChange={setAvailability}
+              />
 
               <div className="flex justify-between gap-2">
                 <Button variant="outline" onClick={() => setStep(step - 1)}>
