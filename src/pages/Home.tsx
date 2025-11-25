@@ -50,9 +50,6 @@ const Home = () => {
       setUserId(user.id);
 
       // Check if welcome toast already shown
-      const welcomeShown = localStorage.getItem('welcome_achievement_shown');
-      if (welcomeShown) return;
-
       try {
         // Step 1: Get the welcome achievement definition
         const { data: welcomeDef, error: defError } = await supabase
@@ -84,7 +81,7 @@ const Home = () => {
           return;
         }
 
-        // Step 3: If user doesn't have it, grant it now
+        // Step 3: If user doesn't have it, grant it now (UNIVERSAL AUTO-GRANT)
         if (!existingAchievement) {
           const { error: insertError } = await supabase
             .from('user_achievements')
@@ -98,14 +95,16 @@ const Home = () => {
             return;
           }
 
-          // Step 4: Show the toast notification (only for newly granted)
-          toast({
-            title: "Achievement Unlocked: Welcome Aboard! 🏆",
-            description: "You joined the community.",
-          });
+          // Step 4: Show the toast notification only once
+          const welcomeShown = localStorage.getItem('welcome_achievement_shown');
+          if (!welcomeShown) {
+            toast({
+              title: "Achievement Unlocked: Welcome Aboard! 🏆",
+              description: "You joined the community.",
+            });
+            localStorage.setItem('welcome_achievement_shown', 'true');
+          }
         }
-
-        localStorage.setItem('welcome_achievement_shown', 'true');
       } catch (error) {
         console.error('Error in welcome achievement flow:', error);
       }
