@@ -104,19 +104,22 @@ const IceBreaker = () => {
       // Generate random questions for this session if not already done
       if (selectedQuestions.length === 0) {
         const stage1Questions = [
-          "What's the story behind how you got into [interest]?",
-          "What first sparked your interest in [interest]?",
-          "Was there a moment when you realized you really enjoyed [interest]?"
+          "How has your week been going so far? Anything interesting happen?",
+          "If you could teleport anywhere right now for 1 hour, where would you go?",
+          "What's a small habit you have that you're proud of?",
+          "Coffee, tea, or something else? What fuels your day?"
         ];
         const stage2Questions = [
+          "What's the story behind how you got into [interest]?",
           "What part of [interest] energizes you the most right now?",
-          "What part of [interest] keeps you coming back to it?",
-          "What's something about [interest] that genuinely excites you?"
+          "Who has influenced your journey in [interest] the most?",
+          "What is the biggest misconception people have about [interest]?"
         ];
         const stage3Questions = [
-          "Has anything you're learning or exploring in [interest] surprised you lately?",
-          "Have you changed your perspective on [interest] recently?",
-          "What's something unexpected you discovered while exploring [interest]?"
+          "What is a piece of advice you received that completely changed your perspective?",
+          "What does 'success' authentically look like to you in 5 years?",
+          "If you could solve one major problem in the world, what would it be?",
+          "What brings you a sense of purpose outside of work or study?"
         ];
 
         const randomQ1 = stage1Questions[Math.floor(Math.random() * stage1Questions.length)];
@@ -407,14 +410,25 @@ const IceBreaker = () => {
                 <p className="text-xl text-foreground leading-relaxed font-medium text-center py-8">
                   {currentEndlessTopic}
                 </p>
-                <Button 
-                  onClick={handleGenerateNewTopic} 
-                  variant="outline" 
-                  className="w-full h-12"
-                  size="lg"
-                >
-                  Generate New Topic 🎲
-                </Button>
+                <div className="flex gap-3">
+                  <Button 
+                    onClick={handleBack} 
+                    variant="outline" 
+                    size="lg" 
+                    className="h-12"
+                  >
+                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    Back
+                  </Button>
+                  <Button 
+                    onClick={handleGenerateNewTopic} 
+                    variant="outline" 
+                    className="flex-1 h-12"
+                    size="lg"
+                  >
+                    Generate New Topic 🎲
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           )}
