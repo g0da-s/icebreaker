@@ -122,12 +122,17 @@ export const ScheduleMeetingModal = ({
   ): TimeSlot[] => {
     const slots: TimeSlot[] = [];
     const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    const startOfThisWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
     const now = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    daysOfWeek.forEach((day, index) => {
-      const userDay = userAvail[day];
-      const recipientDay = recipientAvail[day];
+    // Generate slots for the next 14 days to ensure we have enough future slots
+    for (let dayOffset = 0; dayOffset < 14; dayOffset++) {
+      const date = addDays(today, dayOffset);
+      const dayName = daysOfWeek[date.getDay() === 0 ? 6 : date.getDay() - 1];
+      
+      const userDay = userAvail[dayName];
+      const recipientDay = recipientAvail[dayName];
 
       if (userDay?.active && recipientDay?.active) {
         const userStart = timeToMinutes(userDay.start);
@@ -139,22 +144,21 @@ export const ScheduleMeetingModal = ({
         const overlapEnd = Math.min(userEnd, recipientEnd);
 
         if (overlapEnd - overlapStart >= 60) {
-          const date = addDays(startOfThisWeek, index);
-          
-            for (let time = overlapStart; time + 60 <= overlapEnd; time += 60) {
-              if (slots.length >= 8) break;
+          for (let time = overlapStart; time + 60 <= overlapEnd; time += 60) {
+            if (slots.length >= 8) break;
             
             const startTimeStr = minutesToTime(time);
             const endTimeStr = minutesToTime(time + 60);
             
-            // PHASE 1: Filter out past time slots
+            // Create the slot date-time
             const slotDateTime = new Date(date);
             const [hours, minutes] = startTimeStr.split(':').map(Number);
             slotDateTime.setHours(hours, minutes, 0, 0);
             
+            // Only include future slots (must be at least 1 minute in the future)
             if (slotDateTime > now) {
               slots.push({
-                day: day.charAt(0).toUpperCase() + day.slice(1),
+                day: dayName.charAt(0).toUpperCase() + dayName.slice(1),
                 date: date,
                 startTime: startTimeStr,
                 endTime: endTimeStr,
@@ -165,8 +169,8 @@ export const ScheduleMeetingModal = ({
         }
       }
 
-      if (slots.length >= 8) return;
-    });
+      if (slots.length >= 8) break;
+    }
 
     return slots.slice(0, 8);
   };
@@ -267,9 +271,9 @@ export const ScheduleMeetingModal = ({
           ) : overlappingSlots.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p>No overlapping availability found.</p>
+              <p className="font-medium">No more slots available today</p>
               <p className="text-sm mt-2">
-                Try updating your availability or contact them directly.
+                Please choose another date or contact them directly.
               </p>
             </div>
           ) : (

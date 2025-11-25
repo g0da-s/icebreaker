@@ -18,10 +18,17 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const currentTime = now.toTimeString().slice(0, 5);
+
     const systemPrompt = `You are a smart meeting scheduler. Analyze two users' weekly availability and suggest the best meeting times.
+
+CRITICAL: Only suggest times that are in the future. Current date is ${today} and current time is ${currentTime}.
 
 Consider:
 - Overlapping time slots
+- Only suggest times after the current date and time
 - Preferred days (weekdays are usually better than weekends)
 - Time of day (mid-morning and early afternoon are often ideal)
 - Meeting length (assume 1-hour meetings)
@@ -128,7 +135,16 @@ Suggest 5-8 optimal meeting times for this week and next week.`;
 
     const suggestions = JSON.parse(toolCall.function.arguments);
     
-    return new Response(JSON.stringify(suggestions), {
+    // Filter out any past time slots as a safety measure
+    const filterDate = new Date();
+    const filteredSuggestions = {
+      suggestions: suggestions.suggestions.filter((slot: any) => {
+        const slotDateTime = new Date(`${slot.date}T${slot.startTime}:00`);
+        return slotDateTime > filterDate;
+      })
+    };
+    
+    return new Response(JSON.stringify(filteredSuggestions), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
 
