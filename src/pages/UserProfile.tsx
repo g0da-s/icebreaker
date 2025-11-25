@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { ScheduleMeetingModal } from "@/components/ScheduleMeetingModal";
+import { formatDisplayName } from "@/lib/utils";
 
 const CREATIVE_INTERESTS = [
   "Photography", "Music", "Art", "Design", "Writing", "Dance", "Theater", "Cooking", "Crafts", "Fashion"
@@ -150,7 +151,7 @@ const UserProfile = () => {
               </AvatarFallback>
             </Avatar>
             <h1 className="text-2xl font-bold text-foreground mb-1">
-              {profile.full_name}
+              {formatDisplayName(profile.full_name)}
             </h1>
             <p className="text-muted-foreground mb-2">
               {profile.studies?.includes(' - ') 
@@ -260,7 +261,7 @@ const UserProfile = () => {
         open={scheduleMeetingOpen}
         onOpenChange={setScheduleMeetingOpen}
         recipientId={profile.id}
-        recipientName={profile.full_name}
+        recipientName={formatDisplayName(profile.full_name)}
         recipientAvailability={profile.availability}
       />
 

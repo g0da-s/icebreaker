@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { ArrowLeft, RefreshCw, Calendar, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { formatDisplayName } from "@/lib/utils";
 
 // Mock data - will be replaced with real AI matching
 const MOCK_MATCHES = {
@@ -156,7 +157,7 @@ const Match = () => {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-xl mb-2">{match.name}</CardTitle>
+                      <CardTitle className="text-xl mb-2">{formatDisplayName(match.name)}</CardTitle>
                       <CardDescription className="text-base">
                         {match.bio}
                       </CardDescription>
@@ -235,7 +236,7 @@ const Match = () => {
 
                   <Button
                     className="w-full"
-                    onClick={() => handleSchedule(match.name)}
+                    onClick={() => handleSchedule(formatDisplayName(match.name))}
                   >
                     <Calendar className="w-4 h-4 mr-2" />
                     Schedule Meeting
