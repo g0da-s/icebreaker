@@ -43,10 +43,35 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserId(user.id);
-    });
-  }, []);
+    const checkWelcomeAchievement = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      
+      setUserId(user.id);
+
+      // Check if welcome toast already shown
+      const welcomeShown = localStorage.getItem('welcome_achievement_shown');
+      if (welcomeShown) return;
+
+      // Check if user has the welcome achievement
+      const { data: achievement } = await supabase
+        .from('user_achievements')
+        .select('achievement_id, achievement_definitions(slug, title)')
+        .eq('user_id', user.id)
+        .eq('achievement_definitions.slug', 'welcome_newcomer')
+        .single();
+
+      if (achievement) {
+        toast({
+          title: "Achievement Unlocked: Welcome Aboard! 🏆",
+          description: "You joined the community.",
+        });
+        localStorage.setItem('welcome_achievement_shown', 'true');
+      }
+    };
+
+    checkWelcomeAchievement();
+  }, [toast]);
 
   useEffect(() => {
     const fetchActiveCommunity = async () => {
