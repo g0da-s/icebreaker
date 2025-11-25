@@ -54,47 +54,60 @@ const Home = () => {
       if (welcomeShown) return;
 
       try {
-        // Check if user has the welcome achievement
-        const { data: existingAchievement } = await supabase
-          .from('user_achievements')
-          .select('achievement_id')
-          .eq('user_id', user.id)
-          .eq('achievement_definitions.slug', 'welcome')
+        // Step 1: Get the welcome achievement definition
+        const { data: welcomeDef, error: defError } = await supabase
+          .from('achievement_definitions')
+          .select('id')
+          .eq('slug', 'welcome')
           .maybeSingle();
 
-        // If user doesn't have the achievement, grant it
-        if (!existingAchievement) {
-          // Get the welcome achievement definition
-          const { data: achievementDef } = await supabase
-            .from('achievement_definitions')
-            .select('id')
-            .eq('slug', 'welcome')
-            .single();
-
-          if (achievementDef) {
-            // Grant the achievement to the user
-            const { error: insertError } = await supabase
-              .from('user_achievements')
-              .insert({
-                user_id: user.id,
-                achievement_id: achievementDef.id
-              });
-
-            if (insertError) {
-              console.error('Error granting welcome achievement:', insertError);
-              return;
-            }
-          }
+        if (defError) {
+          console.error('Error fetching welcome achievement:', defError);
+          return;
         }
 
-        // Show the toast notification (for both new and retroactive grants)
-        toast({
-          title: "Achievement Unlocked: Welcome Aboard! 🏆",
-          description: "You joined the community.",
-        });
+        if (!welcomeDef) {
+          console.error('Welcome achievement not found in definitions');
+          return;
+        }
+
+        // Step 2: Check if user already has this achievement
+        const { data: existingAchievement, error: checkError } = await supabase
+          .from('user_achievements')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('achievement_id', welcomeDef.id)
+          .maybeSingle();
+
+        if (checkError) {
+          console.error('Error checking user achievements:', checkError);
+          return;
+        }
+
+        // Step 3: If user doesn't have it, grant it now
+        if (!existingAchievement) {
+          const { error: insertError } = await supabase
+            .from('user_achievements')
+            .insert({
+              user_id: user.id,
+              achievement_id: welcomeDef.id
+            });
+
+          if (insertError) {
+            console.error('Error granting welcome achievement:', insertError);
+            return;
+          }
+
+          // Step 4: Show the toast notification (only for newly granted)
+          toast({
+            title: "Achievement Unlocked: Welcome Aboard! 🏆",
+            description: "You joined the community.",
+          });
+        }
+
         localStorage.setItem('welcome_achievement_shown', 'true');
       } catch (error) {
-        console.error('Error checking/granting welcome achievement:', error);
+        console.error('Error in welcome achievement flow:', error);
       }
     };
 
