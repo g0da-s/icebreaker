@@ -27,7 +27,6 @@ import { cn } from "@/lib/utils";
 import { LocationSelector } from "@/components/LocationSelector";
 import { CalendarAvailability } from "@/components/CalendarAvailability";
 import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
-import { DateSpecificAvailability } from "@/components/DateSpecificAvailability";
 
 const STUDY_LEVELS = ["Bachelor's", "Master's", "Executive", "Alumni", "Faculty Member"];
 
@@ -101,7 +100,6 @@ const ProfileSetup = () => {
     saturday: { active: false, start: "09:00", end: "17:00" },
     sunday: { active: false, start: "09:00", end: "17:00" },
   });
-  const [dateSlots, setDateSlots] = useState<Array<{ date: Date; start: string; end: string }>>([]);
 
   // Step 2: AI Chat
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -736,22 +734,6 @@ const ProfileSetup = () => {
               <CalendarAvailability 
                 availability={availability}
                 onChange={setAvailability}
-              />
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Specific dates
-                  </span>
-                </div>
-              </div>
-
-              <DateSpecificAvailability 
-                dateSlots={dateSlots}
-                onChange={setDateSlots}
               />
 
               <div className="flex justify-between gap-2">
