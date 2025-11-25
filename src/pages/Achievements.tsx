@@ -138,7 +138,7 @@ export default function Achievements() {
                 <CardDescription>
                   {achievement.isUnlocked
                     ? achievement.description
-                    : "Keep exploring to unlock"}
+                    : "Keep meeting to unlock"}
                 </CardDescription>
               </CardHeader>
               {achievement.isUnlocked && achievement.unlockedAt && (
