@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Heart, Users, Lightbulb, Sparkles, Search, Calendar, Eye } from "lucide-react";
+import { Heart, Users, Lightbulb, Sparkles, Calendar, Eye } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { QuickScheduleModal } from "@/components/QuickScheduleModal";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface Match {
   user_id: string;
@@ -26,10 +27,13 @@ interface Match {
   earliest_available?: string;
 }
 
+type CategoryFilter = "friendly" | "mentoring" | "co-founding" | "surprise-me";
+
 const Home = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter | null>(null);
   const [matches, setMatches] = useState<Match[]>([]);
   const [featuredUsers, setFeaturedUsers] = useState<Match[]>([]);
   const [loading, setLoading] = useState(false);
@@ -90,43 +94,111 @@ const Home = () => {
     fetchFeaturedUsers();
   }, []);
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      toast({
-        title: "Enter a search query",
-        description: "Tell us what you're looking for",
-        variant: "destructive",
-      });
-      return;
-    }
+  // Real-time search effect
+  useEffect(() => {
+    const performSearch = async () => {
+      const hasText = searchQuery.trim().length > 0;
+      const hasCategory = selectedCategory !== null;
 
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('ai-match', {
-        body: { searchQuery, userId }
-      });
-
-      if (error) throw error;
-
-      setMatches(data.matches || []);
-      
-      if (data.matches?.length === 0) {
-        toast({
-          title: "No matches found",
-          description: "Try a different search or adjust your interests",
-        });
+      // Scenario D: Empty state - show featured users
+      if (!hasText && !hasCategory) {
+        setMatches([]);
+        return;
       }
-    } catch (error: any) {
-      console.error('Search error:', error);
-      toast({
-        title: "Search failed",
-        description: error.message || "Please try again",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      setLoading(true);
+      try {
+        // Scenario C: Text only (no category)
+        if (hasText && !hasCategory) {
+          const { data, error } = await supabase.functions.invoke('ai-match', {
+            body: { searchQuery, userId }
+          });
+          if (error) throw error;
+          setMatches(data.matches || []);
+        }
+        // Scenario A & B: Category (with or without text)
+        else if (hasCategory) {
+          // Surprise Me logic
+          if (selectedCategory === "surprise-me") {
+            if (hasText) {
+              // Surprise Me + text: use AI match
+              const { data, error } = await supabase.functions.invoke('ai-match', {
+                body: { searchQuery, userId }
+              });
+              if (error) throw error;
+              setMatches(data.matches || []);
+            } else {
+              // Surprise Me only: randomized diverse selection
+              const { data: { session } } = await supabase.auth.getSession();
+              if (!session) return;
+
+              const { data: profiles, error: profilesError } = await supabase
+                .from('profiles')
+                .select('id, full_name, studies, role, avatar_url, avatar_type, email')
+                .neq('id', session.user.id)
+                .limit(6);
+
+              if (profilesError) throw profilesError;
+
+              const userIds = profiles?.map(p => p.id) || [];
+              const { data: interests } = await supabase
+                .from('user_interests')
+                .select('user_id, tags, bio')
+                .in('user_id', userIds);
+
+              const diverseMatches: Match[] = (profiles || []).map(profile => {
+                const userInterest = interests?.find(i => i.user_id === profile.id);
+                return {
+                  user_id: profile.id,
+                  full_name: profile.full_name || 'No Name',
+                  email: profile.email,
+                  studies: profile.studies,
+                  role: profile.role,
+                  avatar_url: profile.avatar_url,
+                  avatar_type: profile.avatar_type,
+                  tags: userInterest?.tags || [],
+                  bio: userInterest?.bio || null,
+                };
+              });
+              setMatches(diverseMatches);
+            }
+          } else {
+            // Regular category filter (friendly, mentoring, co-founding)
+            const categoryMap: Record<CategoryFilter, string> = {
+              "friendly": "friendly",
+              "mentoring": "mentor",
+              "co-founding": "co-founder",
+              "surprise-me": "surprise me"
+            };
+            
+            const categoryQuery = categoryMap[selectedCategory];
+            const combinedQuery = hasText 
+              ? `${categoryQuery} ${searchQuery}` 
+              : categoryQuery;
+
+            const { data, error } = await supabase.functions.invoke('ai-match', {
+              body: { searchQuery: combinedQuery, userId }
+            });
+            if (error) throw error;
+            setMatches(data.matches || []);
+          }
+        }
+      } catch (error: any) {
+        console.error('Search error:', error);
+        toast({
+          title: "Search failed",
+          description: error.message || "Please try again",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Debounce search
+    const timeoutId = setTimeout(performSearch, 300);
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, selectedCategory, userId, toast]);
 
 
   const hasResults = matches.length > 0 || featuredUsers.length > 0;
@@ -146,74 +218,54 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div className="flex flex-col gap-3 mb-6">
               <Input
-                placeholder="E.g., 'looking for a co-founder with tech skills' or 'want to meet someone who loves photography'"
+                placeholder="E.g., 'tech skills' or 'photography enthusiast'"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                className="flex-1 h-12 text-base placeholder:text-muted-foreground/50"
+                className="w-full h-12 text-base placeholder:text-muted-foreground/50"
               />
-              <Button 
-                onClick={handleSearch} 
-                disabled={loading}
-                size="icon"
-                className="h-12 w-12 rounded-full transition-transform duration-200 hover:scale-90"
+              
+              {/* Category Filter Chips */}
+              <ToggleGroup 
+                type="single" 
+                value={selectedCategory || ""}
+                onValueChange={(value) => setSelectedCategory(value as CategoryFilter || null)}
+                className="justify-start flex-wrap gap-2"
               >
-                <Search className="w-5 h-5" />
-              </Button>
-            </div>
-
-            {/* Quick search buttons */}
-            <div className="flex flex-wrap gap-2 justify-center">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="transition-transform duration-200 hover:scale-95"
-                onClick={() => { 
-                  setSearchQuery("friendly meeting"); 
-                  setTimeout(handleSearch, 100);
-                }}
-              >
-                <Heart className="w-4 h-4 mr-2" />
-                Friendly
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="transition-transform duration-200 hover:scale-95"
-                onClick={() => { 
-                  setSearchQuery("mentor"); 
-                  setTimeout(handleSearch, 100);
-                }}
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Mentor
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="transition-transform duration-200 hover:scale-95"
-                onClick={() => { 
-                  setSearchQuery("co-founder"); 
-                  setTimeout(handleSearch, 100);
-                }}
-              >
-                <Lightbulb className="w-4 h-4 mr-2" />
-                Co-founder
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="transition-transform duration-200 hover:scale-95"
-                onClick={() => { 
-                  setSearchQuery("surprise me"); 
-                  setTimeout(handleSearch, 100);
-                }}
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                Surprise Me
-              </Button>
+                <ToggleGroupItem 
+                  value="friendly" 
+                  aria-label="Friendly meetings"
+                  className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  <Heart className="w-4 h-4 mr-2" />
+                  Friendly
+                </ToggleGroupItem>
+                <ToggleGroupItem 
+                  value="mentoring" 
+                  aria-label="Mentoring"
+                  className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  <Users className="w-4 h-4 mr-2" />
+                  Mentoring
+                </ToggleGroupItem>
+                <ToggleGroupItem 
+                  value="co-founding" 
+                  aria-label="Co-founding"
+                  className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  <Lightbulb className="w-4 h-4 mr-2" />
+                  Co-founding
+                </ToggleGroupItem>
+                <ToggleGroupItem 
+                  value="surprise-me" 
+                  aria-label="Surprise me"
+                  className="data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Surprise Me
+                </ToggleGroupItem>
+              </ToggleGroup>
             </div>
           </div>
 
