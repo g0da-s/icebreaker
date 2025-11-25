@@ -147,9 +147,11 @@ export default function Achievements() {
                 <div className="flex justify-center mb-4">
                   <div className="relative w-32 h-32">
                     <img
-                      src={achievement.isUnlocked ? achievement.image_unlocked_url : achievement.image_locked_url}
+                      src={achievement.image_unlocked_url}
                       alt={achievement.isUnlocked ? achievement.title : "Locked achievement"}
-                      className="w-full h-full object-contain rounded-full transition-all duration-300"
+                      className={`w-full h-full object-contain rounded-full transition-all duration-300 ${
+                        !achievement.isUnlocked ? 'grayscale opacity-50' : ''
+                      }`}
                     />
                   </div>
                 </div>
