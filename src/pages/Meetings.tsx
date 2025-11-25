@@ -190,12 +190,44 @@ const Meetings = () => {
       // Pick the first common interest or use a default
       const connectedInterest = commonInterests.length > 0 ? commonInterests[0] : 'shared interests';
 
-      // Update meeting status and connected interest
+      // Pre-select questions for all stages (local logic, no API)
+      const stage1Questions = [
+        "How has your week been going so far? Anything interesting happen?",
+        "If you could teleport anywhere right now for 1 hour, where would you go?",
+        "What's a small habit you have that you're proud of?",
+        "Coffee, tea, or something else? What fuels your day?"
+      ];
+      const stage2Questions = [
+        "What's the story behind how you got into [interest]?",
+        "What part of [interest] energizes you the most right now?",
+        "Who has influenced your journey in [interest] the most?",
+        "What is the biggest misconception people have about [interest]?"
+      ];
+      const stage3Questions = [
+        "What is a piece of advice you received that completely changed your perspective?",
+        "What does 'success' authentically look like to you in 5 years?",
+        "If you could solve one major problem in the world, what would it be?",
+        "What brings you a sense of purpose outside of work or study?"
+      ];
+
+      // Randomly select one question from each stage
+      const selectedQ1 = stage1Questions[Math.floor(Math.random() * stage1Questions.length)];
+      const selectedQ2 = stage2Questions[Math.floor(Math.random() * stage2Questions.length)].replace('[interest]', connectedInterest);
+      const selectedQ3 = stage3Questions[Math.floor(Math.random() * stage3Questions.length)];
+
+      const selectedQuestions = {
+        q1: selectedQ1,
+        q2: selectedQ2,
+        q3: selectedQ3
+      };
+
+      // Update meeting status, connected interest, and selected questions
       const { error } = await supabase
         .from('meetings')
         .update({ 
           status: 'confirmed',
-          connected_interest: connectedInterest
+          connected_interest: connectedInterest,
+          selected_questions: selectedQuestions
         })
         .eq('id', meetingId);
 
