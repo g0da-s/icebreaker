@@ -109,7 +109,7 @@ const ProfileSetup = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
-  const progress = (step / 4) * 100;
+  const progress = (step / 5) * 100;
 
   useEffect(() => {
     const checkAuthAndLoadProfile = async () => {
@@ -208,14 +208,14 @@ const ProfileSetup = () => {
     checkAuthAndLoadProfile();
   }, [navigate]);
 
-  // Initialize chat when entering step 2
+  // Initialize chat when entering step 3
   useEffect(() => {
-    if (step === 2 && chatHistory.length === 0) {
+    if (step === 3 && chatHistory.length === 0) {
       setChatHistory([{ role: "ai", text: AI_QUESTIONS[0] }]);
     }
   }, [step, chatHistory.length]);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 1) {
       if (!firstName || !lastName || !studyLevel || !location) {
         toast({
@@ -240,6 +240,25 @@ const ProfileSetup = () => {
           variant: "destructive",
         });
         return;
+      }
+      
+      // PHASE 2: Save avatar immediately after Step 1
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await supabase
+            .from('profiles')
+            .update({
+              full_name: `${firstName} ${lastName}`,
+              studies: studyLevel === "Faculty Member" ? studyLevel : `${studyLevel} - ${studies}`,
+              location: location,
+              avatar_type: avatarType,
+              avatar_url: avatarType === "mascot" ? selectedMascot : null,
+            })
+            .eq('id', session.user.id);
+        }
+      } catch (error) {
+        console.error('Error saving initial profile:', error);
       }
     }
     setStep(step + 1);
@@ -278,7 +297,7 @@ const ProfileSetup = () => {
     } else {
       // All questions answered
       setTimeout(() => {
-        setStep(3);
+        setStep(4);
       }, 500);
     }
   };
@@ -420,7 +439,7 @@ const ProfileSetup = () => {
           <div className="space-y-2">
             <CardTitle>Build Your Profile</CardTitle>
             <CardDescription>
-              Step {step} of 4 - Let's get to know you
+              Step {step} of 5 - Let's get to know you
             </CardDescription>
             <Progress value={progress} className="h-2" />
           </div>
@@ -493,53 +512,29 @@ const ProfileSetup = () => {
               />
 
               <div className="space-y-4">
-                <Label>Profile Picture *</Label>
-                <div className="flex gap-2 mb-4">
-                  <Button
-                    type="button"
-                    variant={avatarType === "upload" ? "default" : "outline"}
-                    onClick={() => setAvatarType("upload")}
-                    className="flex-1"
-                  >
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Photo
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={avatarType === "mascot" ? "default" : "outline"}
-                    onClick={() => setAvatarType("mascot")}
-                    className="flex-1"
-                  >
-                    Choose Avatar
-                  </Button>
+                <Label>Choose Mascot *</Label>
+                <div className="grid grid-cols-4 gap-4">
+                  {["/avatar-1.png", "/avatar-2.png", "/avatar-3.png", "/avatar-4.png"].map((mascot, idx) => (
+                    <div
+                      key={mascot}
+                      onClick={() => {
+                        setAvatarType("mascot");
+                        setSelectedMascot(mascot);
+                      }}
+                      className={`aspect-square rounded-lg border-2 cursor-pointer overflow-hidden ${
+                        selectedMascot === mascot
+                          ? "border-primary ring-2 ring-primary"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <img 
+                        src={mascot} 
+                        alt={`Mascot ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
                 </div>
-
-                {avatarType === "upload" ? (
-                  <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
-                      className="max-w-xs mx-auto"
-                    />
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-4 gap-4">
-                    {["mascot-1", "mascot-2", "mascot-3", "mascot-4"].map((mascot) => (
-                      <div
-                        key={mascot}
-                        onClick={() => setSelectedMascot(mascot)}
-                        className={`aspect-square rounded-lg border-2 cursor-pointer flex items-center justify-center text-4xl ${
-                          selectedMascot === mascot
-                            ? "border-primary bg-primary/10"
-                            : "border-border hover:border-primary/50"
-                        }`}
-                      >
-                        🧊
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
 
               <div className="flex justify-end">
@@ -548,8 +543,26 @@ const ProfileSetup = () => {
             </div>
           )}
 
-          {/* Step 2: AI Chat Interface */}
+          {/* Step 2: Bridge Screen */}
           {step === 2 && (
+            <div className="space-y-6 text-center py-8">
+              <div className="space-y-4">
+                <div className="mx-auto w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-4xl">🤝</span>
+                </div>
+                <h3 className="text-2xl font-bold">Let's Get to Know You</h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  We need to understand your goals and interests to help you find meaningful networking possibilities.
+                </p>
+              </div>
+              <Button onClick={handleNext} className="mt-8">
+                Continue
+              </Button>
+            </div>
+          )}
+
+          {/* Step 3: AI Chat Interface */}
+          {step === 3 && (
             <div className="space-y-6">
               <div className="h-96 overflow-y-auto space-y-4 p-4 bg-muted/30 rounded-lg">
                 {chatHistory.map((msg, idx) => (
@@ -593,14 +606,14 @@ const ProfileSetup = () => {
                   <Button variant="outline" onClick={() => setStep(step - 1)}>
                     Back
                   </Button>
-                  <Button onClick={() => setStep(3)}>Next</Button>
+                  <Button onClick={() => setStep(4)}>Next</Button>
                 </div>
               )}
             </div>
           )}
 
-          {/* Step 3: Interests & Skills */}
-          {step === 3 && (
+          {/* Step 4: Interests & Skills */}
+          {step === 4 && (
             <div className="space-y-6">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -655,8 +668,8 @@ const ProfileSetup = () => {
             </div>
           )}
 
-          {/* Step 4: Availability Scheduler */}
-          {step === 4 && (
+          {/* Step 5: Availability Scheduler */}
+          {step === 5 && (
             <div className="space-y-6">
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Set Your Availability</h3>

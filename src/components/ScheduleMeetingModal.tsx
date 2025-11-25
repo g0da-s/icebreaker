@@ -123,6 +123,7 @@ export const ScheduleMeetingModal = ({
     const slots: TimeSlot[] = [];
     const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     const startOfThisWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const now = new Date();
 
     daysOfWeek.forEach((day, index) => {
       const userDay = userAvail[day];
@@ -146,13 +147,20 @@ export const ScheduleMeetingModal = ({
             const startTimeStr = minutesToTime(time);
             const endTimeStr = minutesToTime(time + 60);
             
-            slots.push({
-              day: day.charAt(0).toUpperCase() + day.slice(1),
-              date: date,
-              startTime: startTimeStr,
-              endTime: endTimeStr,
-              displayTime: `${format(date, 'EEE, MMM d')} at ${startTimeStr}`,
-            });
+            // PHASE 1: Filter out past time slots
+            const slotDateTime = new Date(date);
+            const [hours, minutes] = startTimeStr.split(':').map(Number);
+            slotDateTime.setHours(hours, minutes, 0, 0);
+            
+            if (slotDateTime > now) {
+              slots.push({
+                day: day.charAt(0).toUpperCase() + day.slice(1),
+                date: date,
+                startTime: startTimeStr,
+                endTime: endTimeStr,
+                displayTime: `${format(date, 'EEE, MMM d')} at ${startTimeStr}`,
+              });
+            }
           }
         }
       }
@@ -184,6 +192,24 @@ export const ScheduleMeetingModal = ({
           description: "You must be logged in to schedule meetings",
           variant: "destructive",
         });
+        return;
+      }
+
+      // PHASE 1: Check for existing pending invitation
+      const { data: existingMeetings, error: checkError } = await supabase
+        .from('meetings')
+        .select('*')
+        .or(`and(requester_id.eq.${session.user.id},recipient_id.eq.${recipientId},status.eq.pending),and(requester_id.eq.${recipientId},recipient_id.eq.${session.user.id},status.eq.pending)`);
+
+      if (checkError) throw checkError;
+
+      if (existingMeetings && existingMeetings.length > 0) {
+        toast({
+          title: "Already Pending",
+          description: "You already have a pending invitation with this user.",
+          variant: "destructive",
+        });
+        setLoading(false);
         return;
       }
 

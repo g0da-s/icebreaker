@@ -43,6 +43,24 @@ export const QuickScheduleModal = ({
         return;
       }
 
+      // PHASE 1: Check for existing pending invitation
+      const { data: existingMeetings, error: checkError } = await supabase
+        .from('meetings')
+        .select('*')
+        .or(`and(requester_id.eq.${session.user.id},recipient_id.eq.${recipientId},status.eq.pending),and(requester_id.eq.${recipientId},recipient_id.eq.${session.user.id},status.eq.pending)`);
+
+      if (checkError) throw checkError;
+
+      if (existingMeetings && existingMeetings.length > 0) {
+        toast({
+          title: "Already Pending",
+          description: "You already have a pending invitation with this user.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
       // Fetch both users' availability
       const [requesterResult, recipientResult] = await Promise.all([
         supabase.from('profiles').select('availability').eq('id', session.user.id).single(),
