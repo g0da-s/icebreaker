@@ -94,6 +94,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          ai_summary: string | null
           availability: Json | null
           avatar_type: string | null
           avatar_url: string | null
@@ -109,6 +110,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          ai_summary?: string | null
           availability?: Json | null
           avatar_type?: string | null
           avatar_url?: string | null
@@ -124,6 +126,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          ai_summary?: string | null
           availability?: Json | null
           avatar_type?: string | null
           avatar_url?: string | null

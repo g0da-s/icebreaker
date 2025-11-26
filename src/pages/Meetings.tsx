@@ -149,6 +149,13 @@ const Meetings = () => {
           } else {
             incoming.push(enrichedMeeting);
           }
+        } else if (meeting.status === 'pending_reschedule' && !isExpired) {
+          // Rescheduled meetings go to incoming for recipient
+          if (isRequester) {
+            sent.push(enrichedMeeting);
+          } else {
+            incoming.push(enrichedMeeting);
+          }
         } else if (meeting.status === 'confirmed' && !isInPast) {
           upcoming.push(enrichedMeeting);
         } else if (meeting.status === 'cancelled' || meeting.status === 'completed' || isInPast || (meeting.status === 'pending' && isExpired)) {
@@ -492,7 +499,9 @@ const Meetings = () => {
                             wants to meet with you
                           </p>
                         </div>
-                        <Badge variant="secondary" className="bg-slate-700/50 text-slate-200">Pending</Badge>
+                        <Badge variant="secondary" className="bg-slate-700/50 text-slate-200">
+                          {meeting.status === 'pending_reschedule' ? 'Rescheduled - New Time' : 'Pending'}
+                        </Badge>
                       </div>
 
                       <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-3 mb-4 border border-white/10">
@@ -669,14 +678,32 @@ const Meetings = () => {
                               Break the Ice 🧊
                             </Button>
                           )}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleCancelMeeting(meeting.id, formatDisplayName(meeting.otherUser.full_name))}
-                            className="w-full"
-                          >
-                            Cancel Meeting
-                          </Button>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setRescheduleModal({
+                                  open: true,
+                                  recipientId: meeting.otherUser.id,
+                                  recipientName: formatDisplayName(meeting.otherUser.full_name),
+                                  recipientAvailability: meeting.otherUser.availability,
+                                  meetingId: meeting.id,
+                                });
+                              }}
+                              className="w-full"
+                            >
+                              Reschedule
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleCancelMeeting(meeting.id, formatDisplayName(meeting.otherUser.full_name))}
+                              className="w-full"
+                            >
+                              Cancel
+                            </Button>
+                          </div>
                         </div>
                       );
                     })()}
@@ -736,10 +763,17 @@ const Meetings = () => {
 
       <ScheduleMeetingModal
         open={rescheduleModal.open}
-        onOpenChange={(open) => setRescheduleModal({ ...rescheduleModal, open })}
+        onOpenChange={(open) => {
+          setRescheduleModal({ ...rescheduleModal, open });
+          if (!open) {
+            // Refresh meetings when modal closes
+            fetchAllMeetings();
+          }
+        }}
         recipientId={rescheduleModal.recipientId}
         recipientName={rescheduleModal.recipientName}
         recipientAvailability={rescheduleModal.recipientAvailability}
+        meetingId={rescheduleModal.meetingId}
       />
 
       {profileModal.user && (

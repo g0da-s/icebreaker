@@ -42,11 +42,11 @@ serve(async (req) => {
       });
     }
 
-    // Get profiles for all users
+    // Get profiles for all users (including ai_summary and onboarding_answers)
     const userIds = allUsers.map((u: any) => u.user_id);
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, full_name, email, avatar_url, avatar_type')
+      .select('id, full_name, email, avatar_url, avatar_type, ai_summary, onboarding_answers')
       .in('id', userIds);
 
     // Get availability for all users
@@ -83,11 +83,19 @@ serve(async (req) => {
     
 Current user interests: ${currentUser?.tags?.join(', ') || 'none'}
 
-Available users and their interests:
+Available users and their information:
 ${allUsers.map((u: any, i: number) => {
   const profile = profilesMap.get(u.user_id);
-  return `User Index ${i}: ${profile?.full_name || 'User'} (ID: ${u.user_id}) - Interests: ${u.tags?.join(', ') || 'none'} - Bio: ${u.bio || 'none'}`;
-}).join('\n')}
+  const aiSummary = profile?.ai_summary || '';
+  const onboardingData = profile?.onboarding_answers || {};
+  const onboardingText = Object.values(onboardingData).filter(Boolean).join('. ');
+  
+  return `User Index ${i}: ${profile?.full_name || 'User'} (ID: ${u.user_id})
+- Interests: ${u.tags?.join(', ') || 'none'}
+- Bio: ${u.bio || 'none'}
+- AI Story: ${aiSummary}
+- Background: ${onboardingText}`;
+}).join('\n\n')}
 
 Please analyze and return the top 3-5 best matches as a JSON array. Each match MUST include:
 - user_index (the index number from the list above, as a number)
@@ -98,6 +106,7 @@ CRITICAL INSTRUCTIONS:
 - Use the exact user_index number (0, 1, 2, etc.) from the list above
 - In the reason text, ALWAYS refer to the matched person as "This user" instead of using their actual name
 - Never include the person's name in the reason description
+- Consider ALL provided information: interests, bio, AI story, and background
 
 Return ONLY valid JSON array, no markdown or explanation. Example format:
 [{"user_index": 0, "match_score": 95, "reason": "This user's interest in startups directly aligns with the goal of finding a co-founder."}]`;
