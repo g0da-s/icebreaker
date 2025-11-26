@@ -501,7 +501,13 @@ const Home = () => {
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center justify-between gap-2">
-                          <h3 className="font-semibold text-white text-lg">
+                          <h3 
+                            className="font-semibold text-white text-lg cursor-pointer hover:text-cyan-400 transition-colors"
+                            onClick={() => {
+                              setSelectedProfileUser(match);
+                              setProfileModalOpen(true);
+                            }}
+                          >
                             {formatDisplayName(match.full_name)}
                           </h3>
                           {match.match_score && (
@@ -645,7 +651,13 @@ const Home = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-white text-lg">
+                        <h3 
+                          className="font-semibold text-white text-lg cursor-pointer hover:text-cyan-400 transition-colors"
+                          onClick={() => {
+                            setSelectedProfileUser(user);
+                            setProfileModalOpen(true);
+                          }}
+                        >
                           {formatDisplayName(user.full_name)}
                         </h3>
                         {(user.studies || user.role) && (
