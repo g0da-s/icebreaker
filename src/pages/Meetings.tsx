@@ -636,17 +636,19 @@ const Meetings = () => {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <h3 
-                            className="font-semibold text-white cursor-pointer hover:text-cyan-400 transition-colors"
-                            onClick={() => handleViewProfile(meeting.otherUser.id)}
-                          >
-                            {formatDisplayName(meeting.otherUser.full_name)}
-                          </h3>
-                          <p className="text-sm text-slate-300 mt-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 
+                              className="font-semibold text-white cursor-pointer hover:text-cyan-400 transition-colors"
+                              onClick={() => handleViewProfile(meeting.otherUser.id)}
+                            >
+                              {formatDisplayName(meeting.otherUser.full_name)}
+                            </h3>
+                            <Badge variant="outline" className="text-slate-300 text-xs">Awaiting Response</Badge>
+                          </div>
+                          <p className="text-sm text-slate-300">
                             {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d')} at {format(new Date(meeting.scheduled_at), 'h:mm a')}
                           </p>
                         </div>
-                        <Badge variant="outline" className="text-slate-300">Awaiting Response</Badge>
                       </div>
                     </LiquidCrystalCard>
                   ))}
