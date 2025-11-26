@@ -570,17 +570,6 @@ const Home = () => {
                             }
                           </p>
                         )}
-                        )}
-                        {match.studies?.includes(' - ') && (
-                          <p className="text-xs text-slate-400">
-                            {match.studies.split(' - ')[0]}
-                          </p>
-                        )}
-                        {match.role && (
-                          <Badge variant="outline" className="mt-1 border-white/20 text-slate-200">
-                            {match.role}
-                          </Badge>
-                        )}
                       </div>
                     </div>
 
