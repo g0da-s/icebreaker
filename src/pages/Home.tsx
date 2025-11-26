@@ -158,8 +158,8 @@ const Home = () => {
           const welcomeShown = localStorage.getItem('welcome_achievement_shown');
           if (!welcomeShown) {
             toast({
-              title: "Achievement Unlocked: Welcome Aboard! 🏆",
-              description: "You joined the community.",
+              title: "❄️ First Icebreak!",
+              description: "Welcome to the community",
             });
             localStorage.setItem('welcome_achievement_shown', 'true');
           }
