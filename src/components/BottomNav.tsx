@@ -26,7 +26,7 @@ export function BottomNav() {
         .from('meetings')
         .select('id, status')
         .eq('recipient_id', session.user.id)
-        .in('status', ['pending', 'pending_reschedule']);
+        .eq('status', 'pending');
 
       if (!error && data) {
         setPendingCount(data.length);
