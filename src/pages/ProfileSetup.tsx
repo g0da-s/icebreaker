@@ -78,10 +78,10 @@ const LIFESTYLE_INTERESTS = [
 ];
 
 const AI_QUESTIONS = [
-  "What brings you here today?",
-  "If tomorrow felt completely free, what would you love to spend it doing?",
-  "What's your short-term goal?",
-  "What's your long-term goal?"
+  "What qualities do you enjoy in the people you work or spend time with?",
+  "What do you usually hope to get out of a first meeting - a friendly connection, idea exchange, or potential collaboration?",
+  "When talking to someone new, what makes you feel at ease - shared interests, a friendly tone, or clear purpose?",
+  "ARE YOU READY TO BREAK THE ICE?"
 ];
 
 const ProfileSetup = () => {
@@ -419,7 +419,7 @@ const ProfileSetup = () => {
     }
   };
 
-  const handleChatSubmit = () => {
+  const handleChatSubmit = async () => {
     if (!currentAnswer.trim() || isTyping) return;
 
     const newHistory = [...chatHistory, { role: "user" as const, text: currentAnswer }];
@@ -427,6 +427,33 @@ const ProfileSetup = () => {
     setChatAnswers(newAnswers);
     setChatHistory(newHistory);
     setCurrentAnswer("");
+
+    // Check if this is the last question (ARE YOU READY TO BREAK THE ICE?)
+    if (currentQuestion === AI_QUESTIONS.length - 1) {
+      // User answered "Yes" to the final question - generate AI summary
+      if (currentAnswer.toLowerCase().includes('yes') || currentAnswer.toLowerCase().includes('ready')) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            // Call edge function to generate AI summary
+            await supabase.functions.invoke('generate-user-story', {
+              body: {
+                answers: newAnswers.slice(0, 3), // Use Q1, Q2, Q3 (not Q4 which is confirmation)
+                userId: session.user.id
+              }
+            });
+            
+            toast({
+              title: "Your story has been created!",
+              description: "AI has generated your personalized profile summary",
+            });
+          }
+        } catch (error) {
+          console.error('Error generating user story:', error);
+        }
+      }
+      return;
+    }
 
     if (currentQuestion < AI_QUESTIONS.length - 1) {
       const nextQuestion = currentQuestion + 1;

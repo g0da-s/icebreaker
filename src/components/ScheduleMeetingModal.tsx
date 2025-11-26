@@ -37,6 +37,7 @@ interface ScheduleMeetingModalProps {
   recipientId: string;
   recipientName: string;
   recipientAvailability: WeekAvailability | null;
+  meetingId?: string; // Optional: if provided, this is a reschedule operation
 }
 
 export const ScheduleMeetingModal = ({
@@ -45,6 +46,7 @@ export const ScheduleMeetingModal = ({
   recipientId,
   recipientName,
   recipientAvailability,
+  meetingId,
 }: ScheduleMeetingModalProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -199,42 +201,63 @@ export const ScheduleMeetingModal = ({
         return;
       }
 
-      // PHASE 1: Check for existing pending invitation
-      const { data: existingMeetings, error: checkError } = await supabase
-        .from('meetings')
-        .select('*')
-        .or(`and(requester_id.eq.${session.user.id},recipient_id.eq.${recipientId},status.eq.pending),and(requester_id.eq.${recipientId},recipient_id.eq.${session.user.id},status.eq.pending)`);
+      // PHASE 1: Check for existing pending invitation (skip if rescheduling)
+      if (!meetingId) {
+        const { data: existingMeetings, error: checkError } = await supabase
+          .from('meetings')
+          .select('*')
+          .or(`and(requester_id.eq.${session.user.id},recipient_id.eq.${recipientId},status.eq.pending),and(requester_id.eq.${recipientId},recipient_id.eq.${session.user.id},status.eq.pending)`);
 
-      if (checkError) throw checkError;
+        if (checkError) throw checkError;
 
-      if (existingMeetings && existingMeetings.length > 0) {
-        toast({
-          title: "Already Pending",
-          description: "You already have a pending invitation with this user.",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
+        if (existingMeetings && existingMeetings.length > 0) {
+          toast({
+            title: "Already Pending",
+            description: "You already have a pending invitation with this user.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
       }
 
       const scheduledDateTime = new Date(slot.date);
       const [hours, minutes] = slot.startTime.split(':').map(Number);
       scheduledDateTime.setHours(hours, minutes, 0, 0);
 
-      const { error } = await supabase.from('meetings').insert({
-        requester_id: session.user.id,
-        recipient_id: recipientId,
-        scheduled_at: scheduledDateTime.toISOString(),
-        meeting_type: 'friendly',
-        status: 'pending',
-      });
+      if (meetingId) {
+        // RESCHEDULE: Update existing meeting
+        const { error } = await supabase
+          .from('meetings')
+          .update({
+            scheduled_at: scheduledDateTime.toISOString(),
+            status: 'pending_reschedule',
+          })
+          .eq('id', meetingId);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Invitation Sent!",
-        description: `Meeting request sent to ${recipientName}`,
-      });
+        toast({
+          title: "Meeting Rescheduled!",
+          description: `New time proposed. Waiting for ${recipientName} to confirm.`,
+        });
+      } else {
+        // NEW MEETING: Create new meeting
+        const { error } = await supabase.from('meetings').insert({
+          requester_id: session.user.id,
+          recipient_id: recipientId,
+          scheduled_at: scheduledDateTime.toISOString(),
+          meeting_type: 'friendly',
+          status: 'pending',
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Invitation Sent!",
+          description: `Meeting request sent to ${recipientName}`,
+        });
+      }
       
       onOpenChange(false);
     } catch (error: any) {
@@ -252,9 +275,13 @@ export const ScheduleMeetingModal = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Schedule Meeting with {recipientName}</DialogTitle>
+          <DialogTitle>
+            {meetingId ? `Reschedule Meeting with ${recipientName}` : `Schedule Meeting with ${recipientName}`}
+          </DialogTitle>
           <DialogDescription>
-            Select a time slot that works for both of you
+            {meetingId 
+              ? 'Select a new time slot. Your partner will need to confirm the new time.' 
+              : 'Select a time slot that works for both of you'}
           </DialogDescription>
         </DialogHeader>
 

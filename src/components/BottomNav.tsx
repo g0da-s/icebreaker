@@ -3,16 +3,18 @@ import { Home, Calendar, Trophy, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export function BottomNav() {
   const location = useLocation();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
 
   const navItems = [
-    { icon: Home, label: "Home", path: "/home" },
-    { icon: Calendar, label: "Meetings", path: "/meetings" },
-    { icon: Trophy, label: "Achievements", path: "/achievements" },
-    { icon: User, label: "Profile", path: "/profile" },
+    { icon: Home, label: "Home", path: "/home", showBadge: false },
+    { icon: Calendar, label: "Meetings", path: "/meetings", showBadge: true },
+    { icon: Trophy, label: "Achievements", path: "/achievements", showBadge: false },
+    { icon: User, label: "Profile", path: "/profile", showBadge: false },
   ];
 
   useEffect(() => {
@@ -21,6 +23,42 @@ export function BottomNav() {
       setActiveIndex(currentIndex);
     }
   }, [location.pathname]);
+
+  // Fetch pending meeting count
+  useEffect(() => {
+    const fetchPendingCount = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase
+        .from('meetings')
+        .select('id, status')
+        .eq('recipient_id', session.user.id)
+        .in('status', ['pending', 'pending_reschedule']);
+
+      if (!error && data) {
+        setPendingCount(data.length);
+      }
+    };
+
+    fetchPendingCount();
+
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel('meeting-updates')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'meetings'
+      }, () => {
+        fetchPendingCount();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const handleNavClick = () => {
     // Haptic feedback for mobile devices
@@ -72,6 +110,8 @@ export function BottomNav() {
         <div className="flex items-center gap-2 relative z-10">
           {navItems.map((item, index) => {
             const isActive = location.pathname === item.path;
+            const showBadge = item.showBadge && pendingCount > 0;
+            
             return (
               <Link
                 key={item.path}
@@ -86,6 +126,11 @@ export function BottomNav() {
                 aria-label={item.label}
               >
                 <item.icon className="w-5 h-5 relative z-10" />
+                {showBadge && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center z-20">
+                    {pendingCount}
+                  </span>
+                )}
               </Link>
             );
           })}
