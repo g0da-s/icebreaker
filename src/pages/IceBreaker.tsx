@@ -114,7 +114,7 @@ const IceBreaker = () => {
 
       // Fetch other user's profile
       const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
+        .from('public_profiles')
         .select('id, full_name, avatar_url, avatar_type')
         .eq('id', otherUserId)
         .single();

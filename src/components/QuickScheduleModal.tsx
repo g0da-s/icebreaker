@@ -64,7 +64,7 @@ export const QuickScheduleModal = ({
       // Fetch both users' availability
       const [requesterResult, recipientResult] = await Promise.all([
         supabase.from('profiles').select('availability').eq('id', session.user.id).single(),
-        supabase.from('profiles').select('availability').eq('id', recipientId).single(),
+        supabase.from('public_profiles').select('availability').eq('id', recipientId).single(),
       ]);
 
       if (requesterResult.error || recipientResult.error) {

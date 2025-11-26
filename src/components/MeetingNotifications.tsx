@@ -46,7 +46,7 @@ export const MeetingNotifications = () => {
       if (cancelledMeetings && cancelledMeetings.length > 0) {
         const recipientIds = cancelledMeetings.map(m => m.recipient_id);
         const { data: profiles } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('id, full_name')
           .in('id', recipientIds);
 
@@ -81,7 +81,7 @@ export const MeetingNotifications = () => {
         });
 
         const { data: profiles } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('id, full_name')
           .in('id', Array.from(userIds));
 
@@ -119,7 +119,7 @@ export const MeetingNotifications = () => {
         });
 
         const { data: profiles } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('id, full_name')
           .in('id', Array.from(userIds));
 

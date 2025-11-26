@@ -38,7 +38,7 @@ const Matches = () => {
 
         // Fetch profiles excluding current user
         const { data: profiles, error: profilesError } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('id, full_name, studies, role, avatar_url, avatar_type')
           .neq('id', session.user.id);
 

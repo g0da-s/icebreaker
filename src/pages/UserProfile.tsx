@@ -25,7 +25,6 @@ const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'satu
 type UserProfileData = {
   id: string;
   full_name: string;
-  email: string;
   studies: string;
   role: string;
   location: string;
@@ -54,7 +53,7 @@ const UserProfile = () => {
       try {
         // Fetch profile data
         const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('*')
           .eq('id', id)
           .single();
@@ -71,7 +70,6 @@ const UserProfile = () => {
         setProfile({
           id: profileData.id,
           full_name: profileData.full_name || 'No Name',
-          email: profileData.email,
           studies: profileData.studies || 'Not specified',
           role: profileData.role,
           location: profileData.location || 'Not specified',

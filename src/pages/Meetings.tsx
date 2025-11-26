@@ -96,7 +96,7 @@ const Meetings = () => {
 
       // Fetch all user profiles
       const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
+        .from('public_profiles')
         .select('id, full_name, avatar_url, avatar_type, availability')
         .in('id', Array.from(userIds));
 

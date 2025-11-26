@@ -16,7 +16,6 @@ import { formatDisplayName } from "@/lib/utils";
 interface Match {
   user_id: string;
   full_name: string;
-  email: string;
   studies?: string;
   role?: string;
   avatar_url?: string | null;
@@ -121,8 +120,8 @@ const Home = () => {
 
         // Fetch 8 recently active users excluding current user
         const { data: profiles, error: profilesError } = await supabase
-          .from('profiles')
-          .select('id, full_name, studies, role, avatar_url, avatar_type, email, updated_at')
+          .from('public_profiles')
+          .select('id, full_name, studies, role, avatar_url, avatar_type, updated_at')
           .neq('id', session.user.id)
           .order('updated_at', { ascending: false })
           .limit(8);
@@ -142,7 +141,6 @@ const Home = () => {
           return {
             user_id: profile.id,
             full_name: profile.full_name || 'No Name',
-            email: profile.email,
             studies: profile.studies,
             role: profile.role,
             avatar_url: profile.avatar_url,
@@ -200,8 +198,8 @@ const Home = () => {
               if (!session) return;
 
               const { data: profiles, error: profilesError } = await supabase
-                .from('profiles')
-                .select('id, full_name, studies, role, avatar_url, avatar_type, email')
+                .from('public_profiles')
+                .select('id, full_name, studies, role, avatar_url, avatar_type')
                 .neq('id', session.user.id)
                 .limit(6);
 
@@ -218,7 +216,6 @@ const Home = () => {
                 return {
                   user_id: profile.id,
                   full_name: profile.full_name || 'No Name',
-                  email: profile.email,
                   studies: profile.studies,
                   role: profile.role,
                   avatar_url: profile.avatar_url,
