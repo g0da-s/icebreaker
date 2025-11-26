@@ -3,15 +3,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar, Sparkles } from "lucide-react";
+import { Calendar, Sparkles, X } from "lucide-react";
+import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 interface QuickScheduleModalProps {
   open: boolean;
@@ -125,44 +126,62 @@ export const QuickScheduleModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary" />
-            Quick Schedule with {recipientName}
-          </DialogTitle>
-          <DialogDescription>
-            AI will find the best meeting time based on your mutual availability
-          </DialogDescription>
-        </DialogHeader>
+      <DialogPortal>
+        <DialogOverlay className="backdrop-blur-md bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Content className="fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-top-[48%]">
+          <LiquidCrystalCard className="w-full animate-scale-in">
+            <DialogClose className="absolute right-4 top-4 z-50 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none">
+              <X className="h-4 w-4 text-white hover:text-destructive transition-colors" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+            
+            <div className="p-6 space-y-6">
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Sparkles className="w-6 h-6 text-cyan-400" />
+                  <h2 className="text-2xl font-bold text-white">
+                    Quick Schedule
+                  </h2>
+                </div>
+                <p className="text-sm text-slate-300">
+                  with {recipientName}
+                </p>
+                <p className="text-sm text-slate-400 mt-2">
+                  AI will find the best meeting time based on your mutual availability
+                </p>
+              </div>
 
-        <div className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="preferences">
-              Any preferences? (optional)
-            </Label>
-            <Input
-              id="preferences"
-              placeholder="e.g., 'mornings preferred' or 'weekdays only'"
-              value={preferences}
-              onChange={(e) => setPreferences(e.target.value)}
-            />
-          </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="preferences" className="text-white text-sm">
+                    Any preferences? (optional)
+                  </Label>
+                  <Input
+                    id="preferences"
+                    placeholder="e.g., 'mornings preferred' or 'weekdays only'"
+                    value={preferences}
+                    onChange={(e) => setPreferences(e.target.value)}
+                    className="rounded-full bg-white/5 border-white/20 text-white placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
+                  />
+                </div>
 
-          <Button
-            className="w-full h-12"
-            onClick={handleQuickSchedule}
-            disabled={loading}
-          >
-            <Calendar className="w-5 h-5 mr-2" />
-            {loading ? "Finding Best Time..." : "Let AI Schedule"}
-          </Button>
+                <Button
+                  className="w-full h-12 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0 shadow-lg shadow-cyan-500/20"
+                  onClick={handleQuickSchedule}
+                  disabled={loading}
+                >
+                  <Calendar className="w-5 h-5 mr-2" />
+                  {loading ? "Finding Best Time..." : "Let AI Schedule"}
+                </Button>
 
-          <p className="text-xs text-muted-foreground text-center">
-            You'll receive a notification once {recipientName} confirms
-          </p>
-        </div>
-      </DialogContent>
+                <p className="text-xs text-slate-400 text-center">
+                  You'll receive a notification once {recipientName} confirms
+                </p>
+              </div>
+            </div>
+          </LiquidCrystalCard>
+        </DialogPrimitive.Content>
+      </DialogPortal>
     </Dialog>
   );
 };
