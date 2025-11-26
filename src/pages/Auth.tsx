@@ -9,29 +9,30 @@ import { Sparkles, ArrowLeft, Award } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
-
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get('mode') === 'signin' ? 'signin' : 'signup';
   const [isLoading, setIsLoading] = useState(false);
   const [showAchievement, setShowAchievement] = useState(false);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const navigate = useNavigate();
-
   const allowedDomains = ['@ism.lt', '@stud.ism.lt', '@faculty.ism.lt'];
 
   // Redirect if already logged in
   useEffect(() => {
     const checkSessionAndProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (session) {
         // Check if user has completed profile setup
-        const { data: interests } = await supabase
-          .from('user_interests')
-          .select('id')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-        
+        const {
+          data: interests
+        } = await supabase.from('user_interests').select('id').eq('user_id', session.user.id).maybeSingle();
         if (interests) {
           navigate("/dashboard");
         } else {
@@ -41,48 +42,45 @@ const Auth = () => {
     };
     checkSessionAndProfile();
   }, [navigate]);
-
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const firstName = formData.get("firstName") as string;
     const lastName = formData.get("lastName") as string;
-    
+
     // Validate allowed domains
     const isValidDomain = allowedDomains.some(domain => email.endsWith(domain));
-    
     if (!isValidDomain) {
       toast({
         title: "Access Restricted",
         description: "Please use your official university email (@ism.lt, @stud.ism.lt, or @faculty.ism.lt).",
-        variant: "destructive",
+        variant: "destructive"
       });
       setIsLoading(false);
       return;
     }
-
-    const { error } = await supabase.auth.signUp({
+    const {
+      error
+    } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           first_name: firstName,
           last_name: lastName,
-          full_name: `${firstName} ${lastName}`,
+          full_name: `${firstName} ${lastName}`
         },
-        emailRedirectTo: `${window.location.origin}/`,
-      },
+        emailRedirectTo: `${window.location.origin}/`
+      }
     });
-
     if (error) {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive",
+        variant: "destructive"
       });
     } else {
       setShowAchievement(true);
@@ -91,42 +89,36 @@ const Auth = () => {
         navigate("/profile-setup");
       }, 3000);
     }
-    
     setIsLoading(false);
   };
-
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-
-    const { error } = await supabase.auth.signInWithPassword({
+    const {
+      error
+    } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password
     });
-
     if (error) {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive",
+        variant: "destructive"
       });
     } else {
       toast({
         title: "Welcome back!",
-        description: "Signed in successfully.",
+        description: "Signed in successfully."
       });
       navigate("/home");
     }
-    
     setIsLoading(false);
   };
-
-  return (
-    <>
+  return <>
       <Dialog open={showAchievement} onOpenChange={setShowAchievement}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -154,7 +146,7 @@ const Auth = () => {
               <Sparkles className="w-6 h-6 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Welcome to ISM Connect</CardTitle>
+          <CardTitle className="text-2xl">Welcome to ICE-BREAKER.AI</CardTitle>
           <CardDescription>
             Connect with your fellow ISM students
           </CardDescription>
@@ -171,49 +163,23 @@ const Auth = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label htmlFor="signup-firstName">First Name</Label>
-                    <Input
-                      id="signup-firstName"
-                      name="firstName"
-                      placeholder="John"
-                      className="bg-muted/30"
-                      required
-                    />
+                    <Input id="signup-firstName" name="firstName" placeholder="John" className="bg-muted/30" required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-lastName">Last Name</Label>
-                    <Input
-                      id="signup-lastName"
-                      name="lastName"
-                      placeholder="Doe"
-                      className="bg-muted/30"
-                      required
-                    />
+                    <Input id="signup-lastName" name="lastName" placeholder="Doe" className="bg-muted/30" required />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">University Email</Label>
-                  <Input
-                    id="signup-email"
-                    name="email"
-                    type="email"
-                    placeholder="your.name@stud.ism.lt"
-                    className="bg-muted/30"
-                    required
-                  />
+                  <Input id="signup-email" name="email" type="email" placeholder="your.name@stud.ism.lt" className="bg-muted/30" required />
                   <p className="text-xs text-muted-foreground">
                     Enter your student, faculty, or staff email.
                   </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    name="password"
-                    type="password"
-                    placeholder="••••••••"
-                    className="bg-muted/30"
-                    required
-                  />
+                  <Input id="signup-password" name="password" type="password" placeholder="••••••••" className="bg-muted/30" required />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Creating Account..." : "Create Account"}
@@ -225,25 +191,11 @@ const Auth = () => {
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signin-email">Email</Label>
-                  <Input
-                    id="signin-email"
-                    name="email"
-                    type="email"
-                    placeholder="your.name@ism.lt"
-                    className="bg-muted/30"
-                    required
-                  />
+                  <Input id="signin-email" name="email" type="email" placeholder="your.name@ism.lt" className="bg-muted/30" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signin-password">Password</Label>
-                  <Input
-                    id="signin-password"
-                    name="password"
-                    type="password"
-                    placeholder="••••••••"
-                    className="bg-muted/30"
-                    required
-                  />
+                  <Input id="signin-password" name="password" type="password" placeholder="••••••••" className="bg-muted/30" required />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Signing In..." : "Sign In"}
@@ -254,8 +206,6 @@ const Auth = () => {
         </CardContent>
       </Card>
     </div>
-    </>
-  );
+    </>;
 };
-
 export default Auth;
