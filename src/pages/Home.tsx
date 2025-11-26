@@ -393,7 +393,7 @@ const Home = () => {
       <div className="relative z-10 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Search Section - Centered when not in search mode */}
-          <div className={`mb-12 ${!isSearchMode ? 'min-h-[60vh] flex items-center justify-center' : ''}`}>
+          <div className="mb-12 min-h-[60vh] flex items-center justify-center">
             <div className="w-full">
               <div className="text-center mb-6">
                 {/* Active Now Indicator */}
