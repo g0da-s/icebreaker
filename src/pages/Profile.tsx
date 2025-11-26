@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { BottomNav } from "@/components/BottomNav";
 import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
+import { GlassCard } from "@/components/landing/GlassCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -103,40 +104,45 @@ const Profile = () => {
       <div className="relative z-10 container max-w-2xl mx-auto px-4 pt-24 pb-6">
         {/* Main Profile Container */}
         <LiquidCrystalCard className="p-8">
-          {/* Header Section */}
-          <div className="flex items-start gap-4 mb-8">
-            {/* Avatar */}
-            <div className="flex-shrink-0">
-              {profile.avatar_url ? (
-                <img 
-                  src={profile.avatar_url} 
-                  alt={profile.full_name || profile.email}
-                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
-                />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-slate-700 border-2 border-white flex items-center justify-center">
-                  <span className="text-2xl font-bold text-white">
-                    {profile.full_name?.charAt(0) || profile.email.charAt(0)}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* User Details */}
-            <div className="flex-1 min-w-0">
-              <h2 className="text-xl font-bold text-white mb-1">
-                {profile.full_name || "No name"}
-              </h2>
-              <p className="text-sm text-slate-400 mb-1">{profile.email}</p>
-              <p className="text-sm text-slate-400">{profile.role}</p>
-            </div>
-
-            {/* Edit Icon */}
-            <Button variant="ghost" size="icon" asChild className="text-white hover:bg-white/10 flex-shrink-0">
+          {/* Edit Button - Top Right */}
+          <div className="flex justify-end mb-4">
+            <Button variant="ghost" size="icon" asChild className="text-white hover:bg-white/10">
               <Link to="/edit-profile">
                 <Edit className="w-5 h-5" />
               </Link>
             </Button>
+          </div>
+
+          {/* Centered Avatar Section */}
+          <div className="flex flex-col items-center mb-8">
+            {profile.avatar_url ? (
+              <img 
+                src={profile.avatar_url} 
+                alt={profile.full_name || profile.email}
+                className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-xl mb-6"
+              />
+            ) : (
+              <div className="w-32 h-32 rounded-full bg-slate-700 border-4 border-white flex items-center justify-center shadow-xl mb-6">
+                <span className="text-4xl font-bold text-white">
+                  {profile.full_name?.charAt(0) || profile.email.charAt(0)}
+                </span>
+              </div>
+            )}
+
+            {/* Name */}
+            <h2 className="text-2xl font-bold text-white mb-6">
+              {profile.full_name || "No name"}
+            </h2>
+
+            {/* Email and Role in Glass Cards */}
+            <div className="flex flex-col gap-3 w-full max-w-md">
+              <GlassCard className="px-6 py-3">
+                <p className="text-sm text-slate-300 text-center">{profile.email}</p>
+              </GlassCard>
+              <GlassCard className="px-6 py-3">
+                <p className="text-sm text-slate-300 text-center capitalize">{profile.role}</p>
+              </GlassCard>
+            </div>
           </div>
 
           {/* Studies Section */}
