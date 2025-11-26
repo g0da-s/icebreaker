@@ -5,6 +5,8 @@ import { BottomNav } from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import logo from "@/assets/logo.png";
+import { Link } from "react-router-dom";
 
 interface AchievementDefinition {
   id: string;
@@ -261,7 +263,15 @@ export default function Achievements() {
         />
       </div>
 
-      <div className="relative z-10 container max-w-6xl mx-auto px-4 py-8">
+      {/* Logo Header */}
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-white/5">
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
+          <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
+        </Link>
+      </nav>
+
+      <div className="relative z-10 container max-w-6xl mx-auto px-4 pt-24 pb-8">
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
