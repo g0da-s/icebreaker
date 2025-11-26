@@ -521,7 +521,7 @@ const Home = () => {
               >
                 {matches.length} {matches.length === 1 ? 'match' : 'matches'} found
               </motion.p>
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {matches.map((match, index) => (
                   <motion.div
                     key={match.user_id}
@@ -529,9 +529,9 @@ const Home = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
                   >
-                    <Card className="p-5 bg-slate-800/40 backdrop-blur-xl border-white/10 hover:bg-slate-800/60 hover:border-white/20 transition-all shadow-xl">
-                    <div className="flex items-start gap-3 mb-4">
-                      <Avatar className="h-12 w-12">
+                    <Card className="aspect-square p-5 bg-slate-800/40 backdrop-blur-xl border-white/10 hover:bg-slate-800/60 hover:border-white/20 transition-all shadow-xl flex flex-col">
+                    <div className="flex items-start gap-3 mb-3">
+                      <Avatar className="h-12 w-12 flex-shrink-0">
                         <AvatarImage 
                           src={match.avatar_url || undefined} 
                           alt={match.full_name} 
@@ -540,24 +540,36 @@ const Home = () => {
                           {match.full_name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between gap-2">
-                          <h3 className="font-semibold text-white text-lg">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <h3 
+                            className="font-semibold text-white text-base cursor-pointer hover:text-cyan-400 transition-colors"
+                            onClick={() => {
+                              setSelectedProfileUser(match);
+                              setProfileModalOpen(true);
+                            }}
+                          >
                             {formatDisplayName(match.full_name)}
+                            {match.role && (
+                              <span className="text-xs text-slate-400 font-normal ml-2">
+                                {match.role}
+                              </span>
+                            )}
                           </h3>
                           {match.match_score && (
-                            <Badge className="shrink-0 bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0">
-                              {match.match_score}% match
+                            <Badge className="shrink-0 text-xs bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0">
+                              {match.match_score}%
                             </Badge>
                           )}
                         </div>
-                        {(match.studies || match.role) && (
-                          <p className="text-sm text-slate-300">
-                            {match.studies?.includes(' - ')
+                        {match.studies && (
+                          <p className="text-xs text-slate-300">
+                            {match.studies.includes(' - ')
                               ? match.studies.split(' - ')[1]
-                              : match.studies || match.role
+                              : match.studies
                             }
                           </p>
+                        )}
                         )}
                         {match.studies?.includes(' - ') && (
                           <p className="text-xs text-slate-400">
