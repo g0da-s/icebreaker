@@ -327,6 +327,21 @@ const Home = () => {
   const isSearchMode = searchQuery.trim().length > 0 || selectedCategory !== null;
   const hasResults = matches.length > 0 || featuredUsers.length > 0;
 
+  // Helper function to prioritize tags based on search query
+  const getPrioritizedTags = (tags: string[], query: string) => {
+    if (!query || !tags || tags.length === 0) return tags;
+    
+    const lowerQuery = query.toLowerCase();
+    const matchingTags = tags.filter(tag => 
+      tag.toLowerCase().includes(lowerQuery)
+    );
+    const nonMatchingTags = tags.filter(tag => 
+      !tag.toLowerCase().includes(lowerQuery)
+    );
+    
+    return [...matchingTags, ...nonMatchingTags];
+  };
+
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
       {/* Animated Background Orbs */}
@@ -565,11 +580,26 @@ const Home = () => {
 
                     {match.tags && match.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {match.tags.slice(0, 5).map((tag, idx) => (
-                          <Badge key={idx} className="text-xs bg-slate-700/50 text-slate-200 border-white/10 hover:bg-slate-600/50">
-                            {tag}
-                          </Badge>
-                        ))}
+                        {(() => {
+                          const prioritizedTags = getPrioritizedTags(match.tags, searchQuery);
+                          const displayTags = prioritizedTags.slice(0, 2);
+                          const remainingCount = match.tags.length - 2;
+                          
+                          return (
+                            <>
+                              {displayTags.map((tag, idx) => (
+                                <Badge key={idx} className="text-xs bg-slate-700/50 text-slate-200 border-white/10 hover:bg-slate-600/50">
+                                  {tag}
+                                </Badge>
+                              ))}
+                              {remainingCount > 0 && (
+                                <Badge className="text-xs bg-slate-700/30 text-slate-300 border-white/10">
+                                  +{remainingCount}
+                                </Badge>
+                              )}
+                            </>
+                          );
+                        })()}
                       </div>
                     )}
 
