@@ -22,6 +22,19 @@ export function BottomNav() {
     }
   }, [location.pathname]);
 
+  const handleNavClick = () => {
+    // Haptic feedback for mobile devices
+    if ('vibrate' in navigator) {
+      navigator.vibrate(10);
+    }
+    
+    // Subtle click sound effect
+    const audio = new Audio();
+    audio.volume = 0.2;
+    audio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGS57OahUBELTKXh8bllHAU7k9nyx3ElBSl+zPDajzsKFmO96+mmVBELSKDf8blpIAU=';
+    audio.play().catch(() => {});
+  };
+
   return (
     <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
       <div className="relative bg-slate-900/30 backdrop-blur-xl border border-white/20 rounded-full shadow-2xl px-4 py-3">
@@ -63,6 +76,7 @@ export function BottomNav() {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={handleNavClick}
                 className={cn(
                   "flex items-center justify-center w-12 h-12 rounded-full transition-all relative",
                   isActive
