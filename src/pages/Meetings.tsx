@@ -149,8 +149,8 @@ const Meetings = () => {
           } else {
             incoming.push(enrichedMeeting);
           }
-        } else if (meeting.status === 'pending_reschedule' && !isExpired) {
-          // Rescheduled meetings go to incoming for recipient
+        } else if (meeting.status === 'pending' && !isExpired && isRequester) {
+          // Pending meetings that requester created go to outgoing
           if (isRequester) {
             sent.push(enrichedMeeting);
           } else {
@@ -500,7 +500,7 @@ const Meetings = () => {
                           </p>
                         </div>
                         <Badge variant="secondary" className="bg-slate-700/50 text-slate-200">
-                          {meeting.status === 'pending_reschedule' ? 'Rescheduled - New Time' : 'Pending'}
+                          Pending
                         </Badge>
                       </div>
 

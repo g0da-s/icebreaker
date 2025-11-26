@@ -231,7 +231,7 @@ export const ScheduleMeetingModal = ({
           .from('meetings')
           .update({
             scheduled_at: scheduledDateTime.toISOString(),
-            status: 'pending_reschedule',
+            status: 'pending',
           })
           .eq('id', meetingId);
 
