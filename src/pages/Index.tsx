@@ -44,12 +44,9 @@ const Index = () => {
             </p>
             
             {!isAuthenticated ? (
-              <div className="flex flex-col gap-3 justify-center max-w-xs mx-auto sm:max-w-none sm:flex-row sm:gap-4">
-                <Button asChild size="lg" className="text-base h-12">
-                  <Link to="/auth?mode=signup">Register</Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="text-base h-12">
-                  <Link to="/auth?mode=signin">Sign In</Link>
+              <div className="flex justify-center">
+                <Button asChild size="lg" className="text-base h-12 px-8">
+                  <Link to="/auth?mode=signup">Connect Now</Link>
                 </Button>
               </div>
             ) : (
@@ -130,20 +127,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 to-secondary/10">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-            Ready to Make Meaningful Connections?
-          </h2>
-          <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-            Join your fellow ISM students and start building your network today
-          </p>
-          <Button asChild size="lg" className="text-base">
-            <Link to="/auth?mode=signup">Join Now with ISM Email</Link>
-          </Button>
-        </div>
-      </section>
     </div>
   );
 };
