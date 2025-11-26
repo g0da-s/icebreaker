@@ -146,7 +146,7 @@ const Auth = () => {
               <Sparkles className="w-6 h-6 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Welcome to ICE-BREAKER.AI</CardTitle>
+          <CardTitle className="text-2xl">Welcome to icebreaker.ai</CardTitle>
           <CardDescription>Tap to crack the ice and meet someone new.</CardDescription>
         </CardHeader>
         <CardContent>
