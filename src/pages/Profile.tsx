@@ -145,8 +145,8 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Content Sections Grid - Side by Side */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Content Sections Grid - 3 columns on desktop, stacked on mobile */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* About Section */}
             {interests?.bio && (
               <GlassCard className="p-6" hoverEffect>
