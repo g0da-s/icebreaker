@@ -38,7 +38,7 @@ export const MeetingCountdown = ({ scheduledAt }: MeetingCountdownProps) => {
   }, [scheduledAt]);
 
   return (
-    <div className="text-sm font-semibold text-primary">
+    <div className="text-sm font-semibold text-white">
       {timeLeft}
     </div>
   );
