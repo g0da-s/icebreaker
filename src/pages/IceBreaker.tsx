@@ -76,6 +76,39 @@ const IceBreaker = () => {
     };
   }, [id, stage]);
 
+  // Subscribe to meeting completion
+  useEffect(() => {
+    if (!id) return;
+
+    const channel = supabase
+      .channel(`meeting-completion-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'meetings',
+          filter: `id=eq.${id}`
+        },
+        (payload) => {
+          if (payload.new.status === 'completed') {
+            toast({
+              title: "Thanks for breaking this little ice! 🧊",
+            });
+            
+            setTimeout(() => {
+              navigate("/meetings");
+            }, 2500);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [id, navigate, toast]);
+
   const fetchMeetingData = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -336,10 +369,12 @@ const IceBreaker = () => {
         await checkAndGrantAchievements(meeting.recipient_id);
 
         toast({
-          title: "Meeting Completed!",
-          description: "Thanks for confirming. The meeting has been moved to history.",
+          title: "Thanks for breaking this little ice! 🧊",
         });
-        navigate("/meetings");
+
+        setTimeout(() => {
+          navigate("/meetings");
+        }, 2500);
       } else {
         // Waiting for other user
         setWaitingForOther(true);

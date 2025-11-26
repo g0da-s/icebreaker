@@ -73,6 +73,47 @@ const Meetings = () => {
     fetchAllMeetings();
   }, []);
 
+  // Subscribe to meeting completions
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return null;
+      return session.user.id;
+    };
+
+    fetchUserId().then((userId) => {
+      if (!userId) return;
+
+      const channel = supabase
+        .channel('meetings-completion')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'meetings',
+          },
+          (payload) => {
+            if (payload.new.status === 'completed') {
+              const meeting = payload.new as any;
+              if (meeting.requester_id === userId || meeting.recipient_id === userId) {
+                toast({
+                  title: "Thanks for breaking this little ice! 🧊",
+                });
+                
+                fetchAllMeetings();
+              }
+            }
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    });
+  }, [toast]);
+
   const fetchAllMeetings = async () => {
     setLoading(true);
     try {
