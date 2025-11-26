@@ -3,15 +3,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, X } from "lucide-react";
 import { format, addDays, startOfWeek } from "date-fns";
+import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 type TimeSlot = {
   day: string;
@@ -278,76 +279,91 @@ export const ScheduleMeetingModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>
-            {meetingId ? `Reschedule Meeting with ${recipientName}` : `Schedule Meeting with ${recipientName}`}
-          </DialogTitle>
-          <DialogDescription>
-            {meetingId 
-              ? 'Select a new time slot. Your partner will need to confirm the new time.' 
-              : 'Select a time slot that works for both of you'}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogPortal>
+        <DialogOverlay className="backdrop-blur-md bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Content className="fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-top-[48%]">
+          <LiquidCrystalCard className="w-full animate-scale-in">
+            <DialogClose className="absolute right-4 top-4 z-50 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none">
+              <X className="h-4 w-4 text-white hover:text-destructive transition-colors" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+            
+            <div className="p-6 space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">
+                  {meetingId ? `Reschedule Meeting` : `Schedule Meeting`}
+                </h2>
+                <p className="text-sm text-slate-300">
+                  with {recipientName}
+                </p>
+                <p className="text-sm text-slate-400 mt-2">
+                  {meetingId 
+                    ? 'Select a new time slot. Your partner will need to confirm the new time.' 
+                    : 'Select a time slot that works for both of you'}
+                </p>
+              </div>
 
-        <div className="space-y-3 mt-4">
-          {loadingSlots ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <div className="animate-pulse space-y-3">
-                <div className="h-16 bg-muted rounded-lg"></div>
-                <div className="h-16 bg-muted rounded-lg"></div>
-                <div className="h-16 bg-muted rounded-lg"></div>
-              </div>
-              <p className="text-sm mt-4">AI is finding the best meeting times...</p>
-            </div>
-          ) : overlappingSlots.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
-              <p className="font-medium">No more slots available today</p>
-              <p className="text-sm mt-2">
-                Please choose another date or contact them directly.
-              </p>
-            </div>
-          ) : (
-            <>
-              <p className="text-sm text-muted-foreground mb-4">
-                AI-suggested meeting times based on your mutual availability:
-              </p>
-              <div className="max-h-[400px] overflow-y-auto space-y-2 pr-2">
-                {overlappingSlots.map((slot, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="w-full justify-start h-auto py-4 px-4 hover:bg-primary hover:text-primary-foreground transition-colors"
-                  onClick={() => handleScheduleMeeting(slot)}
-                  disabled={loading}
-                >
-                    <div className="flex items-center gap-3 w-full">
-                      <div className="flex-shrink-0">
-                        <Badge variant="secondary" className="px-2 py-1">
-                          {slot.day}
-                        </Badge>
-                      </div>
-                      <div className="flex-1 text-left">
-                        <div className="font-medium">{format(slot.date, 'MMMM d, yyyy')}</div>
-                        <div className="text-sm opacity-80 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {slot.startTime} - {slot.endTime}
-                        </div>
-                        {slot.displayTime && (
-                          <div className="text-xs opacity-60 mt-1">
-                            {slot.displayTime}
-                          </div>
-                        )}
-                      </div>
+              <div className="space-y-3">
+                {loadingSlots ? (
+                  <div className="text-center py-8">
+                    <div className="animate-pulse space-y-3">
+                      <div className="h-16 bg-white/10 rounded-full"></div>
+                      <div className="h-16 bg-white/10 rounded-full"></div>
+                      <div className="h-16 bg-white/10 rounded-full"></div>
                     </div>
-                  </Button>
-                ))}
+                    <p className="text-sm mt-4 text-slate-300">AI is finding the best meeting times...</p>
+                  </div>
+                ) : overlappingSlots.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50 text-white" />
+                    <p className="font-medium text-white">No more slots available today</p>
+                    <p className="text-sm mt-2 text-slate-300">
+                      Please choose another date or contact them directly.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-slate-300 mb-4 text-center">
+                      AI-suggested meeting times based on your mutual availability
+                    </p>
+                    <div className="max-h-[400px] overflow-y-auto space-y-2 pr-2">
+                      {overlappingSlots.map((slot, index) => (
+                        <Button
+                          key={index}
+                          variant="outline"
+                          className="w-full justify-start h-auto py-4 px-4 rounded-full bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all"
+                          onClick={() => handleScheduleMeeting(slot)}
+                          disabled={loading}
+                        >
+                          <div className="flex items-center gap-3 w-full">
+                            <div className="flex-shrink-0">
+                              <Badge variant="secondary" className="px-2 py-1 rounded-full bg-white/10 text-white border-white/20">
+                                {slot.day}
+                              </Badge>
+                            </div>
+                            <div className="flex-1 text-left">
+                              <div className="font-medium text-white">{format(slot.date, 'MMMM d, yyyy')}</div>
+                              <div className="text-sm text-slate-300 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {slot.startTime} - {slot.endTime}
+                              </div>
+                              {slot.displayTime && (
+                                <div className="text-xs text-slate-400 mt-1">
+                                  {slot.displayTime}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
-            </>
-          )}
-        </div>
-      </DialogContent>
+            </div>
+          </LiquidCrystalCard>
+        </DialogPrimitive.Content>
+      </DialogPortal>
     </Dialog>
   );
 };
