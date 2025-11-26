@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { GraduationCap, Rocket, Shuffle, Calendar, Eye, Search } from "lucide-react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -289,32 +290,100 @@ const Home = () => {
   const hasResults = matches.length > 0 || featuredUsers.length > 0;
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="container mx-auto px-4 py-8">
+    <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
+      {/* Animated Background Orbs */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+            x: [-20, 20, -20]
+          }}
+          transition={{ 
+            duration: 15, 
+            repeat: Infinity, 
+            ease: "easeInOut" 
+          }}
+          className="absolute top-[10%] left-[5%] w-[600px] h-[600px] bg-cyan-500/20 rounded-full blur-[120px]"
+        />
+        
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.6, 0.3],
+            y: [20, -20, 20]
+          }}
+          transition={{ 
+            duration: 20, 
+            repeat: Infinity, 
+            ease: "easeInOut",
+            delay: 2
+          }}
+          className="absolute top-[40%] right-[10%] w-[700px] h-[700px] bg-violet-600/20 rounded-full blur-[130px]"
+        />
+        
+        <motion.div 
+          animate={{ 
+            scale: [1, 1.1, 1],
+            opacity: [0.2, 0.4, 0.2]
+          }}
+          transition={{ 
+            duration: 18, 
+            repeat: Infinity, 
+            ease: "easeInOut",
+            delay: 4
+          }}
+          className="absolute bottom-[10%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-700/15 rounded-full blur-[140px]"
+        />
+      </div>
+
+      <div className="relative z-10 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Search Section - Centered when not in search mode */}
           <div className={`mb-12 ${!isSearchMode ? 'min-h-[60vh] flex items-center justify-center' : ''}`}>
             <div className="w-full">
               <div className="text-center mb-6">
                 {/* Active Now Indicator */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg mb-4">
-                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-sm text-muted-foreground">
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50 backdrop-blur-xl border border-white/10 shadow-lg mb-4"
+                >
+                  <div className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </div>
+                  <span className="text-sm text-slate-200">
                     Active now: {featuredUsers.length}
                   </span>
-                </div>
+                </motion.div>
                 
-                <h1 className="text-3xl font-bold text-foreground mb-2">
+                <motion.h1 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-3xl font-bold text-white mb-2"
+                >
                   Find Your First Icebreak
-                </h1>
-                <p className="text-muted-foreground">
+                </motion.h1>
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-slate-300"
+                >
                   Connect with peers, mentors, and collaborators
-                </p>
+                </motion.p>
               </div>
 
               <div className="flex flex-col gap-3">
                 {/* Search Input with Button */}
-                <div className="relative">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="relative"
+                >
                   <Input
                     placeholder={typedPlaceholder}
                     value={searchQuery}
@@ -324,21 +393,26 @@ const Home = () => {
                         e.preventDefault();
                       }
                     }}
-                    className="w-full h-12 text-base placeholder:text-muted-foreground/50 pr-12 rounded-full"
+                    className="w-full h-12 text-base placeholder:text-slate-400 pr-12 rounded-full bg-slate-800/40 backdrop-blur-xl border-white/10 text-white focus:border-cyan-500/50 focus:ring-cyan-500/20"
                   />
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="absolute right-1 top-1 h-10 w-10"
+                    className="absolute right-1 top-1 h-10 w-10 text-slate-300 hover:text-white hover:bg-white/10"
                     disabled={loading}
                   >
                     <Search className="w-5 h-5" />
                   </Button>
-                </div>
+                </motion.div>
               
               {/* Category Filter Chips */}
-              <div className="flex flex-col items-center gap-2">
-                <p className="text-xs text-muted-foreground/40">Choose what you're searching for</p>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="flex flex-col items-center gap-2"
+              >
+                <p className="text-xs text-slate-400">Choose what you're searching for</p>
                 <div className="flex gap-2">
                   <ToggleGroup 
                     type="single" 
@@ -349,7 +423,7 @@ const Home = () => {
                     <ToggleGroupItem 
                       value="surprise-me" 
                       aria-label="Surprise me"
-                      className="rounded-full data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
+                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-slate-700/50 hover:border-white/20 transition-all px-3 h-8 text-sm"
                     >
                       <Shuffle className="w-3 h-3 mr-1.5" />
                       Surprise Me
@@ -357,7 +431,7 @@ const Home = () => {
                     <ToggleGroupItem 
                       value="mentoring" 
                       aria-label="Mentoring"
-                      className="rounded-full data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
+                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-slate-700/50 hover:border-white/20 transition-all px-3 h-8 text-sm"
                     >
                       <GraduationCap className="w-3 h-3 mr-1.5" />
                       Mentoring
@@ -365,14 +439,14 @@ const Home = () => {
                     <ToggleGroupItem 
                       value="co-founding" 
                       aria-label="Co-founding"
-                      className="rounded-full data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
+                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-slate-700/50 hover:border-white/20 transition-all px-3 h-8 text-sm"
                     >
                       <Rocket className="w-3 h-3 mr-1.5" />
                       Co-founding
                     </ToggleGroupItem>
                   </ToggleGroup>
                 </div>
-              </div>
+              </motion.div>
               </div>
             </div>
           </div>
@@ -380,15 +454,29 @@ const Home = () => {
           {/* STATE B: Search Results */}
           {isSearchMode && matches.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-foreground mb-2">
+              <motion.h2 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-2xl font-bold text-white mb-2"
+              >
                 Search Results
-              </h2>
-              <p className="text-muted-foreground mb-4">
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-slate-300 mb-4"
+              >
                 {matches.length} {matches.length === 1 ? 'match' : 'matches'} found
-              </p>
+              </motion.p>
               <div className="space-y-4">
-                {matches.map((match) => (
-                  <Card key={match.user_id} className="p-5">
+                {matches.map((match, index) => (
+                  <motion.div
+                    key={match.user_id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <Card className="p-5 bg-slate-800/40 backdrop-blur-xl border-white/10 hover:bg-slate-800/60 hover:border-white/20 transition-all shadow-xl">
                     <div className="flex items-start gap-3 mb-4">
                       <Avatar className="h-12 w-12">
                         <AvatarImage 
@@ -401,30 +489,30 @@ const Home = () => {
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center justify-between gap-2">
-                          <h3 className="font-semibold text-foreground text-lg">
+                          <h3 className="font-semibold text-white text-lg">
                             {formatDisplayName(match.full_name)}
                           </h3>
                           {match.match_score && (
-                            <Badge variant="default" className="shrink-0">
+                            <Badge className="shrink-0 bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0">
                               {match.match_score}% match
                             </Badge>
                           )}
                         </div>
                         {(match.studies || match.role) && (
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-slate-300">
                             {match.studies?.includes(' - ')
-                              ? match.studies.split(' - ')[1]  // Show program
+                              ? match.studies.split(' - ')[1]
                               : match.studies || match.role
                             }
                           </p>
                         )}
                         {match.studies?.includes(' - ') && (
-                          <p className="text-xs text-muted-foreground">
-                            {match.studies.split(' - ')[0]}  {/* Show study level */}
+                          <p className="text-xs text-slate-400">
+                            {match.studies.split(' - ')[0]}
                           </p>
                         )}
                         {match.role && (
-                          <Badge variant="outline" className="mt-1">
+                          <Badge variant="outline" className="mt-1 border-white/20 text-slate-200">
                             {match.role}
                           </Badge>
                         )}
@@ -432,7 +520,7 @@ const Home = () => {
                     </div>
 
                     {match.reason && (
-                      <p className="text-muted-foreground text-sm mb-3">
+                      <p className="text-slate-300 text-sm mb-3">
                         {match.reason}
                       </p>
                     )}
@@ -440,39 +528,40 @@ const Home = () => {
                     {match.tags && match.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-4">
                         {match.tags.slice(0, 5).map((tag, idx) => (
-                          <Badge key={idx} variant="secondary" className="text-xs">
+                          <Badge key={idx} className="text-xs bg-slate-700/50 text-slate-200 border-white/10 hover:bg-slate-600/50">
                             {tag}
                           </Badge>
                         ))}
                       </div>
                     )}
 
-                    <div className="flex gap-2 justify-center">
+                    <div className="flex gap-2">
                       <Button
-                        variant="outline"
                         size="sm"
-                        className="rounded-full bg-gradient-to-r from-white/5 via-white/20 to-white/5 hover:from-white/10 hover:via-white/30 hover:to-white/10 transition-all"
+                        variant="outline"
                         onClick={() => {
                           setSelectedProfileUser(match);
                           setProfileModalOpen(true);
                         }}
+                        className="flex-1 rounded-full bg-slate-700/30 backdrop-blur-sm hover:bg-slate-600/50 border-white/20 text-white"
                       >
-                        <Eye className="w-4 h-4 mr-1.5" />
+                        <Eye className="w-4 h-4 mr-2" />
                         View Profile
                       </Button>
                       <Button
                         size="sm"
-                        className="rounded-full bg-gradient-to-r from-primary/80 via-primary to-primary/80 hover:from-primary hover:via-primary/90 hover:to-primary transition-all"
                         onClick={() => {
                           setSelectedUser({ id: match.user_id, name: formatDisplayName(match.full_name) });
                           setQuickScheduleOpen(true);
                         }}
+                        className="flex-1 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0 shadow-lg shadow-cyan-500/20"
                       >
-                        <Calendar className="w-4 h-4 mr-1.5" />
+                        <Calendar className="w-4 h-4 mr-2" />
                         Meet Up
                       </Button>
                     </div>
-                  </Card>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -481,12 +570,16 @@ const Home = () => {
 
           {/* No Results Message for Search Mode */}
           {isSearchMode && !loading && matches.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg mb-2">No matches found</p>
-              <p className="text-muted-foreground text-sm">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <p className="text-slate-300 text-lg mb-2">No matches found</p>
+              <p className="text-slate-400 text-sm">
                 Try adjusting your search or filter criteria
               </p>
-            </div>
+            </motion.div>
           )}
 
         </div>
