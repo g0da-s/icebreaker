@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { BottomNav } from "@/components/BottomNav";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -543,7 +543,7 @@ const Meetings = () => {
               ) : (
                 <div className="space-y-4">
                   {incomingRequests.map((meeting) => (
-                    <Card key={meeting.id} className="p-4 bg-slate-900/30 backdrop-blur-xl border-white/20">
+                    <LiquidCrystalCard key={meeting.id} className="p-4">
                       <div className="flex items-start gap-3 mb-4">
                         <Avatar className="h-12 w-12">
                           <AvatarImage
@@ -608,7 +608,7 @@ const Meetings = () => {
                           <X className="w-4 h-4" />
                         </Button>
                       </div>
-                    </Card>
+                    </LiquidCrystalCard>
                   ))}
                 </div>
               )}
@@ -624,7 +624,7 @@ const Meetings = () => {
               ) : (
                 <div className="space-y-4">
                   {sentRequests.map((meeting) => (
-                    <Card key={meeting.id} className="p-4">
+                    <LiquidCrystalCard key={meeting.id} className="p-4">
                       <div className="flex items-start gap-3">
                         <Avatar className="h-12 w-12">
                           <AvatarImage
@@ -648,7 +648,7 @@ const Meetings = () => {
                         </div>
                         <Badge variant="outline">Awaiting Response</Badge>
                       </div>
-                    </Card>
+                    </LiquidCrystalCard>
                   ))}
                 </div>
               )}
@@ -667,7 +667,7 @@ const Meetings = () => {
             ) : (
               <div className="space-y-4">
                 {upcomingMeetings.map((meeting) => (
-                  <Card key={meeting.id} className="p-4">
+                  <LiquidCrystalCard key={meeting.id} className="p-4">
                     <div className="flex items-start gap-3 mb-3">
                       <Avatar className="h-12 w-12">
                         <AvatarImage
@@ -778,7 +778,7 @@ const Meetings = () => {
                         </div>
                       );
                     })()}
-                  </Card>
+                  </LiquidCrystalCard>
                 ))}
               </div>
             )}
@@ -797,7 +797,7 @@ const Meetings = () => {
             ) : (
               <div className="space-y-4">
                 {historyMeetings.map((meeting) => (
-                  <Card key={meeting.id} className="p-4 opacity-75 bg-slate-900/30 backdrop-blur-xl border-white/20">
+                  <LiquidCrystalCard key={meeting.id} className="p-4 opacity-75">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-12 w-12">
                         <AvatarImage
@@ -825,7 +825,7 @@ const Meetings = () => {
                         {meeting.status === 'cancelled' ? 'Cancelled' : meeting.status === 'completed' ? 'Completed' : 'Past'}
                       </Badge>
                     </div>
-                  </Card>
+                  </LiquidCrystalCard>
                 ))}
               </div>
             )}
