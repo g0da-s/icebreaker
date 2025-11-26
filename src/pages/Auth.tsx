@@ -9,6 +9,8 @@ import { Sparkles, ArrowLeft, Award } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { GlassCard } from "@/components/landing/GlassCard";
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get('mode') === 'signin' ? 'signin' : 'signup';
@@ -135,49 +137,77 @@ const Auth = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-        <Link to="/" className="absolute top-4 left-4 text-muted-foreground hover:text-foreground transition-colors">
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <motion.div 
+            animate={{ 
+              y: [0, 100, 0],
+              rotate: [0, 45, 0]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
+          />
+          
+          <motion.div 
+            animate={{ 
+              y: [0, -100, 0],
+              rotate: [0, -45, 0]
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
+          />
+          
+          <motion.div 
+            animate={{ y: [0, 50, 0] }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
+          />
+        </div>
+
+        <Link to="/" className="absolute top-4 left-4 text-white/70 hover:text-white transition-colors z-50">
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
+        
+        <GlassCard className="w-full max-w-md z-10 p-6">
+        <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
-            <div className="bg-primary/10 p-3 rounded-full">
-              <Sparkles className="w-6 h-6 text-primary" />
+            <div className="bg-cyan-500/10 p-3 rounded-full">
+              <Sparkles className="w-6 h-6 text-cyan-400" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Welcome to icebreaker.ai</CardTitle>
-          <CardDescription>Tap to crack the ice and meet someone new.</CardDescription>
-        </CardHeader>
-        <CardContent>
+          <h1 className="text-2xl font-bold text-white mb-2">Welcome to icebreaker.ai</h1>
+          <p className="text-white/60 text-sm">Tap to crack the ice and meet someone new.</p>
+        </div>
+        
+        <div>
           <Tabs defaultValue={defaultTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signup">Register</TabsTrigger>
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
+              <TabsTrigger value="signup" className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/60">Register</TabsTrigger>
+              <TabsTrigger value="signin" className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-white/60">Sign In</TabsTrigger>
             </TabsList>
 
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-firstName">First Name</Label>
-                    <Input id="signup-firstName" name="firstName" placeholder="John" className="bg-muted/30" required />
+                    <Label htmlFor="signup-firstName" className="text-white/90">First Name</Label>
+                    <Input id="signup-firstName" name="firstName" placeholder="John" className="bg-white/5 border-white/10 text-white placeholder:text-white/40" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-lastName">Last Name</Label>
-                    <Input id="signup-lastName" name="lastName" placeholder="Doe" className="bg-muted/30" required />
+                    <Label htmlFor="signup-lastName" className="text-white/90">Last Name</Label>
+                    <Input id="signup-lastName" name="lastName" placeholder="Doe" className="bg-white/5 border-white/10 text-white placeholder:text-white/40" required />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">University Email</Label>
-                  <Input id="signup-email" name="email" type="email" placeholder="your.name@stud.ism.lt" className="bg-muted/30" required />
-                  <p className="text-xs text-muted-foreground">
+                  <Label htmlFor="signup-email" className="text-white/90">University Email</Label>
+                  <Input id="signup-email" name="email" type="email" placeholder="your.name@stud.ism.lt" className="bg-white/5 border-white/10 text-white placeholder:text-white/40" required />
+                  <p className="text-xs text-white/50">
                     Enter your student, faculty, or staff email.
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input id="signup-password" name="password" type="password" placeholder="••••••••" className="bg-muted/30" required />
+                  <Label htmlFor="signup-password" className="text-white/90">Password</Label>
+                  <Input id="signup-password" name="password" type="password" placeholder="••••••••" className="bg-white/5 border-white/10 text-white placeholder:text-white/40" required />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Creating Account..." : "Create Account"}
@@ -188,12 +218,12 @@ const Auth = () => {
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
-                  <Input id="signin-email" name="email" type="email" placeholder="your.name@ism.lt" className="bg-muted/30" required />
+                  <Label htmlFor="signin-email" className="text-white/90">Email</Label>
+                  <Input id="signin-email" name="email" type="email" placeholder="your.name@ism.lt" className="bg-white/5 border-white/10 text-white placeholder:text-white/40" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <Input id="signin-password" name="password" type="password" placeholder="••••••••" className="bg-muted/30" required />
+                  <Label htmlFor="signin-password" className="text-white/90">Password</Label>
+                  <Input id="signin-password" name="password" type="password" placeholder="••••••••" className="bg-white/5 border-white/10 text-white placeholder:text-white/40" required />
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Signing In..." : "Sign In"}
@@ -201,8 +231,8 @@ const Auth = () => {
               </form>
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
+        </div>
+      </GlassCard>
     </div>
     </>;
 };
