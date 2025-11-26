@@ -113,8 +113,7 @@ const Auth = () => {
       });
     } else {
       toast({
-        title: "❄️ Breaking the ice again!",
-        description: "Welcome back to icebreaker.ai"
+        title: "Welcome Back!",
       });
       navigate("/home");
     }
