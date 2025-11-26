@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { BottomNav } from "@/components/BottomNav";
-import { Card } from "@/components/ui/card";
+import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -183,7 +183,7 @@ const Profile = () => {
 
       <div className="relative z-10 container max-w-screen-sm mx-auto px-4 pt-24 pb-6">
         {/* Profile Header */}
-        <Card className="p-6 mb-4 bg-slate-900/30 backdrop-blur-xl border-white/20">
+        <LiquidCrystalCard className="p-6 mb-4">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-4">
               {profile.avatar_url ? (
@@ -226,13 +226,13 @@ const Profile = () => {
                 </h3>
                 <p className="text-sm text-slate-300">
                   {profile.studies?.includes(' - ') 
-                    ? profile.studies.split(' - ')[1]  // Show program name
+                    ? profile.studies.split(' - ')[1]
                     : profile.studies
                   }
                 </p>
                 {profile.studies?.includes(' - ') && (
                   <p className="text-xs text-slate-400 mt-1">
-                    {profile.studies.split(' - ')[0]}  {/* Show study level */}
+                    {profile.studies.split(' - ')[0]}
                   </p>
                 )}
               </div>
@@ -300,7 +300,7 @@ const Profile = () => {
               </div>
             )}
           </div>
-        </Card>
+        </LiquidCrystalCard>
 
         {/* Settings Actions */}
         <div className="space-y-2">
