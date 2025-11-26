@@ -40,7 +40,7 @@ export function BottomNav() {
       <div className="relative bg-slate-900/30 backdrop-blur-xl border border-white/20 rounded-full shadow-2xl px-4 py-3">
         {/* Animated Bubble Indicator */}
         <motion.div
-          className="absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400/40 via-blue-500/40 to-purple-500/40 backdrop-blur-sm"
+          className="absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400/40 via-blue-500/40 to-purple-500/40 backdrop-blur-sm z-0"
           animate={{
             x: activeIndex * 56 + 16,
           }}
@@ -56,7 +56,7 @@ export function BottomNav() {
 
         {/* Trail Effect */}
         <motion.div
-          className="absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-cyan-300/20 via-blue-400/20 to-purple-400/20"
+          className="absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-cyan-300/20 via-blue-400/20 to-purple-400/20 z-0"
           animate={{
             x: activeIndex * 56 + 16,
             opacity: [0.5, 0],
