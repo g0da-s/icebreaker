@@ -210,7 +210,7 @@ const Auth = () => {
                   <Input id="signup-password" name="password" type="password" placeholder="••••••••" className="bg-white/5 border-white/10 text-white placeholder:text-white/40" required />
                 </div>
                 <Button type="submit" className="w-full rounded-full" disabled={isLoading}>
-                  {isLoading ? "Creating Account..." : "create as liquid glass"}
+                  {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
               </form>
             </TabsContent>
