@@ -16,6 +16,8 @@ import { Clock as ClockComponent } from "@/components/Clock";
 import { formatDisplayName } from "@/lib/utils";
 import { UserProfileModal } from "@/components/UserProfileModal";
 import { motion } from "framer-motion";
+import logo from "@/assets/logo.png";
+import { Link } from "react-router-dom";
 
 type Meeting = {
   id: string;
@@ -396,7 +398,15 @@ const Meetings = () => {
           />
         </div>
 
-        <div className="relative z-10 container max-w-screen-sm mx-auto px-4 py-6">
+        {/* Logo Header */}
+        <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-white/5">
+          <Link to="/" className="flex items-center gap-3">
+            <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
+            <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
+          </Link>
+        </nav>
+
+        <div className="relative z-10 container max-w-screen-sm mx-auto px-4 pt-24 pb-6">
           <p className="text-center text-slate-300">Loading meetings...</p>
         </div>
         <BottomNav />
@@ -433,10 +443,18 @@ const Meetings = () => {
         />
       </div>
 
+      {/* Logo Header */}
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-white/5">
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
+          <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
+        </Link>
+      </nav>
+
       <ClockComponent />
       <MeetingNotifications />
       
-      <div className="relative z-10 container max-w-screen-sm mx-auto px-4 py-6">
+      <div className="relative z-10 container max-w-screen-sm mx-auto px-4 pt-24 pb-6">
         <motion.h1 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -684,11 +702,16 @@ const Meetings = () => {
                               size="sm"
                               variant="outline"
                               onClick={() => {
+                                // When rescheduling, we need to pass the OTHER user's info
+                                // so the reschedule request goes to them for confirmation
+                                const otherUserId = meeting.isRequester ? meeting.recipient_id : meeting.requester_id;
+                                const otherUser = meeting.otherUser;
+                                
                                 setRescheduleModal({
                                   open: true,
-                                  recipientId: meeting.otherUser.id,
-                                  recipientName: formatDisplayName(meeting.otherUser.full_name),
-                                  recipientAvailability: meeting.otherUser.availability,
+                                  recipientId: otherUserId,
+                                  recipientName: formatDisplayName(otherUser.full_name),
+                                  recipientAvailability: otherUser.availability,
                                   meetingId: meeting.id,
                                 });
                               }}
@@ -717,16 +740,17 @@ const Meetings = () => {
           {/* History Tab */}
           <TabsContent value="history">
             {historyMeetings.length === 0 ? (
-              <div className="text-center py-12">
-                <HistoryIcon className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">
-                  No meeting history yet.
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <HistoryIcon className="w-16 h-16 text-slate-400 mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold text-white mb-2">No Meeting History Yet</h3>
+                <p className="text-sm text-slate-400 max-w-md">
+                  Your past meetings will appear here. Start connecting with others to build your meeting history!
                 </p>
               </div>
             ) : (
               <div className="space-y-4">
                 {historyMeetings.map((meeting) => (
-                  <Card key={meeting.id} className="p-4 opacity-75">
+                  <Card key={meeting.id} className="p-4 opacity-75 bg-slate-900/30 backdrop-blur-xl border-white/20">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-12 w-12">
                         <AvatarImage

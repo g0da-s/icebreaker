@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { GraduationCap, Rocket, Shuffle, Calendar, Eye, Search } from "lucide-react";
 import { motion } from "framer-motion";
@@ -14,6 +14,7 @@ import { QuickScheduleModal } from "@/components/QuickScheduleModal";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { UserProfileModal } from "@/components/UserProfileModal";
 import { formatDisplayName } from "@/lib/utils";
+import logo from "@/assets/logo.png";
 
 interface Match {
   user_id: string;
@@ -390,7 +391,15 @@ const Home = () => {
         />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8">
+      {/* Logo Header */}
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-white/5">
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
+          <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
+        </Link>
+      </nav>
+
+      <div className="relative z-10 container mx-auto px-4 pt-24 pb-8">
         <div className="max-w-4xl mx-auto">
           {/* Search Section - Centered when not in search mode */}
           <div className="mb-12 min-h-[60vh] flex items-center justify-center">

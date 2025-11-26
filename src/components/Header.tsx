@@ -23,7 +23,7 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
-          <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg" />
+          <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
           <span className="font-bold text-xl text-foreground">icebreaker.ai</span>
         </Link>
 

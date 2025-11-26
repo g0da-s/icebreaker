@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { LogOut, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import logo from "@/assets/logo.png";
 
 const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -172,7 +173,15 @@ const Profile = () => {
         />
       </div>
 
-      <div className="relative z-10 container max-w-screen-sm mx-auto px-4 py-6">
+      {/* Logo Header */}
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-white/5">
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
+          <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
+        </Link>
+      </nav>
+
+      <div className="relative z-10 container max-w-screen-sm mx-auto px-4 pt-24 pb-6">
         {/* Profile Header */}
         <Card className="p-6 mb-4 bg-slate-900/30 backdrop-blur-xl border-white/20">
           <div className="flex items-start justify-between mb-4">
