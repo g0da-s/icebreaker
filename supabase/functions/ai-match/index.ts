@@ -94,10 +94,13 @@ Please analyze and return the top 3-5 best matches as a JSON array. Each match M
 - match_score (0-100, as a number)
 - reason (why they match - keep it brief, 1-2 sentences)
 
-CRITICAL: Use the exact user_index number (0, 1, 2, etc.) from the list above, NOT the user's name or ID.
+CRITICAL INSTRUCTIONS:
+- Use the exact user_index number (0, 1, 2, etc.) from the list above
+- In the reason text, ALWAYS refer to the matched person as "This user" instead of using their actual name
+- Never include the person's name in the reason description
 
 Return ONLY valid JSON array, no markdown or explanation. Example format:
-[{"user_index": 0, "match_score": 95, "reason": "Great match because..."}]`;
+[{"user_index": 0, "match_score": 95, "reason": "This user's interest in startups directly aligns with the goal of finding a co-founder."}]`;
 
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -139,10 +142,22 @@ Return ONLY valid JSON array, no markdown or explanation. Example format:
       const profile = profilesMap.get(user.user_id);
       const earliestAvailable = getEarliestAvailability(user.user_id);
       
+      // Sanitize reason to replace any names with "This user"
+      let sanitizedReason = match.reason || '';
+      if (profile?.full_name) {
+        const nameParts = profile.full_name.split(' ');
+        nameParts.forEach((part: string) => {
+          if (part.length > 2) {
+            const regex = new RegExp(part, 'gi');
+            sanitizedReason = sanitizedReason.replace(regex, 'This user');
+          }
+        });
+      }
+      
       return {
         user_id: user.user_id,
         match_score: match.match_score,
-        reason: match.reason,
+        reason: sanitizedReason,
         full_name: profile?.full_name || 'Unknown',
         email: profile?.email || '',
         studies: profile?.studies || null,
