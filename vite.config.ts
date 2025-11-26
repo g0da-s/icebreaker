@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'ISM Connect',
-        short_name: 'ISM Connect',
+        name: 'Icebreaker - AI Powered Networking',
+        short_name: 'Icebreaker',
         description: 'AI-powered networking for ISM University students',
         theme_color: '#0ea5e9',
         background_color: '#f0f4f8',
