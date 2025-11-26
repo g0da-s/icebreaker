@@ -2,9 +2,10 @@ import { Dialog, DialogPortal, DialogOverlay, DialogClose } from "@/components/u
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, X } from "lucide-react";
+import { Calendar, X, ChevronRight } from "lucide-react";
 import { formatDisplayName } from "@/lib/utils";
 import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
+import { GlassCard } from "@/components/landing/GlassCard";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 interface UserProfileModalProps {
@@ -48,9 +49,9 @@ export const UserProfileModal = ({
               <span className="sr-only">Close</span>
             </DialogClose>
             <div className="space-y-6 p-6">
-              {/* Profile Header */}
-              <div className="flex flex-col items-center text-center pt-4">
-                <Avatar className="h-24 w-24 mb-4">
+              {/* Centered Avatar Section */}
+              <div className="flex flex-col items-center">
+                <Avatar className="h-24 w-24 mb-4 border-4 border-white shadow-xl">
                   <AvatarImage 
                     src={user.avatar_url || undefined} 
                     alt={user.full_name} 
@@ -59,36 +60,53 @@ export const UserProfileModal = ({
                     {user.full_name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
-                <h2 className="text-2xl font-bold text-white mb-1">
+                
+                {/* Name - Smaller */}
+                <h2 className="text-xl font-bold text-white mb-2">
                   {formatDisplayName(user.full_name)}
                 </h2>
-                <p className="text-slate-300 mb-2">
-                  {user.studies?.includes(' - ') 
-                    ? user.studies.split(' - ')[1]
-                    : user.studies
-                  }
-                </p>
-                {user.studies?.includes(' - ') && (
-                  <p className="text-sm text-slate-300 mb-2">
-                    {user.studies.split(' - ')[0]}
-                  </p>
+                
+                {/* Role Badge under name */}
+                {user.role && (
+                  <Badge className="mb-4 bg-white/10 text-white border-white/20 px-3 py-1">
+                    {user.role}
+                  </Badge>
                 )}
-                <Badge variant="secondary" className="bg-white/10 text-white border-white/20">{user.role}</Badge>
               </div>
 
-              {/* Bio */}
-              {user.bio && (
-                <div>
-                  <h3 className="text-sm font-semibold text-white mb-2">
-                    Bio
-                  </h3>
-                  <p className="text-sm text-slate-300 leading-relaxed">
-                    {user.bio}
-                  </p>
-                </div>
-              )}
+              {/* Content Sections Grid */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                {/* Studies Section */}
+                {user.studies && (
+                  <GlassCard className="p-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="text-xs font-bold text-white">Studies</h3>
+                      <ChevronRight className="w-3 h-3 text-slate-400" />
+                    </div>
+                    <p className="text-xs text-slate-300 line-clamp-2">
+                      {user.studies?.includes(' - ')
+                        ? user.studies.split(' - ')[1]
+                        : user.studies
+                      }
+                    </p>
+                  </GlassCard>
+                )}
 
-              {/* Interests */}
+                {/* Bio Section */}
+                {user.bio && (
+                  <GlassCard className="p-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="text-xs font-bold text-white">About</h3>
+                      <ChevronRight className="w-3 h-3 text-slate-400" />
+                    </div>
+                    <p className="text-xs text-slate-300 line-clamp-2">
+                      {user.bio}
+                    </p>
+                  </GlassCard>
+                )}
+              </div>
+
+              {/* Interests Section */}
               {user.tags.filter(tag => CREATIVE_INTERESTS.includes(tag)).length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-white mb-2">
@@ -106,7 +124,7 @@ export const UserProfileModal = ({
                 </div>
               )}
 
-              {/* Skills */}
+              {/* Skills Section */}
               {user.tags.filter(tag => LIFESTYLE_INTERESTS.includes(tag)).length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-white mb-2">
@@ -128,7 +146,7 @@ export const UserProfileModal = ({
               {onScheduleMeeting && (
                 <Button 
                   size="lg" 
-                  className="w-full h-12"
+                  className="w-full h-12 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0 shadow-lg shadow-cyan-500/20"
                   onClick={onScheduleMeeting}
                 >
                   <Calendar className="w-5 h-5 mr-2" />
