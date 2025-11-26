@@ -646,7 +646,7 @@ const Meetings = () => {
                             {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d')} at {format(new Date(meeting.scheduled_at), 'h:mm a')}
                           </p>
                         </div>
-                        <Badge variant="outline">Awaiting Response</Badge>
+                        <Badge variant="outline" className="text-slate-300">Awaiting Response</Badge>
                       </div>
                     </LiquidCrystalCard>
                   ))}
