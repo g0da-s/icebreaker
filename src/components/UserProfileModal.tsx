@@ -37,19 +37,8 @@ export const UserProfileModal = ({
 }: UserProfileModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4"
-            onClick={() => onOpenChange(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </DialogHeader>
-
-        <div className="space-y-6">
+      <DialogContent className="max-w-md [&>button]:hover:text-destructive [&>button]:transition-colors">
+        <div className="space-y-6 pt-4">
           {/* Profile Header */}
           <div className="flex flex-col items-center text-center pt-4">
             <Avatar className="h-24 w-24 mb-4">
