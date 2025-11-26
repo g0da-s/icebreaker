@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { GlassCard } from "@/components/landing/GlassCard";
+import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get('mode') === 'signin' ? 'signin' : 'signup';
@@ -168,7 +168,7 @@ const Auth = () => {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         
-        <GlassCard className="w-full max-w-md z-10 p-6">
+        <LiquidCrystalCard className="w-full max-w-md z-10 p-6">
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
             <div className="bg-cyan-500/10 p-3 rounded-full">
@@ -232,7 +232,7 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
         </div>
-      </GlassCard>
+      </LiquidCrystalCard>
     </div>
     </>;
 };
