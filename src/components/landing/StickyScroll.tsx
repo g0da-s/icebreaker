@@ -1,6 +1,7 @@
 import React from 'react';
 import { Fingerprint, Sliders, Bot, Pickaxe } from 'lucide-react';
 import { GlassCard } from './GlassCard';
+import iceCube from '@/assets/ice-cube.png';
 
 const steps = [
   {
@@ -39,30 +40,40 @@ export const StickyScroll: React.FC = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-cyan-500 to-violet-500 mx-auto mt-6 rounded-full" />
         </div>
 
-        <div className="max-w-4xl mx-auto flex flex-col gap-6">
-          {steps.map((step, index) => (
-            <GlassCard key={step.id} className="p-8 flex items-center justify-between group border-white/10 hover:border-cyan-500/30 transition-all duration-300 bg-slate-900/80">
-               <div className="text-6xl font-black text-white/5 mr-8 select-none">
-                 0{index + 1}
-               </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div className="flex flex-col gap-6">
+            {steps.map((step, index) => (
+              <GlassCard key={step.id} className="p-8 flex items-center justify-between group border-white/20 hover:border-cyan-500/30 transition-all duration-300 bg-slate-900/80 rounded-lg">
+                 <div className="text-6xl font-black text-white/10 mr-8 select-none">
+                   0{index + 1}
+                 </div>
 
-               <div className="flex flex-1 items-center gap-6">
-                 <div className="hidden md:flex flex-shrink-0 w-16 h-16 rounded-2xl bg-slate-800/50 border border-white/10 items-center justify-center text-white shadow-inner shadow-white/5">
-                    {step.icon}
+                 <div className="flex flex-1 items-center gap-6">
+                   <div className="hidden md:flex flex-shrink-0 w-16 h-16 rounded-lg bg-slate-800/50 border border-white/10 items-center justify-center text-white shadow-inner shadow-white/5">
+                      {step.icon}
+                   </div>
+                   
+                   <div>
+                      <div className="flex items-center gap-3 mb-2">
+                          <span className="md:hidden text-cyan-400">{step.icon}</span>
+                          <h3 className="text-2xl font-bold text-white tracking-tight">{step.title}</h3>
+                      </div>
+                      <p className="text-slate-300 leading-relaxed font-medium">
+                        {step.description}
+                      </p>
+                   </div>
                  </div>
-                 
-                 <div>
-                    <div className="flex items-center gap-3 mb-2">
-                        <span className="md:hidden text-cyan-400">{step.icon}</span>
-                        <h3 className="text-2xl font-bold text-white tracking-tight">{step.title}</h3>
-                    </div>
-                    <p className="text-slate-300 leading-relaxed font-medium">
-                      {step.description}
-                    </p>
-                 </div>
-               </div>
-            </GlassCard>
-          ))}
+              </GlassCard>
+            ))}
+          </div>
+
+          <div className="hidden lg:flex justify-center items-center">
+            <img 
+              src={iceCube} 
+              alt="Ice Cube" 
+              className="w-96 h-96 object-contain drop-shadow-2xl"
+            />
+          </div>
         </div>
     </section>
   );
