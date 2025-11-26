@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Heart, Users, Lightbulb, Sparkles, Calendar, Eye, Search } from "lucide-react";
+import { Globe, GraduationCap, Rocket, Shuffle, Calendar, Eye, Search } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ interface Match {
   earliest_available?: string;
 }
 
-type CategoryFilter = "friendly" | "mentoring" | "co-founding" | "surprise-me";
+type CategoryFilter = "general" | "mentoring" | "co-founding" | "surprise-me";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -247,9 +247,9 @@ const Home = () => {
               setMatches(diverseMatches);
             }
           } else {
-            // Regular category filter (friendly, mentoring, co-founding)
+            // Regular category filter (general, mentoring, co-founding)
             const categoryMap: Record<CategoryFilter, string> = {
-              "friendly": "friendly",
+              "general": "general",
               "mentoring": "mentor",
               "co-founding": "co-founder",
               "surprise-me": "surprise me"
@@ -338,46 +338,49 @@ const Home = () => {
                 </div>
               
               {/* Category Filter Chips */}
-              <div className="rounded-full bg-muted/30 p-0.5 mx-auto w-fit">
-                <ToggleGroup 
-                  type="single" 
-                  value={selectedCategory || ""}
-                  onValueChange={(value) => setSelectedCategory(value as CategoryFilter || null)}
-                  className="justify-center gap-0"
-                >
-                  <ToggleGroupItem 
-                    value="friendly" 
-                    aria-label="Friendly meetings"
-                    className="rounded-l-full rounded-r-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-xs text-muted-foreground">Choose what you're searching for</p>
+                <div className="rounded-full bg-muted/30 p-0.5 w-fit">
+                  <ToggleGroup 
+                    type="single" 
+                    value={selectedCategory || ""}
+                    onValueChange={(value) => setSelectedCategory(value as CategoryFilter || null)}
+                    className="justify-center gap-0"
                   >
-                    <Heart className="w-3 h-3 mr-1.5" />
-                    Friendly
-                  </ToggleGroupItem>
-                  <ToggleGroupItem 
-                    value="mentoring" 
-                    aria-label="Mentoring"
-                    className="rounded-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
-                  >
-                    <Users className="w-3 h-3 mr-1.5" />
-                    Mentoring
-                  </ToggleGroupItem>
-                  <ToggleGroupItem 
-                    value="co-founding" 
-                    aria-label="Co-founding"
-                    className="rounded-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
-                  >
-                    <Lightbulb className="w-3 h-3 mr-1.5" />
-                    Co-founding
-                  </ToggleGroupItem>
-                  <ToggleGroupItem 
-                    value="surprise-me" 
-                    aria-label="Surprise me"
-                    className="rounded-r-full rounded-l-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
-                  >
-                    <Sparkles className="w-3 h-3 mr-1.5" />
-                    Surprise Me
-                  </ToggleGroupItem>
-                </ToggleGroup>
+                    <ToggleGroupItem 
+                      value="general" 
+                      aria-label="General meetings"
+                      className="rounded-l-full rounded-r-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
+                    >
+                      <Globe className="w-3 h-3 mr-1.5" />
+                      General
+                    </ToggleGroupItem>
+                    <ToggleGroupItem 
+                      value="mentoring" 
+                      aria-label="Mentoring"
+                      className="rounded-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
+                    >
+                      <GraduationCap className="w-3 h-3 mr-1.5" />
+                      Mentoring
+                    </ToggleGroupItem>
+                    <ToggleGroupItem 
+                      value="co-founding" 
+                      aria-label="Co-founding"
+                      className="rounded-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
+                    >
+                      <Rocket className="w-3 h-3 mr-1.5" />
+                      Co-founding
+                    </ToggleGroupItem>
+                    <ToggleGroupItem 
+                      value="surprise-me" 
+                      aria-label="Surprise me"
+                      className="rounded-r-full rounded-l-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
+                    >
+                      <Shuffle className="w-3 h-3 mr-1.5" />
+                      Surprise Me
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
               </div>
               </div>
             </div>
