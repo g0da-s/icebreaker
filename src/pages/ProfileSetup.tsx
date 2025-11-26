@@ -131,6 +131,13 @@ const ProfileSetup = () => {
         return;
       }
 
+      // Load names from user metadata for first-time users
+      const userMetadata = session.user.user_metadata;
+      if (userMetadata?.first_name && userMetadata?.last_name) {
+        setFirstName(userMetadata.first_name);
+        setLastName(userMetadata.last_name);
+      }
+
       // Fetch existing profile data
       try {
         const { data: profileData, error: profileError } = await supabase
@@ -150,9 +157,16 @@ const ProfileSetup = () => {
 
         // Pre-fill form fields with existing data
         if (profileData) {
-          const nameParts = profileData.full_name?.split(' ') || [];
-          setFirstName(nameParts[0] || '');
-          setLastName(nameParts.slice(1).join(' ') || '');
+          // Try to get names from user metadata first, then from profile
+          if (userMetadata?.first_name && userMetadata?.last_name) {
+            setFirstName(userMetadata.first_name);
+            setLastName(userMetadata.last_name);
+          } else {
+            // Fall back to parsing full_name
+            const nameParts = profileData.full_name?.split(' ') || [];
+            setFirstName(nameParts[0] || '');
+            setLastName(nameParts.slice(1).join(' ') || '');
+          }
           
           // Parse studies to extract level and program
           const studiesValue = profileData.studies || '';
