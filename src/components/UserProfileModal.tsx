@@ -37,7 +37,7 @@ export const UserProfileModal = ({
 }: UserProfileModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md [&>button]:hover:text-destructive [&>button]:transition-colors">
+      <DialogContent className="max-w-md [&>button]:hover:bg-transparent [&>button>svg]:hover:text-destructive [&>button>svg]:transition-colors">
         <div className="space-y-6 pt-4">
           {/* Profile Header */}
           <div className="flex flex-col items-center text-center pt-4">
