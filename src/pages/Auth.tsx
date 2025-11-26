@@ -147,9 +147,7 @@ const Auth = () => {
             </div>
           </div>
           <CardTitle className="text-2xl">Welcome to ICE-BREAKER.AI</CardTitle>
-          <CardDescription>
-            Connect with your fellow ISM students
-          </CardDescription>
+          <CardDescription>Tap to crack the ice and meet someone new.</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue={defaultTab} className="w-full">
