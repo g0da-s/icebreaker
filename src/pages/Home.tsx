@@ -297,7 +297,7 @@ const Home = () => {
             <div className="w-full">
               <div className="text-center mb-6">
                 {/* Active Now Indicator */}
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg mb-4">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   <span className="text-sm text-muted-foreground">
                     Active now: {featuredUsers.length}
