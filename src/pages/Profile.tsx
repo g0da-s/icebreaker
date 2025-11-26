@@ -70,34 +70,7 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
-        {/* Animated Background Orbs */}
-        <div className="fixed inset-0 z-0 pointer-events-none">
-          <motion.div 
-            animate={{ 
-              y: [0, 100, 0],
-              rotate: [0, 45, 0]
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
-          />
-          <motion.div 
-            animate={{ 
-              y: [0, -100, 0],
-              rotate: [0, -45, 0]
-            }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
-          />
-          <motion.div 
-            animate={{ 
-              y: [0, 50, 0]
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
-          />
-        </div>
-
+      <div className="relative min-h-screen bg-[#3d4654] pb-24">
         <div className="relative z-10 container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-slate-300">Loading...</p>
         </div>
@@ -108,34 +81,7 @@ const Profile = () => {
 
   if (!profile) {
     return (
-      <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
-        {/* Animated Background Orbs */}
-        <div className="fixed inset-0 z-0 pointer-events-none">
-          <motion.div 
-            animate={{ 
-              y: [0, 100, 0],
-              rotate: [0, 45, 0]
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
-          />
-          <motion.div 
-            animate={{ 
-              y: [0, -100, 0],
-              rotate: [0, -45, 0]
-            }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
-          />
-          <motion.div 
-            animate={{ 
-              y: [0, 50, 0]
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
-          />
-        </div>
-
+      <div className="relative min-h-screen bg-[#3d4654] pb-24">
         <div className="relative z-10 container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-slate-300">Profile not found</p>
         </div>
@@ -145,174 +91,150 @@ const Profile = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
-      {/* Animated Background Orbs */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <motion.div 
-          animate={{ 
-            y: [0, 100, 0],
-            rotate: [0, 45, 0]
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
-        />
-        <motion.div 
-          animate={{ 
-            y: [0, -100, 0],
-            rotate: [0, -45, 0]
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
-        />
-        <motion.div 
-          animate={{ 
-            y: [0, 50, 0]
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
-        />
-      </div>
-
+    <div className="relative min-h-screen bg-[#3d4654] pb-24">
       {/* Logo Header */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-white/5">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/30 border-b border-white/5">
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
           <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
         </Link>
       </nav>
 
-      <div className="relative z-10 container max-w-screen-sm mx-auto px-4 pt-24 pb-6">
-        {/* Profile Header */}
-        <LiquidCrystalCard className="p-6 mb-4">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-4">
+      <div className="relative z-10 container max-w-2xl mx-auto px-4 pt-24 pb-6">
+        {/* Main Profile Container */}
+        <div className="bg-slate-800 rounded-3xl border border-slate-600/50 shadow-2xl p-8">
+          {/* Header Section */}
+          <div className="flex items-start gap-4 mb-8">
+            {/* Avatar */}
+            <div className="flex-shrink-0">
               {profile.avatar_url ? (
                 <img 
                   src={profile.avatar_url} 
                   alt={profile.full_name || profile.email}
-                  className="w-16 h-16 rounded-full object-cover"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
                 />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-cyan-400">
+                <div className="w-20 h-20 rounded-full bg-slate-700 border-2 border-white flex items-center justify-center">
+                  <span className="text-2xl font-bold text-white">
                     {profile.full_name?.charAt(0) || profile.email.charAt(0)}
                   </span>
                 </div>
               )}
-              <div>
-                <h2 className="text-xl font-bold text-white">
-                  {profile.full_name || "No name"}
-                </h2>
-                <p className="text-sm text-slate-300">{profile.email}</p>
-                <Badge variant="secondary" className="mt-1 bg-slate-700/50 text-slate-200">
-                  {profile.role}
-                </Badge>
-              </div>
             </div>
-            <Button variant="ghost" size="icon" asChild className="text-white hover:bg-white/10">
+
+            {/* User Details */}
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl font-bold text-white mb-1">
+                {profile.full_name || "No name"}
+              </h2>
+              <p className="text-sm text-slate-400 mb-1">{profile.email}</p>
+              <p className="text-sm text-slate-400">{profile.role}</p>
+            </div>
+
+            {/* Edit Icon */}
+            <Button variant="ghost" size="icon" asChild className="text-white hover:bg-white/10 flex-shrink-0">
               <Link to="/edit-profile">
                 <Edit className="w-5 h-5" />
               </Link>
             </Button>
           </div>
 
-          <Separator className="my-4 bg-white/10" />
-
-          <div className="space-y-4">
-            {profile.studies && (
-              <div>
-                <h3 className="text-sm font-semibold text-white mb-2">
-                  Studies
-                </h3>
-                <p className="text-sm text-slate-300">
-                  {profile.studies?.includes(' - ') 
-                    ? profile.studies.split(' - ')[1]
-                    : profile.studies
-                  }
+          {/* Studies Section */}
+          {profile.studies && (
+            <div className="mb-8">
+              <h3 className="text-base font-bold text-white mb-3">
+                Studies
+              </h3>
+              <p className="text-sm text-slate-400 mb-1">
+                {profile.studies?.includes(' - ') 
+                  ? profile.studies.split(' - ')[1]
+                  : profile.studies
+                }
+              </p>
+              {profile.studies?.includes(' - ') && (
+                <p className="text-xs text-slate-500">
+                  {profile.studies.split(' - ')[0]}
                 </p>
-                {profile.studies?.includes(' - ') && (
-                  <p className="text-xs text-slate-400 mt-1">
-                    {profile.studies.split(' - ')[0]}
-                  </p>
-                )}
-              </div>
-            )}
+              )}
+            </div>
+          )}
 
-            {interests?.bio && (
-              <div>
-                <h3 className="text-sm font-semibold text-white mb-2">
-                  Bio
-                </h3>
-                <p className="text-sm text-slate-300">{interests.bio}</p>
-              </div>
-            )}
+          {/* Bio Section */}
+          {interests?.bio && (
+            <div className="mb-8">
+              <h3 className="text-base font-bold text-white mb-3">
+                Bio
+              </h3>
+              <p className="text-sm text-slate-400">{interests.bio}</p>
+            </div>
+          )}
 
-            {interests?.tags && interests.tags.length > 0 && (
-              <div>
-                <h3 className="text-sm font-semibold text-white mb-2">
-                  Interests & Skills
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {interests.tags.map((tag: string, index: number) => (
-                    <Badge key={index} variant="outline" className="bg-slate-700/30 text-slate-200 border-white/20">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {profile.availability && Object.keys(profile.availability).some((day: string) => profile.availability[day]?.active) && (
-              <div>
-                <h3 className="text-sm font-semibold text-white mb-2">
-                  Availability
-                </h3>
-                <div className="space-y-2">
-                  {DAY_ORDER.map((day) => {
-                    const schedule = profile.availability[day];
-                    return schedule?.active && (
-                      <div key={day} className="text-sm">
-                        <span className="capitalize font-medium text-white">{day}:</span>{" "}
-                        <span className="text-slate-300">
-                          {schedule.start} - {schedule.end}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {interests?.linkedin_url && (
-              <div>
-                <h3 className="text-sm font-semibold text-white mb-2">
-                  LinkedIn
-                </h3>
-                <Button variant="outline" size="sm" className="h-10 bg-slate-800/50 text-slate-200 border-white/20 hover:bg-slate-700/50" asChild>
-                  <a
-                    href={interests.linkedin_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+          {/* Interests & Skills Section */}
+          {interests?.tags && interests.tags.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-base font-bold text-white mb-3">
+                Interests & Skills
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {interests.tags.map((tag: string, index: number) => (
+                  <span 
+                    key={index} 
+                    className="px-4 py-2 bg-indigo-900/50 text-slate-300 text-sm rounded-full border border-indigo-500/30"
                   >
-                    View LinkedIn Profile
-                  </a>
-                </Button>
+                    {tag}
+                  </span>
+                ))}
               </div>
-            )}
-          </div>
-        </LiquidCrystalCard>
+            </div>
+          )}
 
-        {/* Settings Actions */}
-        <div className="space-y-2">
-          <Button
-            variant="outline"
-            size="lg"
-            className="w-full h-12 justify-start bg-slate-900/30 backdrop-blur-xl border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300 hover:border-red-500/50"
-            onClick={handleSignOut}
-          >
-            <LogOut className="w-5 h-5 mr-3" />
-            Sign Out
-          </Button>
+          {/* Availability Section */}
+          {profile.availability && Object.keys(profile.availability).some((day: string) => profile.availability[day]?.active) && (
+            <div className="mb-8">
+              <h3 className="text-base font-bold text-white mb-3">
+                Availability
+              </h3>
+              <div className="space-y-2">
+                {DAY_ORDER.map((day) => {
+                  const schedule = profile.availability[day];
+                  return schedule?.active && (
+                    <div key={day} className="text-sm text-slate-400">
+                      <span className="capitalize">{day}: {schedule.start} - {schedule.end}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* LinkedIn Section */}
+          {interests?.linkedin_url && (
+            <div className="mb-8">
+              <h3 className="text-base font-bold text-white mb-3">
+                LinkedIn
+              </h3>
+              <Button variant="outline" size="sm" className="h-10 bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-700" asChild>
+                <a
+                  href={interests.linkedin_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View LinkedIn Profile
+                </a>
+              </Button>
+            </div>
+          )}
+
+          {/* Footer/Action Section */}
+          <div className="pt-6 border-t border-slate-700">
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-3 text-slate-400 hover:text-slate-300 transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="text-sm font-medium">Sign Out</span>
+            </button>
+          </div>
         </div>
       </div>
 
