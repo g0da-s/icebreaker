@@ -17,7 +17,6 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AvailabilityScheduler } from "@/components/AvailabilityScheduler";
-import { LocationSelector } from "@/components/LocationSelector";
 import { CalendarAvailability } from "@/components/CalendarAvailability";
 import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
 import { AIAvailabilityEditor } from "@/components/AIAvailabilityEditor";
@@ -102,7 +101,6 @@ const EditProfile = () => {
   const [lastName, setLastName] = useState("");
   const [studyLevel, setStudyLevel] = useState("");
   const [studies, setStudies] = useState("");
-  const [location, setLocation] = useState("");
   const [bio, setBio] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   
@@ -170,8 +168,6 @@ const EditProfile = () => {
             setStudyLevel('');
             setStudies(studiesValue);
           }
-          
-          setLocation(profileData.location || '');
           
           // Set avatar
           setAvatarType(profileData.avatar_type);
@@ -281,8 +277,6 @@ const EditProfile = () => {
           profileUpdate.studies = studyLevel;
         }
       }
-      
-      if (location) profileUpdate.location = location;
       
       // Update avatar if mascot is selected
       if (selectedMascot) {
@@ -491,11 +485,6 @@ const EditProfile = () => {
                   </Select>
                 </div>
               )}
-
-              <LocationSelector
-                value={location}
-                onChange={setLocation}
-              />
 
               <div className="space-y-2">
                 <Label htmlFor="bio">Bio</Label>

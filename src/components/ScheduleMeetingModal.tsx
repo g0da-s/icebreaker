@@ -226,7 +226,12 @@ export const ScheduleMeetingModal = ({
       scheduledDateTime.setHours(hours, minutes, 0, 0);
 
       if (meetingId) {
-        // RESCHEDULE: Update existing meeting
+        // RESCHEDULE LOGIC (Ping-Pong Flow):
+        // - Update the existing meeting with new time
+        // - Set status to 'pending' so the OTHER PARTY must confirm
+        // - The proposer is automatically considered "ready" for this new time
+        // - The recipient will see this in their "Requests" tab with "Reschedule Proposed" badge
+        // - This allows unlimited back-and-forth rescheduling
         const { error } = await supabase
           .from('meetings')
           .update({
@@ -238,8 +243,8 @@ export const ScheduleMeetingModal = ({
         if (error) throw error;
 
         toast({
-          title: "Meeting Rescheduled!",
-          description: `New time proposed. Waiting for ${recipientName} to confirm.`,
+          title: "Reschedule Proposed!",
+          description: `New time sent to ${recipientName} for confirmation.`,
         });
       } else {
         // NEW MEETING: Create new meeting
