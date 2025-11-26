@@ -145,91 +145,94 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Studies Section */}
-          {profile.studies && (
-            <div className="mb-8">
-              <h3 className="text-base font-bold text-white mb-3">
-                Studies
-              </h3>
-              <p className="text-sm text-slate-400 mb-1">
-                {profile.studies?.includes(' - ') 
-                  ? profile.studies.split(' - ')[1]
-                  : profile.studies
-                }
-              </p>
-              {profile.studies?.includes(' - ') && (
-                <p className="text-xs text-slate-500">
-                  {profile.studies.split(' - ')[0]}
+          {/* Content Sections Grid - Side by Side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* About Section */}
+            {interests?.bio && (
+              <GlassCard className="p-6" hoverEffect>
+                <h3 className="text-base font-bold text-white mb-3">
+                  About
+                </h3>
+                <p className="text-sm text-slate-300">{interests.bio}</p>
+              </GlassCard>
+            )}
+
+            {/* Studies Section */}
+            {profile.studies && (
+              <GlassCard className="p-6" hoverEffect>
+                <h3 className="text-base font-bold text-white mb-3">
+                  Studies
+                </h3>
+                <p className="text-sm text-slate-300 mb-1">
+                  {profile.studies?.includes(' - ') 
+                    ? profile.studies.split(' - ')[1]
+                    : profile.studies
+                  }
                 </p>
-              )}
-            </div>
-          )}
+                {profile.studies?.includes(' - ') && (
+                  <p className="text-xs text-slate-400">
+                    {profile.studies.split(' - ')[0]}
+                  </p>
+                )}
+              </GlassCard>
+            )}
 
-          {/* Bio Section */}
-          {interests?.bio && (
-            <div className="mb-8">
-              <h3 className="text-base font-bold text-white mb-3">
-                Bio
-              </h3>
-              <p className="text-sm text-slate-400">{interests.bio}</p>
-            </div>
-          )}
+            {/* Interests & Skills Section */}
+            {interests?.tags && interests.tags.length > 0 && (
+              <GlassCard className="p-6" hoverEffect>
+                <h3 className="text-base font-bold text-white mb-3">
+                  Interests & Skills
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {interests.tags.map((tag: string, index: number) => (
+                    <span 
+                      key={index} 
+                      className="px-4 py-2 bg-indigo-900/50 text-slate-300 text-sm rounded-full border border-indigo-500/30"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </GlassCard>
+            )}
 
-          {/* Interests & Skills Section */}
-          {interests?.tags && interests.tags.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-base font-bold text-white mb-3">
-                Interests & Skills
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {interests.tags.map((tag: string, index: number) => (
-                  <span 
-                    key={index} 
-                    className="px-4 py-2 bg-indigo-900/50 text-slate-300 text-sm rounded-full border border-indigo-500/30"
+            {/* Availability Section */}
+            {profile.availability && Object.keys(profile.availability).some((day: string) => profile.availability[day]?.active) && (
+              <GlassCard className="p-6" hoverEffect>
+                <h3 className="text-base font-bold text-white mb-3">
+                  Availability
+                </h3>
+                <div className="space-y-2">
+                  {DAY_ORDER.map((day) => {
+                    const schedule = profile.availability[day];
+                    return schedule?.active && (
+                      <div key={day} className="text-sm text-slate-300">
+                        <span className="capitalize">{day}: {schedule.start} - {schedule.end}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </GlassCard>
+            )}
+
+            {/* LinkedIn Section */}
+            {interests?.linkedin_url && (
+              <GlassCard className="p-6" hoverEffect>
+                <h3 className="text-base font-bold text-white mb-3">
+                  LinkedIn
+                </h3>
+                <Button variant="outline" size="sm" className="h-10 bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-700" asChild>
+                  <a
+                    href={interests.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Availability Section */}
-          {profile.availability && Object.keys(profile.availability).some((day: string) => profile.availability[day]?.active) && (
-            <div className="mb-8">
-              <h3 className="text-base font-bold text-white mb-3">
-                Availability
-              </h3>
-              <div className="space-y-2">
-                {DAY_ORDER.map((day) => {
-                  const schedule = profile.availability[day];
-                  return schedule?.active && (
-                    <div key={day} className="text-sm text-slate-400">
-                      <span className="capitalize">{day}: {schedule.start} - {schedule.end}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* LinkedIn Section */}
-          {interests?.linkedin_url && (
-            <div className="mb-8">
-              <h3 className="text-base font-bold text-white mb-3">
-                LinkedIn
-              </h3>
-              <Button variant="outline" size="sm" className="h-10 bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-slate-700" asChild>
-                <a
-                  href={interests.linkedin_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View LinkedIn Profile
-                </a>
-              </Button>
-            </div>
-          )}
+                    View LinkedIn Profile
+                  </a>
+                </Button>
+              </GlassCard>
+            )}
+          </div>
 
           {/* Footer/Action Section */}
           <div className="pt-6 border-t border-slate-700">
