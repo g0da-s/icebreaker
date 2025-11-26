@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { X, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { differenceInMinutes, format } from "date-fns";
+import { formatDisplayName } from "@/lib/utils";
 
 type Notification = {
   id: string;
@@ -58,7 +59,7 @@ export const MeetingNotifications = () => {
               id: notifId,
               meeting_id: meeting.id,
               type: "cancelled",
-              other_user_name: profile?.full_name || 'Someone',
+              other_user_name: formatDisplayName(profile?.full_name) || 'Someone',
               created_at: meeting.updated_at,
             });
           }
@@ -94,7 +95,7 @@ export const MeetingNotifications = () => {
               id: notifId,
               meeting_id: meeting.id,
               type: "confirmed",
-              other_user_name: profile?.full_name || 'Someone',
+              other_user_name: formatDisplayName(profile?.full_name) || 'Someone',
               scheduled_at: meeting.scheduled_at,
               created_at: meeting.updated_at,
             });
@@ -134,7 +135,7 @@ export const MeetingNotifications = () => {
                 id: notifId,
                 meeting_id: meeting.id,
                 type: "reminder",
-                other_user_name: profile?.full_name || 'Someone',
+                other_user_name: formatDisplayName(profile?.full_name) || 'Someone',
                 scheduled_at: meeting.scheduled_at,
                 created_at: new Date().toISOString(),
               });
