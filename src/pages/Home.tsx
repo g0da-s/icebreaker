@@ -43,6 +43,23 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState<{ id: string; name: string } | null>(null);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [selectedProfileUser, setSelectedProfileUser] = useState<Match | null>(null);
+  const [typedPlaceholder, setTypedPlaceholder] = useState("");
+  
+  const fullPlaceholder = "Tell us what you're looking for...";
+
+  useEffect(() => {
+    let currentIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= fullPlaceholder.length) {
+        setTypedPlaceholder(fullPlaceholder.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 50);
+
+    return () => clearInterval(typingInterval);
+  }, []);
 
   useEffect(() => {
     const checkWelcomeAchievement = async () => {
@@ -300,7 +317,7 @@ const Home = () => {
                 {/* Search Input with Button */}
                 <div className="relative">
                   <Input
-                    placeholder="Tell us what you're looking for..."
+                    placeholder={typedPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => {
@@ -308,7 +325,7 @@ const Home = () => {
                         e.preventDefault();
                       }
                     }}
-                    className="w-full h-12 text-base placeholder:text-muted-foreground/50 pr-12"
+                    className="w-full h-12 text-base placeholder:text-muted-foreground/50 pr-12 rounded-full"
                   />
                   <Button
                     size="icon"
@@ -321,7 +338,7 @@ const Home = () => {
                 </div>
               
               {/* Category Filter Chips */}
-              <div className="rounded-full bg-muted/30 p-1 mx-auto w-fit">
+              <div className="rounded-full bg-muted/30 p-0.5 mx-auto w-fit">
                 <ToggleGroup 
                   type="single" 
                   value={selectedCategory || ""}
@@ -331,33 +348,33 @@ const Home = () => {
                   <ToggleGroupItem 
                     value="friendly" 
                     aria-label="Friendly meetings"
-                    className="rounded-l-full rounded-r-none border-r border-border/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-5"
+                    className="rounded-l-full rounded-r-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
                   >
-                    <Heart className="w-4 h-4 mr-2" />
+                    <Heart className="w-3 h-3 mr-1.5" />
                     Friendly
                   </ToggleGroupItem>
                   <ToggleGroupItem 
                     value="mentoring" 
                     aria-label="Mentoring"
-                    className="rounded-none border-r border-border/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-5"
+                    className="rounded-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
                   >
-                    <Users className="w-4 h-4 mr-2" />
+                    <Users className="w-3 h-3 mr-1.5" />
                     Mentoring
                   </ToggleGroupItem>
                   <ToggleGroupItem 
                     value="co-founding" 
                     aria-label="Co-founding"
-                    className="rounded-none border-r border-border/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-5"
+                    className="rounded-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
                   >
-                    <Lightbulb className="w-4 h-4 mr-2" />
+                    <Lightbulb className="w-3 h-3 mr-1.5" />
                     Co-founding
                   </ToggleGroupItem>
                   <ToggleGroupItem 
                     value="surprise-me" 
                     aria-label="Surprise me"
-                    className="rounded-r-full rounded-l-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-5"
+                    className="rounded-r-full rounded-l-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-3 h-8 text-sm"
                   >
-                    <Sparkles className="w-4 h-4 mr-2" />
+                    <Sparkles className="w-3 h-3 mr-1.5" />
                     Surprise Me
                   </ToggleGroupItem>
                 </ToggleGroup>
