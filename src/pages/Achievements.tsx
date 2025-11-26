@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BottomNav } from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface AchievementDefinition {
   id: string;
@@ -199,27 +200,84 @@ export default function Achievements() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center pb-24">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center pb-24 overflow-hidden">
+        {/* Animated Background Orbs */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <motion.div 
+            animate={{ 
+              y: [0, 100, 0],
+              rotate: [0, 45, 0]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
+          />
+          <motion.div 
+            animate={{ 
+              y: [0, -100, 0],
+              rotate: [0, -45, 0]
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
+          />
+          <motion.div 
+            animate={{ 
+              y: [0, 50, 0]
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
+          />
+        </div>
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-400 relative z-10" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="container max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Achievements</h1>
-          <p className="text-muted-foreground">
+    <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
+      {/* Animated Background Orbs */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <motion.div 
+          animate={{ 
+            y: [0, 100, 0],
+            rotate: [0, 45, 0]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
+        />
+        <motion.div 
+          animate={{ 
+            y: [0, -100, 0],
+            rotate: [0, -45, 0]
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
+        />
+        <motion.div 
+          animate={{ 
+            y: [0, 50, 0]
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
+        />
+      </div>
+
+      <div className="relative z-10 container max-w-6xl mx-auto px-4 py-8">
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className="text-4xl font-bold text-white mb-2">Achievements</h1>
+          <p className="text-slate-300">
             Track your progress and unlock badges as you connect with others
           </p>
-        </div>
+        </motion.div>
 
-        <Card className="mb-8 border-primary/20 bg-primary/5">
+        <Card className="mb-8 bg-slate-900/30 backdrop-blur-xl border-cyan-500/30">
           <CardContent className="pt-6">
             <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-1">Successful Meetings</p>
-              <p className="text-4xl font-bold text-primary">{completedMeetings}</p>
+              <p className="text-sm text-slate-300 mb-1">Successful Meetings</p>
+              <p className="text-4xl font-bold text-cyan-400">{completedMeetings}</p>
             </div>
           </CardContent>
         </Card>
@@ -230,8 +288,8 @@ export default function Achievements() {
               key={achievement.id}
               className={`transition-all ${
                 achievement.isUnlocked
-                  ? "border-primary/50 shadow-lg"
-                  : "border-muted opacity-75"
+                  ? "bg-slate-900/40 backdrop-blur-xl border-cyan-500/50 shadow-lg shadow-cyan-500/20"
+                  : "bg-slate-900/20 backdrop-blur-xl border-white/10 opacity-75"
               }`}
             >
               <CardHeader className="text-center">
@@ -246,10 +304,10 @@ export default function Achievements() {
                     />
                   </div>
                 </div>
-                <CardTitle className="text-xl">
+                <CardTitle className="text-xl text-white">
                   {achievement.isUnlocked ? achievement.title : "???"}
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-slate-300">
                   {achievement.isUnlocked
                     ? achievement.description
                     : "Keep meeting to unlock"}
@@ -257,7 +315,7 @@ export default function Achievements() {
               </CardHeader>
               <CardContent className="text-center">
                 {achievement.isUnlocked && achievement.unlockedAt && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-slate-400">
                     Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
                   </p>
                 )}

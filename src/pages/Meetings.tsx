@@ -15,6 +15,7 @@ import { MeetingCountdown } from "@/components/MeetingCountdown";
 import { Clock as ClockComponent } from "@/components/Clock";
 import { formatDisplayName } from "@/lib/utils";
 import { UserProfileModal } from "@/components/UserProfileModal";
+import { motion } from "framer-motion";
 
 type Meeting = {
   id: string;
@@ -359,9 +360,36 @@ const Meetings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background pb-24">
-        <div className="container max-w-screen-sm mx-auto px-4 py-6">
-          <p className="text-center text-muted-foreground">Loading meetings...</p>
+      <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
+        {/* Animated Background Orbs */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <motion.div 
+            animate={{ 
+              y: [0, 100, 0],
+              rotate: [0, 45, 0]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
+          />
+          <motion.div 
+            animate={{ 
+              y: [0, -100, 0],
+              rotate: [0, -45, 0]
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
+          />
+          <motion.div 
+            animate={{ 
+              y: [0, 50, 0]
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
+          />
+        </div>
+
+        <div className="relative z-10 container max-w-screen-sm mx-auto px-4 py-6">
+          <p className="text-center text-slate-300">Loading meetings...</p>
         </div>
         <BottomNav />
       </div>
@@ -369,16 +397,49 @@ const Meetings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
+      {/* Animated Background Orbs */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <motion.div 
+          animate={{ 
+            y: [0, 100, 0],
+            rotate: [0, 45, 0]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
+        />
+        <motion.div 
+          animate={{ 
+            y: [0, -100, 0],
+            rotate: [0, -45, 0]
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
+        />
+        <motion.div 
+          animate={{ 
+            y: [0, 50, 0]
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
+        />
+      </div>
+
       <ClockComponent />
       <MeetingNotifications />
       
-      <div className="container max-w-screen-sm mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold text-foreground mb-6">Meetings</h1>
+      <div className="relative z-10 container max-w-screen-sm mx-auto px-4 py-6">
+        <motion.h1 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-2xl font-bold text-white mb-6"
+        >
+          Meetings
+        </motion.h1>
 
         <Tabs defaultValue="requests" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="requests" className="relative">
+          <TabsList className="grid w-full grid-cols-3 mb-6 bg-slate-900/30 backdrop-blur-xl border border-white/20">
+            <TabsTrigger value="requests" className="relative data-[state=active]:bg-white/10 data-[state=active]:text-white text-slate-300">
               <Inbox className="w-4 h-4 mr-2" />
               Requests
               {incomingRequests.length > 0 && (
@@ -387,11 +448,11 @@ const Meetings = () => {
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="upcoming">
+            <TabsTrigger value="upcoming" className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-slate-300">
               <CalendarDays className="w-4 h-4 mr-2" />
               Upcoming
             </TabsTrigger>
-            <TabsTrigger value="history">
+            <TabsTrigger value="history" className="data-[state=active]:bg-white/10 data-[state=active]:text-white text-slate-300">
               <HistoryIcon className="w-4 h-4 mr-2" />
               History
             </TabsTrigger>
@@ -401,15 +462,15 @@ const Meetings = () => {
           <TabsContent value="requests" className="space-y-6">
             {/* Incoming Requests */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Incoming Requests</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white">Incoming Requests</h3>
               {incomingRequests.length === 0 ? (
-                <p className="text-center py-8 text-muted-foreground">
+                <p className="text-center py-8 text-slate-300">
                   No pending requests
                 </p>
               ) : (
                 <div className="space-y-4">
                   {incomingRequests.map((meeting) => (
-                    <Card key={meeting.id} className="p-4">
+                    <Card key={meeting.id} className="p-4 bg-slate-900/30 backdrop-blur-xl border-white/20">
                       <div className="flex items-start gap-3 mb-4">
                         <Avatar className="h-12 w-12">
                           <AvatarImage
@@ -422,26 +483,26 @@ const Meetings = () => {
                         </Avatar>
                         <div className="flex-1">
                           <h3 
-                            className="font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+                            className="font-semibold text-white cursor-pointer hover:text-cyan-400 transition-colors"
                             onClick={() => handleViewProfile(meeting.otherUser.id)}
                           >
                             {formatDisplayName(meeting.otherUser.full_name)}
                           </h3>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-sm text-slate-300 mt-1">
                             wants to meet with you
                           </p>
                         </div>
-                        <Badge variant="secondary">Pending</Badge>
+                        <Badge variant="secondary" className="bg-slate-700/50 text-slate-200">Pending</Badge>
                       </div>
 
-                      <div className="bg-muted/30 rounded-lg p-3 mb-4">
+                      <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-3 mb-4 border border-white/10">
                         <div className="flex items-center gap-2 text-sm">
-                          <Clock className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-medium">
+                          <Clock className="w-4 h-4 text-slate-300" />
+                          <span className="font-medium text-white">
                             {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d, yyyy')}
                           </span>
                         </div>
-                        <div className="text-sm text-muted-foreground mt-1 ml-6">
+                        <div className="text-sm text-slate-300 mt-1 ml-6">
                           {format(new Date(meeting.scheduled_at), 'h:mm a')}
                         </div>
                       </div>
