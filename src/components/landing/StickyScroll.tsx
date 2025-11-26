@@ -1,5 +1,5 @@
 import React from 'react';
-import { Fingerprint, Sliders, Bot, MessageCircleHeart } from 'lucide-react';
+import { Fingerprint, Sliders, Bot, Pickaxe } from 'lucide-react';
 import { GlassCard } from './GlassCard';
 
 const steps = [
@@ -25,7 +25,7 @@ const steps = [
     id: 3,
     title: "Break the Ice",
     description: "You show up. We handle the rest. Your app unlocks custom conversation starters generated for your connection.",
-    icon: <MessageCircleHeart className="w-8 h-8 text-pink-400" />
+    icon: <Pickaxe className="w-8 h-8 text-pink-400" />
   }
 ];
 
