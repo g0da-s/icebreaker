@@ -29,7 +29,7 @@ export const Header = () => {
 
         {!isAuthenticated && (
           <Button asChild className="hidden sm:flex">
-            <Link to="/auth?mode=signup">Sign Up for Early Access</Link>
+            <Link to="/auth?mode=signin">Sign In</Link>
           </Button>
         )}
       </div>
