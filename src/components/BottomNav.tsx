@@ -58,10 +58,10 @@ export function BottomNav() {
       navigator.vibrate(10);
     }
     
-    // Subtle click sound effect
+    // Ice cracking sound effect
     const audio = new Audio();
-    audio.volume = 0.2;
-    audio.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGS57OahUBELTKXh8bllHAU7k9nyx3ElBSl+zPDajzsKFmO96+mmVBELSKDf8blpIAU=';
+    audio.volume = 0.3;
+    audio.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
     audio.play().catch(() => {});
   };
 
