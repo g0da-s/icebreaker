@@ -461,7 +461,7 @@ const Home = () => {
                     <ToggleGroupItem 
                       value="surprise-me" 
                       aria-label="Surprise me"
-                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-slate-700/50 hover:border-white/20 transition-all px-3 h-8 text-sm"
+                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/30 hover:text-white transition-all px-3 h-8 text-sm"
                     >
                       <Shuffle className="w-3 h-3 mr-1.5" />
                       Surprise Me
@@ -469,7 +469,7 @@ const Home = () => {
                     <ToggleGroupItem 
                       value="mentoring" 
                       aria-label="Mentoring"
-                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-slate-700/50 hover:border-white/20 transition-all px-3 h-8 text-sm"
+                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/30 hover:text-white transition-all px-3 h-8 text-sm"
                     >
                       <GraduationCap className="w-3 h-3 mr-1.5" />
                       Mentoring
@@ -477,7 +477,7 @@ const Home = () => {
                     <ToggleGroupItem 
                       value="co-founding" 
                       aria-label="Co-founding"
-                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-slate-700/50 hover:border-white/20 transition-all px-3 h-8 text-sm"
+                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/30 hover:text-white transition-all px-3 h-8 text-sm"
                     >
                       <Rocket className="w-3 h-3 mr-1.5" />
                       Co-founding
