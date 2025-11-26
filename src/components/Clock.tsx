@@ -14,7 +14,7 @@ export const Clock = () => {
   }, []);
 
   return (
-    <div className="fixed top-4 right-4 z-50 bg-slate-900/40 backdrop-blur-xl border-2 border-white/20 rounded-2xl px-4 py-3 shadow-2xl">
+    <div className="fixed top-20 right-4 z-50 bg-slate-900/40 backdrop-blur-xl border-2 border-white/20 rounded-2xl px-4 py-3 shadow-2xl">
       <div className="flex items-center gap-3">
         <div className="relative">
           <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
