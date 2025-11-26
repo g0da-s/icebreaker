@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { LogOut, Edit, ChevronRight } from "lucide-react";
+import { LogOut, Edit, ChevronRight, X } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import logo from "@/assets/logo.png";
