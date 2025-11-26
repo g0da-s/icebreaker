@@ -229,15 +229,6 @@ const Profile = () => {
               </div>
             )}
 
-            {profile.location && (
-              <div>
-                <h3 className="text-sm font-semibold text-white mb-2">
-                  Location
-                </h3>
-                <p className="text-sm text-slate-300">{profile.location}</p>
-              </div>
-            )}
-
             {interests?.bio && (
               <div>
                 <h3 className="text-sm font-semibold text-white mb-2">

@@ -24,7 +24,6 @@ import { Switch } from "@/components/ui/switch";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { LocationSelector } from "@/components/LocationSelector";
 import { CalendarAvailability } from "@/components/CalendarAvailability";
 import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
 import {
@@ -96,7 +95,6 @@ const ProfileSetup = () => {
   const [lastName, setLastName] = useState("");
   const [studyLevel, setStudyLevel] = useState("");
   const [studies, setStudies] = useState("");
-  const [location, setLocation] = useState("");
   const [avatarType, setAvatarType] = useState<"upload" | "mascot">("mascot");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [selectedMascot, setSelectedMascot] = useState("");
@@ -193,8 +191,6 @@ const ProfileSetup = () => {
             setStudies(studiesValue);
           }
           
-          setLocation(profileData.location || '');
-          
           if (profileData.avatar_type === 'upload' || profileData.avatar_type === 'mascot') {
             setAvatarType(profileData.avatar_type);
           }
@@ -275,7 +271,6 @@ const ProfileSetup = () => {
       const profileData = {
         name: `${firstName} ${lastName}`,
         studies,
-        location,
         answers: {
           question1: chatAnswers[0],
           question2: chatAnswers[1],
@@ -357,7 +352,7 @@ const ProfileSetup = () => {
 
   const handleNext = async () => {
     if (step === 1) {
-      if (!firstName || !lastName || !studyLevel || !location) {
+      if (!firstName || !lastName || !studyLevel) {
         toast({
           title: "Complete all fields",
           description: "Please fill in all required fields",
@@ -391,7 +386,6 @@ const ProfileSetup = () => {
             .update({
               full_name: `${firstName} ${lastName}`,
               studies: studyLevel === "Faculty Member" ? studyLevel : `${studyLevel} - ${studies}`,
-              location: location,
               avatar_type: avatarType,
               avatar_url: avatarType === "mascot" ? selectedMascot : null,
             })
@@ -739,11 +733,6 @@ const ProfileSetup = () => {
                   </Select>
                 </div>
               )}
-
-              <LocationSelector
-                value={location}
-                onChange={setLocation}
-              />
 
               <div className="space-y-4">
                 <Label>Choose Mascot *</Label>

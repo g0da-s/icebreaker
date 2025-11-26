@@ -27,7 +27,6 @@ type UserProfileData = {
   full_name: string;
   studies: string;
   role: string;
-  location: string;
   avatar_url: string | null;
   avatar_type: string | null;
   availability: any;
@@ -72,7 +71,6 @@ const UserProfile = () => {
           full_name: profileData.full_name || 'No Name',
           studies: profileData.studies || 'Not specified',
           role: profileData.role,
-          location: profileData.location || 'Not specified',
           avatar_url: profileData.avatar_url,
           avatar_type: profileData.avatar_type,
           availability: profileData.availability,
@@ -169,13 +167,6 @@ const UserProfile = () => {
 
           {/* Profile Details */}
           <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-semibold text-foreground mb-2">
-                Location
-              </h3>
-              <p className="text-sm text-muted-foreground">{profile.location}</p>
-            </div>
-
             {profile.bio && (
               <div>
                 <h3 className="text-sm font-semibold text-foreground mb-2">

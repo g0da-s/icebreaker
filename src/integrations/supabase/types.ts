@@ -103,7 +103,6 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
-          location: string | null
           onboarding_answers: Json | null
           role: string
           studies: string | null
@@ -119,7 +118,6 @@ export type Database = {
           email: string
           full_name?: string | null
           id: string
-          location?: string | null
           onboarding_answers?: Json | null
           role: string
           studies?: string | null
@@ -135,7 +133,6 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
-          location?: string | null
           onboarding_answers?: Json | null
           role?: string
           studies?: string | null
@@ -271,7 +268,6 @@ export type Database = {
           created_at: string | null
           full_name: string | null
           id: string | null
-          location: string | null
           role: string | null
           studies: string | null
           updated_at: string | null
@@ -283,7 +279,6 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id?: string | null
-          location?: string | null
           role?: string | null
           studies?: string | null
           updated_at?: string | null
@@ -295,7 +290,6 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id?: string | null
-          location?: string | null
           role?: string | null
           studies?: string | null
           updated_at?: string | null

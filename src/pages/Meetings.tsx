@@ -25,6 +25,7 @@ type Meeting = {
   status: string;
   meeting_type: string;
   created_at: string;
+  updated_at: string;
   requester_completed: boolean | null;
   recipient_completed: boolean | null;
   otherUser: {
@@ -35,6 +36,7 @@ type Meeting = {
     availability?: any;
   };
   isRequester: boolean;
+  isReschedule?: boolean;
 };
 
 const Meetings = () => {
@@ -137,20 +139,19 @@ const Meetings = () => {
 
         const meetingDate = new Date(meeting.scheduled_at);
         const createdDate = new Date(meeting.created_at);
+        const updatedDate = new Date(meeting.updated_at);
         const isInPast = isPast(meetingDate);
         
         // PHASE 1: Check if invitation is expired (>4 days old)
         const daysSinceCreation = (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
         const isExpired = daysSinceCreation > 4;
+        
+        // Check if this is a reschedule (updated significantly after creation)
+        const timeSinceUpdate = (updatedDate.getTime() - createdDate.getTime()) / (1000 * 60); // in minutes
+        const isReschedule = timeSinceUpdate > 5; // If updated more than 5 mins after creation, it's a reschedule
+        enrichedMeeting.isReschedule = isReschedule;
 
         if (meeting.status === 'pending' && !isExpired) {
-          if (isRequester) {
-            sent.push(enrichedMeeting);
-          } else {
-            incoming.push(enrichedMeeting);
-          }
-        } else if (meeting.status === 'pending' && !isExpired && isRequester) {
-          // Pending meetings that requester created go to outgoing
           if (isRequester) {
             sent.push(enrichedMeeting);
           } else {
@@ -500,7 +501,7 @@ const Meetings = () => {
                           </p>
                         </div>
                         <Badge variant="secondary" className="bg-slate-700/50 text-slate-200">
-                          Pending
+                          {meeting.isReschedule ? 'Reschedule Proposed' : 'Pending'}
                         </Badge>
                       </div>
 
