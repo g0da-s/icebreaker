@@ -14,6 +14,7 @@ import { MeetingNotifications } from "@/components/MeetingNotifications";
 import { MeetingCountdown } from "@/components/MeetingCountdown";
 import { Clock as ClockComponent } from "@/components/Clock";
 import { formatDisplayName } from "@/lib/utils";
+import { UserProfileModal } from "@/components/UserProfileModal";
 
 type Meeting = {
   id: string;
@@ -54,6 +55,14 @@ const Meetings = () => {
     recipientName: '',
     recipientAvailability: null,
     meetingId: '',
+  });
+
+  const [profileModal, setProfileModal] = useState<{
+    open: boolean;
+    user: any;
+  }>({
+    open: false,
+    user: null,
   });
 
   useEffect(() => {
@@ -257,6 +266,8 @@ const Meetings = () => {
 
       if (error) throw error;
 
+      // Only show notification to the person declining (recipient)
+      // MeetingNotifications component will handle notifying the requester
       toast({
         title: "Meeting Declined",
         description: `You declined the meeting with ${requesterName}.`,
@@ -267,6 +278,46 @@ const Meetings = () => {
       toast({
         title: "Error",
         description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleViewProfile = async (userId: string) => {
+    try {
+      // Fetch full user profile including interests
+      const [profileResult, interestsResult] = await Promise.all([
+        supabase
+          .from('public_profiles')
+          .select('*')
+          .eq('id', userId)
+          .single(),
+        supabase
+          .from('user_interests')
+          .select('tags, bio')
+          .eq('user_id', userId)
+          .maybeSingle()
+      ]);
+
+      if (profileResult.error) throw profileResult.error;
+
+      setProfileModal({
+        open: true,
+        user: {
+          user_id: userId,
+          full_name: profileResult.data.full_name || '',
+          studies: profileResult.data.studies,
+          role: profileResult.data.role,
+          avatar_url: profileResult.data.avatar_url,
+          avatar_type: profileResult.data.avatar_type,
+          tags: interestsResult.data?.tags || [],
+          bio: interestsResult.data?.bio || null,
+        }
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Could not load user profile",
         variant: "destructive",
       });
     }
@@ -370,7 +421,10 @@ const Meetings = () => {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-foreground">
+                          <h3 
+                            className="font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+                            onClick={() => handleViewProfile(meeting.otherUser.id)}
+                          >
                             {formatDisplayName(meeting.otherUser.full_name)}
                           </h3>
                           <p className="text-sm text-muted-foreground mt-1">
@@ -446,7 +500,10 @@ const Meetings = () => {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-foreground">
+                          <h3 
+                            className="font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+                            onClick={() => handleViewProfile(meeting.otherUser.id)}
+                          >
                             {formatDisplayName(meeting.otherUser.full_name)}
                           </h3>
                           <p className="text-sm text-muted-foreground mt-1">
@@ -486,7 +543,10 @@ const Meetings = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-foreground flex items-center gap-2">
+                        <h3 
+                          className="font-semibold text-foreground flex items-center gap-2 cursor-pointer hover:text-primary transition-colors"
+                          onClick={() => handleViewProfile(meeting.otherUser.id)}
+                        >
                           <User className="w-4 h-4" />
                           {formatDisplayName(meeting.otherUser.full_name)}
                         </h3>
@@ -591,7 +651,10 @@ const Meetings = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">
+                        <h3 
+                          className="font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+                          onClick={() => handleViewProfile(meeting.otherUser.id)}
+                        >
                           {formatDisplayName(meeting.otherUser.full_name)}
                         </h3>
                         <p className="text-sm text-muted-foreground mt-1">
@@ -617,6 +680,14 @@ const Meetings = () => {
         recipientName={rescheduleModal.recipientName}
         recipientAvailability={rescheduleModal.recipientAvailability}
       />
+
+      {profileModal.user && (
+        <UserProfileModal
+          open={profileModal.open}
+          onOpenChange={(open) => setProfileModal({ ...profileModal, open })}
+          user={profileModal.user}
+        />
+      )}
 
       <BottomNav />
     </div>
