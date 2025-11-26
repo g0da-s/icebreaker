@@ -259,7 +259,13 @@ const Profile = () => {
           {/* Detail Modals */}
           <Dialog open={selectedSection === 'about'} onOpenChange={() => setSelectedSection(null)}>
             <DialogContent className="bg-transparent border-0 max-w-2xl">
-              <LiquidCrystalCard className="p-6">
+              <LiquidCrystalCard className="p-6 relative">
+                <button
+                  onClick={() => setSelectedSection(null)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10"
+                >
+                  <X className="w-5 h-5" />
+                </button>
                 <DialogHeader>
                   <DialogTitle className="text-xl font-bold text-white mb-4">About</DialogTitle>
                 </DialogHeader>
@@ -270,7 +276,13 @@ const Profile = () => {
 
           <Dialog open={selectedSection === 'studies'} onOpenChange={() => setSelectedSection(null)}>
             <DialogContent className="bg-transparent border-0 max-w-2xl">
-              <LiquidCrystalCard className="p-6">
+              <LiquidCrystalCard className="p-6 relative">
+                <button
+                  onClick={() => setSelectedSection(null)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10"
+                >
+                  <X className="w-5 h-5" />
+                </button>
                 <DialogHeader>
                   <DialogTitle className="text-xl font-bold text-white mb-4">Studies</DialogTitle>
                 </DialogHeader>
@@ -291,7 +303,13 @@ const Profile = () => {
 
           <Dialog open={selectedSection === 'interests'} onOpenChange={() => setSelectedSection(null)}>
             <DialogContent className="bg-transparent border-0 max-w-2xl">
-              <LiquidCrystalCard className="p-6">
+              <LiquidCrystalCard className="p-6 relative">
+                <button
+                  onClick={() => setSelectedSection(null)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10"
+                >
+                  <X className="w-5 h-5" />
+                </button>
                 <DialogHeader>
                   <DialogTitle className="text-xl font-bold text-white mb-4">Interests & Skills</DialogTitle>
                 </DialogHeader>
@@ -311,7 +329,13 @@ const Profile = () => {
 
           <Dialog open={selectedSection === 'availability'} onOpenChange={() => setSelectedSection(null)}>
             <DialogContent className="bg-transparent border-0 max-w-2xl">
-              <LiquidCrystalCard className="p-6">
+              <LiquidCrystalCard className="p-6 relative">
+                <button
+                  onClick={() => setSelectedSection(null)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10"
+                >
+                  <X className="w-5 h-5" />
+                </button>
                 <DialogHeader>
                   <DialogTitle className="text-xl font-bold text-white mb-4">Availability</DialogTitle>
                 </DialogHeader>
@@ -331,7 +355,13 @@ const Profile = () => {
 
           <Dialog open={selectedSection === 'linkedin'} onOpenChange={() => setSelectedSection(null)}>
             <DialogContent className="bg-transparent border-0 max-w-2xl">
-              <LiquidCrystalCard className="p-6">
+              <LiquidCrystalCard className="p-6 relative">
+                <button
+                  onClick={() => setSelectedSection(null)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors z-10"
+                >
+                  <X className="w-5 h-5" />
+                </button>
                 <DialogHeader>
                   <DialogTitle className="text-xl font-bold text-white mb-4">LinkedIn</DialogTitle>
                 </DialogHeader>
