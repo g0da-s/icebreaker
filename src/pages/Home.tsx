@@ -321,23 +321,17 @@ const Home = () => {
                 </div>
               
               {/* Category Filter Chips */}
-              <div className="relative overflow-hidden rounded-full bg-muted/30 p-1 mx-auto w-fit">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent animate-[shimmer_3s_ease-in-out_infinite] pointer-events-none" 
-                     style={{
-                       backgroundSize: '200% 100%',
-                       animation: 'shimmer 3s ease-in-out infinite'
-                     }}
-                />
+              <div className="rounded-full bg-muted/30 p-1 mx-auto w-fit">
                 <ToggleGroup 
                   type="single" 
                   value={selectedCategory || ""}
                   onValueChange={(value) => setSelectedCategory(value as CategoryFilter || null)}
-                  className="justify-center gap-0 relative z-10"
+                  className="justify-center gap-0"
                 >
                   <ToggleGroupItem 
                     value="friendly" 
                     aria-label="Friendly meetings"
-                    className="rounded-l-full rounded-r-none border-r border-border/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-5"
+                    className="rounded-l-full rounded-r-none border-r border-border/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-5"
                   >
                     <Heart className="w-4 h-4 mr-2" />
                     Friendly
@@ -345,7 +339,7 @@ const Home = () => {
                   <ToggleGroupItem 
                     value="mentoring" 
                     aria-label="Mentoring"
-                    className="rounded-none border-r border-border/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-5"
+                    className="rounded-none border-r border-border/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-5"
                   >
                     <Users className="w-4 h-4 mr-2" />
                     Mentoring
@@ -353,7 +347,7 @@ const Home = () => {
                   <ToggleGroupItem 
                     value="co-founding" 
                     aria-label="Co-founding"
-                    className="rounded-none border-r border-border/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-5"
+                    className="rounded-none border-r border-border/50 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-5"
                   >
                     <Lightbulb className="w-4 h-4 mr-2" />
                     Co-founding
@@ -361,7 +355,7 @@ const Home = () => {
                   <ToggleGroupItem 
                     value="surprise-me" 
                     aria-label="Surprise me"
-                    className="rounded-r-full rounded-l-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground px-5"
+                    className="rounded-r-full rounded-l-none data-[state=on]:bg-primary data-[state=on]:text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-colors px-5"
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
                     Surprise Me
