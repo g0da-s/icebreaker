@@ -49,7 +49,8 @@ const Auth = () => {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const fullName = formData.get("name") as string;
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
     
     // Validate allowed domains
     const isValidDomain = allowedDomains.some(domain => email.endsWith(domain));
@@ -69,7 +70,9 @@ const Auth = () => {
       password,
       options: {
         data: {
-          full_name: fullName,
+          first_name: firstName,
+          last_name: lastName,
+          full_name: `${firstName} ${lastName}`,
         },
         emailRedirectTo: `${window.location.origin}/`,
       },
@@ -165,14 +168,27 @@ const Auth = () => {
 
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name">Full Name</Label>
-                  <Input
-                    id="signup-name"
-                    name="name"
-                    placeholder="John Doe"
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-firstName">First Name</Label>
+                    <Input
+                      id="signup-firstName"
+                      name="firstName"
+                      placeholder="John"
+                      className="bg-muted/30"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-lastName">Last Name</Label>
+                    <Input
+                      id="signup-lastName"
+                      name="lastName"
+                      placeholder="Doe"
+                      className="bg-muted/30"
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">University Email</Label>
@@ -181,6 +197,7 @@ const Auth = () => {
                     name="email"
                     type="email"
                     placeholder="your.name@stud.ism.lt"
+                    className="bg-muted/30"
                     required
                   />
                   <p className="text-xs text-muted-foreground">
@@ -194,6 +211,7 @@ const Auth = () => {
                     name="password"
                     type="password"
                     placeholder="••••••••"
+                    className="bg-muted/30"
                     required
                   />
                 </div>
@@ -212,6 +230,7 @@ const Auth = () => {
                     name="email"
                     type="email"
                     placeholder="your.name@ism.lt"
+                    className="bg-muted/30"
                     required
                   />
                 </div>
@@ -222,6 +241,7 @@ const Auth = () => {
                     name="password"
                     type="password"
                     placeholder="••••••••"
+                    className="bg-muted/30"
                     required
                   />
                 </div>
