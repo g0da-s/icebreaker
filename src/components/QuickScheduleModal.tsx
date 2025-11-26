@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -30,6 +30,27 @@ export const QuickScheduleModal = ({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [preferences, setPreferences] = useState("");
+  const [typedPlaceholder, setTypedPlaceholder] = useState("");
+  
+  const fullPlaceholder = "Type your preferred time...";
+
+  useEffect(() => {
+    if (open) {
+      let currentIndex = 0;
+      const typingInterval = setInterval(() => {
+        if (currentIndex <= fullPlaceholder.length) {
+          setTypedPlaceholder(fullPlaceholder.slice(0, currentIndex));
+          currentIndex++;
+        } else {
+          clearInterval(typingInterval);
+        }
+      }, 50);
+
+      return () => clearInterval(typingInterval);
+    } else {
+      setTypedPlaceholder("");
+    }
+  }, [open]);
 
   const handleQuickSchedule = async () => {
     setLoading(true);
@@ -158,7 +179,7 @@ export const QuickScheduleModal = ({
                   </Label>
                   <Input
                     id="preferences"
-                    placeholder="e.g., 'mornings preferred' or 'weekdays only'"
+                    placeholder={typedPlaceholder}
                     value={preferences}
                     onChange={(e) => setPreferences(e.target.value)}
                     className="rounded-full bg-white/5 border-white/20 text-white placeholder:text-slate-400 focus:border-cyan-500/50 focus:ring-cyan-500/20"
