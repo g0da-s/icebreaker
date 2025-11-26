@@ -39,12 +39,12 @@ const Index = () => {
       <div className="fixed inset-0 z-0 pointer-events-none">
         <motion.div 
           style={{ y: y1, rotate: rotate1 }}
-          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
+          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-blue-900/20 rounded-full blur-[120px] opacity-40"
         />
         
         <motion.div 
           style={{ y: y2, rotate: rotate2 }}
-          className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
+          className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-blue-500/20 rounded-full blur-[130px] opacity-40"
         />
         
         <motion.div 
