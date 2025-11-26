@@ -574,13 +574,13 @@ const Home = () => {
                     </div>
 
                     {match.reason && (
-                      <p className="text-slate-300 text-sm mb-3">
+                      <p className="text-slate-300 text-xs mb-2 line-clamp-2">
                         {match.reason}
                       </p>
                     )}
 
                     {match.tags && match.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-1.5 mb-auto">
                         {(() => {
                           const prioritizedTags = getPrioritizedTags(match.tags, searchQuery);
                           const displayTags = prioritizedTags.slice(0, 2);
@@ -604,29 +604,19 @@ const Home = () => {
                       </div>
                     )}
 
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setSelectedProfileUser(match);
-                          setProfileModalOpen(true);
-                        }}
-                        className="flex-1 rounded-full bg-slate-700/30 backdrop-blur-sm hover:bg-slate-600/50 border-white/20 text-white"
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        View Profile
-                      </Button>
+                    <div className="flex gap-2 mt-auto pt-3">
                       <Button
                         size="sm"
                         onClick={() => {
                           setSelectedUser({ id: match.user_id, name: formatDisplayName(match.full_name) });
                           setQuickScheduleOpen(true);
                         }}
-                        className="flex-1 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0 shadow-lg shadow-cyan-500/20"
+                        className="flex-1 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0 shadow-lg shadow-cyan-500/20 text-xs"
                       >
-                        <Calendar className="w-4 h-4 mr-2" />
+                        <Calendar className="w-3.5 h-3.5 mr-1.5" />
                         Meet Up
+                      </Button>
+                    </div>
                       </Button>
                     </div>
                     </Card>
