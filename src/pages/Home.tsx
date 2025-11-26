@@ -45,6 +45,7 @@ const Home = () => {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [selectedProfileUser, setSelectedProfileUser] = useState<Match | null>(null);
   const [typedPlaceholder, setTypedPlaceholder] = useState("");
+  const [activeUsersCount, setActiveUsersCount] = useState(0);
   
   const fullPlaceholder = "Tell us what you're looking for...";
 
@@ -60,6 +61,43 @@ const Home = () => {
     }, 50);
 
     return () => clearInterval(typingInterval);
+  }, []);
+
+  // Real-time presence tracking
+  useEffect(() => {
+    const setupPresence = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const channel = supabase.channel('online-users');
+
+      channel
+        .on('presence', { event: 'sync' }, () => {
+          const state = channel.presenceState();
+          const userCount = Object.keys(state).length;
+          setActiveUsersCount(userCount);
+        })
+        .on('presence', { event: 'join' }, ({ newPresences }) => {
+          console.log('User joined:', newPresences);
+        })
+        .on('presence', { event: 'leave' }, ({ leftPresences }) => {
+          console.log('User left:', leftPresences);
+        })
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            await channel.track({
+              user_id: user.id,
+              online_at: new Date().toISOString(),
+            });
+          }
+        });
+
+      return () => {
+        channel.unsubscribe();
+      };
+    };
+
+    setupPresence();
   }, []);
 
   useEffect(() => {
@@ -354,7 +392,7 @@ const Home = () => {
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                   </div>
                   <span className="text-sm text-slate-200">
-                    Active now: {featuredUsers.length}
+                    Active now: {activeUsersCount}
                   </span>
                 </motion.div>
                 
