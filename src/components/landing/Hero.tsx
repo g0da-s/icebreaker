@@ -92,10 +92,10 @@ export const Hero: React.FC = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.4 }}
-        className="z-10 mt-10 w-full max-w-md flex flex-col items-center mb-16"
+        className="z-10 mt-10 flex flex-col items-center mb-16"
       >
-        <Link to="/auth?mode=signup" className="w-full">
-          <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-2 whitespace-nowrap shadow-lg shadow-cyan-500/20">
+        <Link to="/auth?mode=signup">
+          <button className="px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-2 whitespace-nowrap shadow-lg shadow-cyan-500/20">
             Try Now <ArrowRight size={16} />
           </button>
         </Link>
