@@ -14,14 +14,17 @@ export const Clock = () => {
   }, []);
 
   return (
-    <div className="fixed top-4 left-4 z-50 bg-card/95 backdrop-blur-sm border border-border rounded-lg px-4 py-2 shadow-lg">
-      <div className="flex items-center gap-2">
-        <ClockIcon className="w-4 h-4 text-primary" />
-        <div className="text-sm">
-          <div className="font-semibold text-foreground">
+    <div className="fixed top-4 right-4 z-50 bg-slate-900/40 backdrop-blur-xl border-2 border-white/20 rounded-2xl px-4 py-3 shadow-2xl">
+      <div className="flex items-center gap-3">
+        <div className="relative">
+          <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+          <ClockIcon className="w-5 h-5 text-primary relative z-10" />
+        </div>
+        <div className="text-sm border-l-2 border-white/10 pl-3">
+          <div className="font-semibold text-white">
             {format(currentTime, "h:mm:ss a")}
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-white/60">
             {format(currentTime, "EEEE, MMM d, yyyy")}
           </div>
         </div>
