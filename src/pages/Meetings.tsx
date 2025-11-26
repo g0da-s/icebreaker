@@ -616,9 +616,9 @@ const Meetings = () => {
 
             {/* Sent Requests */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Sent Requests</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white">Sent Requests</h3>
               {sentRequests.length === 0 ? (
-                <p className="text-center py-8 text-muted-foreground">
+                <p className="text-center py-8 text-slate-300">
                   No sent requests
                 </p>
               ) : (
@@ -637,12 +637,12 @@ const Meetings = () => {
                         </Avatar>
                         <div className="flex-1">
                           <h3 
-                            className="font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+                            className="font-semibold text-white cursor-pointer hover:text-cyan-400 transition-colors"
                             onClick={() => handleViewProfile(meeting.otherUser.id)}
                           >
                             {formatDisplayName(meeting.otherUser.full_name)}
                           </h3>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-sm text-slate-300 mt-1">
                             {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d')} at {format(new Date(meeting.scheduled_at), 'h:mm a')}
                           </p>
                         </div>
@@ -659,8 +659,8 @@ const Meetings = () => {
           <TabsContent value="upcoming">
             {upcomingMeetings.length === 0 ? (
               <div className="text-center py-12">
-                <Calendar className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">
+                <Calendar className="w-16 h-16 mx-auto text-slate-400 mb-4" />
+                <p className="text-slate-300">
                   No upcoming meetings. Schedule a meeting to see it here.
                 </p>
               </div>
@@ -680,30 +680,30 @@ const Meetings = () => {
                       </Avatar>
                       <div className="flex-1">
                         <h3 
-                          className="font-semibold text-foreground flex items-center gap-2 cursor-pointer hover:text-primary transition-colors"
+                          className="font-semibold text-white flex items-center gap-2 cursor-pointer hover:text-cyan-400 transition-colors"
                           onClick={() => handleViewProfile(meeting.otherUser.id)}
                         >
                           <User className="w-4 h-4" />
                           {formatDisplayName(meeting.otherUser.full_name)}
                         </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="text-sm text-slate-300 mt-1">
                           {meeting.meeting_type}
                         </p>
                       </div>
                       <Badge variant="default">Confirmed</Badge>
                     </div>
 
-                    <div className="bg-primary/5 rounded-lg p-3 mb-3">
+                    <div className="bg-white/5 rounded-lg p-3 mb-3">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2 text-sm">
-                          <Calendar className="w-4 h-4 text-primary" />
-                          <span className="font-medium">
+                          <Calendar className="w-4 h-4 text-cyan-400" />
+                          <span className="font-medium text-white">
                             {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d, yyyy')}
                           </span>
                         </div>
                         <MeetingCountdown scheduledAt={meeting.scheduled_at} />
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground ml-6">
+                      <div className="flex items-center gap-2 text-sm text-slate-300 ml-6">
                         <Clock className="w-4 h-4" />
                         {format(new Date(meeting.scheduled_at), 'h:mm a')}
                       </div>
@@ -812,12 +812,12 @@ const Meetings = () => {
                       </Avatar>
                       <div className="flex-1">
                         <h3 
-                          className="font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+                          className="font-semibold text-white cursor-pointer hover:text-cyan-400 transition-colors"
                           onClick={() => handleViewProfile(meeting.otherUser.id)}
                         >
                           {formatDisplayName(meeting.otherUser.full_name)}
                         </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="text-sm text-slate-300 mt-1">
                           {format(new Date(meeting.scheduled_at), 'MMMM d, yyyy')} at {format(new Date(meeting.scheduled_at), 'h:mm a')}
                         </p>
                       </div>
