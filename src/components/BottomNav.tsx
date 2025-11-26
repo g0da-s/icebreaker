@@ -1,13 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Calendar, Trophy, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export function BottomNav() {
   const location = useLocation();
-  const [activeIndex, setActiveIndex] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
 
   const navItems = [
@@ -17,12 +15,6 @@ export function BottomNav() {
     { icon: User, label: "Profile", path: "/profile", showBadge: false },
   ];
 
-  useEffect(() => {
-    const currentIndex = navItems.findIndex(item => item.path === location.pathname);
-    if (currentIndex !== -1) {
-      setActiveIndex(currentIndex);
-    }
-  }, [location.pathname]);
 
   // Fetch pending meeting count
   useEffect(() => {
@@ -76,37 +68,6 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
       <div className="relative bg-slate-900/30 backdrop-blur-xl border border-white/20 rounded-full shadow-2xl px-4 py-3">
-        {/* Animated Bubble Indicator */}
-        <motion.div
-          className="absolute top-1/2 -translate-y-1/2 left-0 w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400/40 via-blue-500/40 to-purple-500/40 backdrop-blur-sm z-0"
-          animate={{
-            x: activeIndex * 56 + 16,
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 300,
-            damping: 30,
-          }}
-          style={{
-            boxShadow: "0 0 20px rgba(96, 165, 250, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1)",
-          }}
-        />
-
-        {/* Trail Effect */}
-        <motion.div
-          className="absolute top-1/2 -translate-y-1/2 left-0 w-12 h-12 rounded-full bg-gradient-to-br from-cyan-300/20 via-blue-400/20 to-purple-400/20 z-0"
-          animate={{
-            x: activeIndex * 56 + 16,
-            opacity: [0.5, 0],
-            scale: [1, 1.3],
-          }}
-          transition={{
-            duration: 0.4,
-            ease: "easeOut",
-          }}
-          key={activeIndex}
-        />
-
         <div className="flex items-center gap-2 relative z-10">
           {navItems.map((item, index) => {
             const isActive = location.pathname === item.path;
