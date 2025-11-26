@@ -28,7 +28,7 @@ export const Header = () => {
         </Link>
 
         {!isAuthenticated && (
-          <Button asChild className="hidden sm:flex">
+          <Button asChild variant="ghost" className="hidden sm:flex bg-transparent hover:bg-accent/50">
             <Link to="/auth?mode=signin">Sign In</Link>
           </Button>
         )}
