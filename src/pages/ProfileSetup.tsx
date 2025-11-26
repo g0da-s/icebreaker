@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, Search } from "lucide-react";
 import {
   Select,
@@ -27,6 +27,16 @@ import { cn } from "@/lib/utils";
 import { LocationSelector } from "@/components/LocationSelector";
 import { CalendarAvailability } from "@/components/CalendarAvailability";
 import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const STUDY_LEVELS = ["Bachelor's", "Master's", "Executive", "Alumni", "Faculty Member"];
 
@@ -77,6 +87,7 @@ const AI_QUESTIONS = [
 const ProfileSetup = () => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [showExitDialog, setShowExitDialog] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -329,6 +340,19 @@ const ProfileSetup = () => {
     } finally {
       setIsParsing(false);
     }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    } else {
+      setShowExitDialog(true);
+    }
+  };
+
+  const handleExitConfirm = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
   };
 
   const handleNext = async () => {
@@ -612,10 +636,14 @@ const ProfileSetup = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4 pb-24">
       <div className="absolute top-4 left-4">
-        <Link to="/home" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+        <Button
+          variant="ghost"
+          onClick={handleBack}
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
-        </Link>
+        </Button>
       </div>
       
       <Card className="w-full max-w-2xl">
@@ -796,7 +824,7 @@ const ProfileSetup = () => {
 
               {currentQuestion === AI_QUESTIONS.length - 1 && chatAnswers.length === AI_QUESTIONS.length && (
                 <div className="flex justify-between">
-                  <Button variant="outline" onClick={() => setStep(step - 1)}>
+                  <Button variant="outline" onClick={handleBack}>
                     Back
                   </Button>
                   <Button onClick={() => setStep(4)}>Next</Button>
@@ -925,7 +953,7 @@ const ProfileSetup = () => {
               </div>
 
               <div className="flex justify-between gap-2">
-                <Button variant="outline" onClick={() => setStep(step - 1)}>
+                <Button variant="outline" onClick={handleBack}>
                   Back
                 </Button>
                 <Button onClick={handleNext}>Next</Button>
@@ -1001,7 +1029,7 @@ const ProfileSetup = () => {
               )}
 
               <div className="flex justify-between gap-2">
-                <Button variant="outline" onClick={() => setStep(step - 1)}>
+                <Button variant="outline" onClick={handleBack}>
                   Back
                 </Button>
                 <Button onClick={handleComplete} disabled={loading}>
@@ -1012,6 +1040,21 @@ const ProfileSetup = () => {
           )}
         </CardContent>
       </Card>
+
+      <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Exit Registration?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to leave the registration form? Aren't you afraid of freezing? ❄️
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No, stay warm</AlertDialogCancel>
+            <AlertDialogAction onClick={handleExitConfirm}>Yes, leave</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <BottomNav />
     </div>
