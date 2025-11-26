@@ -1,12 +1,25 @@
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Users, Heart, Lightbulb, Sparkles } from "lucide-react";
-import { Header } from "@/components/Header";
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
+import logo from "@/assets/logo.png";
+import { Hero } from "@/components/landing/Hero";
+import { Marquee } from "@/components/landing/Marquee";
+import { StickyScroll } from "@/components/landing/StickyScroll";
+import { BentoGrid } from "@/components/landing/BentoGrid";
+import { Testimonials } from "@/components/landing/Testimonials";
+import { Footer } from "@/components/landing/Footer";
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+  const { scrollY } = useScroll();
+  
+  const y1 = useTransform(scrollY, [0, 3000], [0, 600]); 
+  const y2 = useTransform(scrollY, [0, 3000], [0, -600]);
+  const y3 = useTransform(scrollY, [0, 3000], [0, 300]);
+  const rotate1 = useTransform(scrollY, [0, 3000], [0, 45]);
+  const rotate2 = useTransform(scrollY, [0, 3000], [0, -45]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -21,129 +34,59 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />
+    <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 text-white selection:bg-cyan-500/30 overflow-hidden">
+      
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <motion.div 
+          style={{ y: y1, rotate: rotate1 }}
+          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
+        />
         
-        <div className="relative container mx-auto px-4 py-20 sm:py-32">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-foreground">Currently exclusive only for ISM</span>
-            </div>
-            
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground mb-4">
-              Connect Without the
-              <span className="text-primary"> Pressure</span>
-            </h1>
-            
-            <p className="text-base sm:text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              AI-powered matching for ISM students. Find friends, mentors, and co-founders based on shared interests-not appearances.
-            </p>
-            
-            {!isAuthenticated ? (
-              <div className="flex justify-center">
-                <Button asChild size="lg" className="text-base h-12 px-8">
-                  <Link to="/auth?mode=signup">Connect Now</Link>
-                </Button>
-              </div>
-            ) : (
-              <Button asChild size="lg" className="text-base h-14 px-12">
-                <Link to="/home">Connect</Link>
-              </Button>
-            )}
-          </div>
-        </div>
-      </section>
+        <motion.div 
+          style={{ y: y2, rotate: rotate2 }}
+          className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
+        />
+        
+        <motion.div 
+          style={{ y: y3 }}
+          className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
+        />
+      </div>
 
-      {/* Features Section */}
-      <section className="py-20 bg-card">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-              Four Ways to Connect
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Choose your path and let our AI find the perfect matches for meaningful connections
-            </p>
-          </div>
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-white/5">
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg" />
+          <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
+        </Link>
+        {isAuthenticated ? (
+          <button 
+            onClick={() => navigate('/home')}
+            className="px-4 py-2 rounded-lg bg-white/10 border border-white/10 text-xs font-medium text-white hover:bg-white/20 transition-colors"
+          >
+            Dashboard
+          </button>
+        ) : (
+          <Link to="/auth?mode=signin">
+            <button className="px-4 py-2 rounded-lg bg-white/10 border border-white/10 text-xs font-medium text-white hover:bg-white/20 transition-colors">
+              Log In
+            </button>
+          </Link>
+        )}
+      </nav>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            <FeatureCard
-              icon={<Heart className="w-8 h-8" />}
-              title="Friendly Meetings"
-              description="Meet new people with shared interests. Random or smart matches available."
-            />
-            <FeatureCard
-              icon={<Users className="w-8 h-8" />}
-              title="Mentoring"
-              description="Get guidance from experienced students and alumni who share your goals."
-            />
-            <FeatureCard
-              icon={<Lightbulb className="w-8 h-8" />}
-              title="Co-founding"
-              description="Find co-founders with complementary skills for your next venture."
-            />
-            <FeatureCard
-              icon={<Sparkles className="w-8 h-8" />}
-              title="Not Sure?"
-              description="Let AI suggest diverse connections across all categories."
-            />
-          </div>
-        </div>
-      </section>
+      <main className="relative z-10">
+        <Hero />
+        <Marquee />
+        <StickyScroll />
+        <BentoGrid />
+        <Testimonials />
+      </main>
 
-      {/* Benefits Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-                Why Students Love icebeaker.ai
-              </h2>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-8">
-              <BenefitCard
-                title="No Cold Outreach"
-                description="We handle the introductions. Just show up and connect."
-              />
-              <BenefitCard
-                title="No Photo Bias"
-                description="Matches based on interests and goals, not appearances."
-              />
-              <BenefitCard
-                title="Smart Scheduling"
-                description="AI finds time slots that work for both people automatically."
-              />
-              <BenefitCard
-                title="Ice Breakers Included"
-                description="Never run out of things to talk about with our conversation starters."
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <div className="relative z-10">
+        <Footer />
+      </div>
     </div>
   );
 };
-
-const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) => (
-  <div className="bg-background border border-border rounded-lg p-6 hover:shadow-lg transition-shadow">
-    <div className="text-primary mb-4">{icon}</div>
-    <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
-    <p className="text-muted-foreground text-sm">{description}</p>
-  </div>
-);
-
-const BenefitCard = ({ title, description }: { title: string; description: string }) => (
-  <div className="bg-card border border-border rounded-lg p-6">
-    <h3 className="font-semibold text-lg text-foreground mb-2">{title}</h3>
-    <p className="text-muted-foreground">{description}</p>
-  </div>
-);
 
 export default Index;
