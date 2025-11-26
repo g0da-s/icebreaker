@@ -209,7 +209,7 @@ const Auth = () => {
                   <Label htmlFor="signup-password" className="text-white/90">Password</Label>
                   <Input id="signup-password" name="password" type="password" placeholder="••••••••" className="bg-white/5 border-white/10 text-white placeholder:text-white/40" required />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full rounded-full" disabled={isLoading}>
                   {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
               </form>
@@ -225,7 +225,7 @@ const Auth = () => {
                   <Label htmlFor="signin-password" className="text-white/90">Password</Label>
                   <Input id="signin-password" name="password" type="password" placeholder="••••••••" className="bg-white/5 border-white/10 text-white placeholder:text-white/40" required />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full rounded-full" disabled={isLoading}>
                   {isLoading ? "Signing In..." : "Sign In"}
                 </Button>
               </form>
