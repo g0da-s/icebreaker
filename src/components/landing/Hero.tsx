@@ -74,7 +74,7 @@ export const Hero: React.FC = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="z-10 text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white max-w-5xl mx-auto leading-[1.1] drop-shadow-sm"
+        className="z-10 text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white max-w-5xl mx-auto leading-[1.1] drop-shadow-sm"
       >
         Network - minus the awkwardness
       </motion.h1>
