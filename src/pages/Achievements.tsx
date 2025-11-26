@@ -292,7 +292,7 @@ export default function Achievements() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {achievements.map((achievement) => (
             <Card
               key={achievement.id}
@@ -302,9 +302,9 @@ export default function Achievements() {
                   : "bg-slate-900/20 backdrop-blur-xl border-white/10 opacity-75"
               }`}
             >
-              <CardHeader className="text-center">
-                <div className="flex justify-center mb-4">
-                  <div className="relative w-32 h-32">
+              <CardHeader className="text-center p-4">
+                <div className="flex justify-center mb-3">
+                  <div className="relative w-20 h-20">
                     <img
                       src={achievement.image_unlocked_url}
                       alt={achievement.isUnlocked ? achievement.title : "Locked achievement"}
@@ -314,19 +314,19 @@ export default function Achievements() {
                     />
                   </div>
                 </div>
-                <CardTitle className="text-xl text-white">
+                <CardTitle className="text-sm text-white">
                   {achievement.isUnlocked ? achievement.title : "???"}
                 </CardTitle>
-                <CardDescription className="text-slate-300">
+                <CardDescription className="text-xs text-slate-300 line-clamp-2">
                   {achievement.isUnlocked
                     ? achievement.description
                     : "Keep meeting to unlock"}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="text-center">
+              <CardContent className="text-center p-4 pt-0">
                 {achievement.isUnlocked && achievement.unlockedAt && (
-                  <p className="text-sm text-slate-400">
-                    Unlocked on {new Date(achievement.unlockedAt).toLocaleDateString()}
+                  <p className="text-xs text-slate-400">
+                    {new Date(achievement.unlockedAt).toLocaleDateString()}
                   </p>
                 )}
               </CardContent>
