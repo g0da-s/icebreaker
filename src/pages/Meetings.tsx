@@ -12,7 +12,6 @@ import { format, isPast } from "date-fns";
 import { ScheduleMeetingModal } from "@/components/ScheduleMeetingModal";
 import { MeetingNotifications } from "@/components/MeetingNotifications";
 import { MeetingCountdown } from "@/components/MeetingCountdown";
-import { Clock as ClockComponent } from "@/components/Clock";
 import { formatDisplayName } from "@/lib/utils";
 import { UserProfileModal } from "@/components/UserProfileModal";
 import { motion } from "framer-motion";
@@ -451,7 +450,6 @@ const Meetings = () => {
         </Link>
       </nav>
 
-      <ClockComponent />
       <MeetingNotifications />
       
       <div className="relative z-10 container max-w-screen-sm mx-auto px-4 pt-24 pb-6">
