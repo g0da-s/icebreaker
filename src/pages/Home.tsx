@@ -506,15 +506,15 @@ const Home = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-white text-lg hover:text-cyan-400 transition-colors">
-                            {formatDisplayName(match.full_name)}
-                          </h3>
-                          {match.role && (
-                            <Badge className="shrink-0 bg-white/10 text-white border-white/20 text-xs px-2 py-0.5">
-                              {match.role}
-                            </Badge>
-                          )}
+                        <h3 className="font-semibold text-white text-lg hover:text-cyan-400 transition-colors mb-1">
+                          {formatDisplayName(match.full_name)}
+                        </h3>
+                        {match.role && (
+                          <Badge className="mb-2 bg-white/10 text-white border-white/20 text-xs px-2 py-0.5">
+                            {match.role}
+                          </Badge>
+                        )}
+                        <div className="flex items-center gap-2">
                           {match.match_score && (
                             <Badge className="shrink-0 bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 text-xs px-2 py-0.5">
                               {match.match_score}% match
@@ -522,7 +522,7 @@ const Home = () => {
                           )}
                         </div>
                         {(match.studies || match.role) && (
-                          <p className="text-sm text-slate-300">
+                          <p className="text-sm text-slate-300 mt-1">
                             {match.studies?.includes(' - ')
                               ? match.studies.split(' - ')[1]
                               : match.studies
@@ -657,16 +657,14 @@ const Home = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-white text-lg hover:text-cyan-400 transition-colors">
-                            {formatDisplayName(user.full_name)}
-                          </h3>
-                          {user.role && (
-                            <Badge className="shrink-0 bg-white/10 text-white border-white/20 text-xs px-2 py-0.5">
-                              {user.role}
-                            </Badge>
-                          )}
-                        </div>
+                        <h3 className="font-semibold text-white text-lg hover:text-cyan-400 transition-colors mb-1">
+                          {formatDisplayName(user.full_name)}
+                        </h3>
+                        {user.role && (
+                          <Badge className="mb-2 bg-white/10 text-white border-white/20 text-xs px-2 py-0.5">
+                            {user.role}
+                          </Badge>
+                        )}
                         {(user.studies || user.role) && (
                           <p className="text-sm text-slate-300">
                             {user.studies?.includes(' - ')
