@@ -1044,8 +1044,12 @@ const ProfileSetup = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>No, stay warm</AlertDialogCancel>
-            <AlertDialogAction onClick={handleExitConfirm}>Yes, leave</AlertDialogAction>
+            <AlertDialogAction onClick={handleExitConfirm} className="bg-background text-foreground hover:bg-background/90 border border-border">
+              Yes, leave
+            </AlertDialogAction>
+            <AlertDialogCancel className="bg-primary text-primary-foreground hover:bg-primary/90">
+              No, stay warm
+            </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
