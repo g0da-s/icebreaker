@@ -489,7 +489,13 @@ const Home = () => {
                     transition={{ delay: index * 0.05 }}
                   >
                     <Card className="p-5 bg-slate-800/40 backdrop-blur-xl border-white/10 hover:bg-slate-800/60 hover:border-white/20 transition-all shadow-xl">
-                    <div className="flex items-start gap-3 mb-4">
+                    <div 
+                      className="flex items-start gap-3 mb-4 cursor-pointer"
+                      onClick={() => {
+                        setSelectedProfileUser(match);
+                        setProfileModalOpen(true);
+                      }}
+                    >
                       <Avatar className="h-12 w-12">
                         <AvatarImage 
                           src={match.avatar_url || undefined} 
@@ -501,7 +507,7 @@ const Home = () => {
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center justify-between gap-2">
-                          <h3 className="font-semibold text-white text-lg">
+                          <h3 className="font-semibold text-white text-lg hover:text-cyan-400 transition-colors">
                             {formatDisplayName(match.full_name)}
                           </h3>
                           {match.match_score && (
@@ -634,7 +640,13 @@ const Home = () => {
                     transition={{ delay: index * 0.05 }}
                   >
                     <Card className="p-5 bg-slate-800/40 backdrop-blur-xl border-white/10 hover:bg-slate-800/60 hover:border-white/20 transition-all shadow-xl">
-                    <div className="flex items-start gap-3 mb-4">
+                    <div 
+                      className="flex items-start gap-3 mb-4 cursor-pointer"
+                      onClick={() => {
+                        setSelectedProfileUser(user);
+                        setProfileModalOpen(true);
+                      }}
+                    >
                       <Avatar className="h-12 w-12">
                         <AvatarImage 
                           src={user.avatar_url || undefined} 
@@ -645,7 +657,7 @@ const Home = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-white text-lg">
+                        <h3 className="font-semibold text-white text-lg hover:text-cyan-400 transition-colors">
                           {formatDisplayName(user.full_name)}
                         </h3>
                         {(user.studies || user.role) && (
