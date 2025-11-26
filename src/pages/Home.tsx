@@ -276,40 +276,49 @@ const Home = () => {
     <div className="min-h-screen bg-background pb-24">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Search Section - Always at top */}
-          <div className="mb-12">
-            <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold text-foreground mb-2">
-                Find Your Perfect Match
-              </h1>
-              <p className="text-muted-foreground">
-                Tell us what you're looking for
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              {/* Search Input with Button */}
-              <div className="relative">
-                <Input
-                  placeholder="E.g., 'tech skills' or 'photography enthusiast'"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                    }
-                  }}
-                  className="w-full h-12 text-base placeholder:text-muted-foreground/50 pr-12"
-                />
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="absolute right-1 top-1 h-10 w-10"
-                  disabled={loading}
-                >
-                  <Search className="w-5 h-5" />
-                </Button>
+          {/* Search Section - Centered when not in search mode */}
+          <div className={`mb-12 ${!isSearchMode ? 'min-h-[60vh] flex items-center justify-center' : ''}`}>
+            <div className="w-full">
+              <div className="text-center mb-6">
+                {/* Active Now Indicator */}
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 mb-4">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-sm text-muted-foreground">
+                    Active now: {featuredUsers.length}
+                  </span>
+                </div>
+                
+                <h1 className="text-3xl font-bold text-foreground mb-2">
+                  Find Your First Icebreak
+                </h1>
+                <p className="text-muted-foreground">
+                  Connect with peers, mentors, and collaborators
+                </p>
               </div>
+
+              <div className="flex flex-col gap-3">
+                {/* Search Input with Button */}
+                <div className="relative">
+                  <Input
+                    placeholder="Tell us what you're looking for..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
+                    }}
+                    className="w-full h-12 text-base placeholder:text-muted-foreground/50 pr-12"
+                  />
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="absolute right-1 top-1 h-10 w-10"
+                    disabled={loading}
+                  >
+                    <Search className="w-5 h-5" />
+                  </Button>
+                </div>
               
               {/* Category Filter Chips */}
               <ToggleGroup 
@@ -351,6 +360,7 @@ const Home = () => {
                   Surprise Me
                 </ToggleGroupItem>
               </ToggleGroup>
+              </div>
             </div>
           </div>
 
@@ -455,97 +465,6 @@ const Home = () => {
             </div>
           )}
 
-          {/* STATE A: Active Community (Default/Idle Mode) */}
-          {!isSearchMode && !loading && featuredUsers.length > 0 && (
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                Active Community Members
-              </h2>
-              <p className="text-muted-foreground mb-4">
-                Recently active members ready to connect
-              </p>
-              <div className="space-y-4">
-                {featuredUsers.map((user) => (
-                  <Card key={user.user_id} className="p-5">
-                    <div className="flex items-start gap-3 mb-4">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage 
-                          src={user.avatar_url || undefined} 
-                          alt={user.full_name} 
-                        />
-                        <AvatarFallback className="text-lg">
-                          {user.full_name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground text-lg">
-                          {formatDisplayName(user.full_name)}
-                        </h3>
-                        {user.studies && (
-                          <p className="text-sm text-muted-foreground">
-                            {user.studies?.includes(' - ')
-                              ? user.studies.split(' - ')[1]  // Show program
-                              : user.studies
-                            }
-                          </p>
-                        )}
-                        {user.studies?.includes(' - ') && (
-                          <p className="text-xs text-muted-foreground">
-                            {user.studies.split(' - ')[0]}  {/* Show study level */}
-                          </p>
-                        )}
-                        {user.role && (
-                          <Badge variant="outline" className="mt-1">
-                            {user.role}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-
-                    {user.bio && (
-                      <p className="text-muted-foreground text-sm mb-3">{user.bio}</p>
-                    )}
-
-                    {user.tags && user.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {user.tags.slice(0, 5).map((tag, idx) => (
-                          <Badge key={idx} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex gap-2 justify-center">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full bg-gradient-to-r from-white/5 via-white/20 to-white/5 hover:from-white/10 hover:via-white/30 hover:to-white/10 transition-all"
-                        onClick={() => {
-                          setSelectedProfileUser(user);
-                          setProfileModalOpen(true);
-                        }}
-                      >
-                        <Eye className="w-4 h-4 mr-1.5" />
-                        View Profile
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="rounded-full bg-gradient-to-r from-primary/80 via-primary to-primary/80 hover:from-primary hover:via-primary/90 hover:to-primary transition-all"
-                        onClick={() => {
-                          setSelectedUser({ id: user.user_id, name: formatDisplayName(user.full_name) });
-                          setQuickScheduleOpen(true);
-                        }}
-                      >
-                        <Calendar className="w-4 h-4 mr-1.5" />
-                        Meet Up
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* No Results Message for Search Mode */}
           {isSearchMode && !loading && matches.length === 0 && (
