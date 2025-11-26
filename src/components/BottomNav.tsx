@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Calendar, Trophy, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export function BottomNav() {
   const location = useLocation();
+  const [activeIndex, setActiveIndex] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
 
   const navItems = [
@@ -14,6 +16,13 @@ export function BottomNav() {
     { icon: Trophy, label: "Achievements", path: "/achievements", showBadge: false },
     { icon: User, label: "Profile", path: "/profile", showBadge: false },
   ];
+
+  useEffect(() => {
+    const currentIndex = navItems.findIndex(item => item.path === location.pathname);
+    if (currentIndex !== -1) {
+      setActiveIndex(currentIndex);
+    }
+  }, [location.pathname]);
 
 
   // Fetch pending meeting count
@@ -68,6 +77,19 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
       <div className="relative bg-slate-900/30 backdrop-blur-xl border border-white/20 rounded-full shadow-2xl px-4 py-3">
+        {/* Subtle White Bubble Indicator */}
+        <motion.div
+          className="absolute top-1/2 -translate-y-1/2 left-0 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm z-0"
+          animate={{
+            x: activeIndex * 56 + 16,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 30,
+          }}
+        />
+
         <div className="flex items-center gap-2 relative z-10">
           {navItems.map((item, index) => {
             const isActive = location.pathname === item.path;
