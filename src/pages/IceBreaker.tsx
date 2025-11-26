@@ -9,6 +9,7 @@ import { ArrowRight, ArrowLeft, Sparkles, MessageCircle, Target } from "lucide-r
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { formatDisplayName } from "@/lib/utils";
+import { CelebrationOverlay } from "@/components/CelebrationOverlay";
 
 type Meeting = {
   id: string;
@@ -43,6 +44,7 @@ const IceBreaker = () => {
   const [waitingForOther, setWaitingForOther] = useState(false);
   const [isRequester, setIsRequester] = useState(false);
   const [currentEndlessTopic, setCurrentEndlessTopic] = useState<string>("Keep the conversation going!");
+  const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
     fetchMeetingData();
@@ -92,13 +94,7 @@ const IceBreaker = () => {
         },
         (payload) => {
           if (payload.new.status === 'completed') {
-            toast({
-              title: "Thanks for breaking this little ice! 🧊",
-            });
-            
-            setTimeout(() => {
-              navigate("/meetings");
-            }, 2500);
+            setShowCelebration(true);
           }
         }
       )
@@ -368,13 +364,7 @@ const IceBreaker = () => {
         await checkAndGrantAchievements(meeting.requester_id);
         await checkAndGrantAchievements(meeting.recipient_id);
 
-        toast({
-          title: "Thanks for breaking this little ice! 🧊",
-        });
-
-        setTimeout(() => {
-          navigate("/meetings");
-        }, 2500);
+        setShowCelebration(true);
       } else {
         // Waiting for other user
         setWaitingForOther(true);
@@ -413,8 +403,13 @@ const IceBreaker = () => {
   const questionData = getQuestion();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl">
+    <>
+      {showCelebration && (
+        <CelebrationOverlay onComplete={() => navigate("/meetings")} />
+      )}
+      
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
+        <Card className="w-full max-w-2xl">
         <CardHeader className="text-center space-y-4">
           <div className="flex justify-center items-center gap-4">
             <Avatar className="h-16 w-16">
@@ -587,6 +582,7 @@ const IceBreaker = () => {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 };
 

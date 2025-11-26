@@ -16,7 +16,8 @@ import { formatDisplayName } from "@/lib/utils";
 import { UserProfileModal } from "@/components/UserProfileModal";
 import { motion } from "framer-motion";
 import logo from "@/assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CelebrationOverlay } from "@/components/CelebrationOverlay";
 
 type Meeting = {
   id: string;
@@ -42,11 +43,13 @@ type Meeting = {
 
 const Meetings = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [incomingRequests, setIncomingRequests] = useState<Meeting[]>([]);
   const [sentRequests, setSentRequests] = useState<Meeting[]>([]);
   const [upcomingMeetings, setUpcomingMeetings] = useState<Meeting[]>([]);
   const [historyMeetings, setHistoryMeetings] = useState<Meeting[]>([]);
+  const [showCelebration, setShowCelebration] = useState(false);
   const [rescheduleModal, setRescheduleModal] = useState<{
     open: boolean;
     recipientId: string;
@@ -97,10 +100,7 @@ const Meetings = () => {
             if (payload.new.status === 'completed') {
               const meeting = payload.new as any;
               if (meeting.requester_id === userId || meeting.recipient_id === userId) {
-                toast({
-                  title: "Thanks for breaking this little ice! 🧊",
-                });
-                
+                setShowCelebration(true);
                 fetchAllMeetings();
               }
             }
@@ -455,7 +455,15 @@ const Meetings = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
+    <>
+      {showCelebration && (
+        <CelebrationOverlay onComplete={() => {
+          setShowCelebration(false);
+          navigate("/meetings");
+        }} />
+      )}
+      
+      <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
       {/* Animated Background Orbs */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <motion.div 
@@ -850,6 +858,7 @@ const Meetings = () => {
 
       <BottomNav />
     </div>
+    </>
   );
 };
 
