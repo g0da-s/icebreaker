@@ -13,6 +13,7 @@ import { QuickScheduleModal } from "@/components/QuickScheduleModal";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { UserProfileModal } from "@/components/UserProfileModal";
 import { formatDisplayName } from "@/lib/utils";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 interface Match {
   user_id: string;
@@ -33,6 +34,14 @@ type CategoryFilter = "surprise-me" | "mentoring" | "co-founding";
 const Home = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { scrollY } = useScroll();
+  
+  const y1 = useTransform(scrollY, [0, 3000], [0, 600]); 
+  const y2 = useTransform(scrollY, [0, 3000], [0, -600]);
+  const y3 = useTransform(scrollY, [0, 3000], [0, 300]);
+  const rotate1 = useTransform(scrollY, [0, 3000], [0, 45]);
+  const rotate2 = useTransform(scrollY, [0, 3000], [0, -45]);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter | null>(null);
   const [matches, setMatches] = useState<Match[]>([]);
@@ -289,8 +298,26 @@ const Home = () => {
   const hasResults = matches.length > 0 || featuredUsers.length > 0;
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 text-white pb-24 relative overflow-hidden">
+      {/* Animated Background Blobs */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <motion.div 
+          style={{ y: y1, rotate: rotate1 }}
+          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-[120px] opacity-40"
+        />
+        
+        <motion.div 
+          style={{ y: y2, rotate: rotate2 }}
+          className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-violet-600/20 rounded-full blur-[130px] opacity-40"
+        />
+        
+        <motion.div 
+          style={{ y: y3 }}
+          className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
+        />
+      </div>
+
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Search Section - Centered when not in search mode */}
           <div className={`mb-12 ${!isSearchMode ? 'min-h-[60vh] flex items-center justify-center' : ''}`}>
@@ -299,15 +326,15 @@ const Home = () => {
                 {/* Active Now Indicator */}
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg mb-4">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-white/70">
                     Active now: {featuredUsers.length}
                   </span>
                 </div>
                 
-                <h1 className="text-3xl font-bold text-foreground mb-2">
+                <h1 className="text-3xl font-bold text-white mb-2">
                   Find Your First Icebreak
                 </h1>
-                <p className="text-muted-foreground">
+                <p className="text-white/60">
                   Connect with peers, mentors, and collaborators
                 </p>
               </div>
@@ -324,7 +351,7 @@ const Home = () => {
                         e.preventDefault();
                       }
                     }}
-                    className="w-full h-12 text-base placeholder:text-muted-foreground/50 pr-12 rounded-full"
+                    className="w-full h-12 text-base placeholder:text-white/40 pr-12 rounded-full bg-white/5 border-white/10 text-white"
                   />
                   <Button
                     size="icon"
