@@ -338,7 +338,7 @@ const Home = () => {
               
               {/* Category Filter Chips */}
               <div className="flex flex-col items-center gap-2">
-                <p className="text-xs text-muted-foreground">Choose what you're searching for</p>
+                <p className="text-xs text-muted-foreground/40">Choose what you're searching for</p>
                 <div className="flex gap-2">
                   <ToggleGroup 
                     type="single" 
