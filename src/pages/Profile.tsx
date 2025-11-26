@@ -102,7 +102,7 @@ const Profile = () => {
 
       <div className="relative z-10 container max-w-2xl mx-auto px-4 pt-24 pb-6">
         {/* Main Profile Container */}
-        <div className="bg-slate-800 rounded-3xl border border-slate-600/50 shadow-2xl p-8">
+        <LiquidCrystalCard className="p-8">
           {/* Header Section */}
           <div className="flex items-start gap-4 mb-8">
             {/* Avatar */}
@@ -235,7 +235,7 @@ const Profile = () => {
               <span className="text-sm font-medium">Sign Out</span>
             </button>
           </div>
-        </div>
+        </LiquidCrystalCard>
       </div>
 
       <BottomNav />
