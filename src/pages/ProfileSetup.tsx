@@ -449,11 +449,6 @@ const ProfileSetup = () => {
           }
         }, 30);
       }, 500);
-    } else {
-      // All questions answered
-      setTimeout(() => {
-        setStep(4);
-      }, 500);
     }
   };
 
@@ -822,12 +817,11 @@ const ProfileSetup = () => {
                 </Button>
               </div>
 
-              {currentQuestion === AI_QUESTIONS.length - 1 && chatAnswers.length === AI_QUESTIONS.length && (
-                <div className="flex justify-between">
-                  <Button variant="outline" onClick={handleBack}>
-                    Back
+              {chatAnswers.length === AI_QUESTIONS.length && (
+                <div className="flex justify-center animate-fade-in">
+                  <Button onClick={() => setStep(4)} size="lg" className="w-full sm:w-auto">
+                    Continue to Interests
                   </Button>
-                  <Button onClick={() => setStep(4)}>Next</Button>
                 </div>
               )}
             </div>
