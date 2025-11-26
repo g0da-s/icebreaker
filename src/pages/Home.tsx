@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { GraduationCap, Rocket, Shuffle, Calendar, Eye, Search } from "lucide-react";
+import { GraduationCap, Rocket, Shuffle, Calendar, Eye, Search, Award, BookOpen, Briefcase } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -293,6 +293,22 @@ const Home = () => {
     return [...matchingTags, ...nonMatchingTags];
   };
 
+  // Helper function to get role icon
+  const getRoleIcon = (role: string) => {
+    switch (role.toLowerCase()) {
+      case 'student':
+        return <GraduationCap className="w-3 h-3" />;
+      case 'alumni':
+        return <Award className="w-3 h-3" />;
+      case 'faculty':
+        return <BookOpen className="w-3 h-3" />;
+      case 'staff':
+        return <Briefcase className="w-3 h-3" />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 pb-24 overflow-hidden">
       {/* Animated Background Orbs */}
@@ -510,7 +526,8 @@ const Home = () => {
                           {formatDisplayName(match.full_name)}
                         </h3>
                         {match.role && (
-                          <Badge className="mb-2 bg-white/10 text-white border-white/20 text-xs px-2 py-0.5">
+                          <Badge className="mb-2 bg-white/10 text-white border-white/20 text-xs px-2 py-0.5 flex items-center gap-1 w-fit">
+                            {getRoleIcon(match.role)}
                             {match.role}
                           </Badge>
                         )}
@@ -661,7 +678,8 @@ const Home = () => {
                           {formatDisplayName(user.full_name)}
                         </h3>
                         {user.role && (
-                          <Badge className="mb-2 bg-white/10 text-white border-white/20 text-xs px-2 py-0.5">
+                          <Badge className="mb-2 bg-white/10 text-white border-white/20 text-xs px-2 py-0.5 flex items-center gap-1 w-fit">
+                            {getRoleIcon(user.role)}
                             {user.role}
                           </Badge>
                         )}
