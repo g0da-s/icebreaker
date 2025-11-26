@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { QuickScheduleModal } from "@/components/QuickScheduleModal";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { UserProfileModal } from "@/components/UserProfileModal";
 import { formatDisplayName } from "@/lib/utils";
 
 interface Match {
@@ -40,6 +41,8 @@ const Home = () => {
   const [userId, setUserId] = useState<string>("");
   const [quickScheduleOpen, setQuickScheduleOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<{ id: string; name: string } | null>(null);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [selectedProfileUser, setSelectedProfileUser] = useState<Match | null>(null);
 
   useEffect(() => {
     const checkWelcomeAchievement = async () => {
@@ -426,7 +429,10 @@ const Home = () => {
                         variant="outline"
                         size="lg"
                         className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
-                        onClick={() => navigate(`/user/${match.user_id}`)}
+                        onClick={() => {
+                          setSelectedProfileUser(match);
+                          setProfileModalOpen(true);
+                        }}
                       >
                         <Eye className="w-5 h-5 mr-2" />
                         View Profile
@@ -515,7 +521,10 @@ const Home = () => {
                         variant="outline"
                         size="lg"
                         className="flex-1 h-12 transition-transform duration-200 hover:scale-95"
-                        onClick={() => navigate(`/user/${user.user_id}`)}
+                        onClick={() => {
+                          setSelectedProfileUser(user);
+                          setProfileModalOpen(true);
+                        }}
                       >
                         <Eye className="w-5 h-5 mr-2" />
                         View Profile
@@ -557,6 +566,22 @@ const Home = () => {
           onOpenChange={setQuickScheduleOpen}
           recipientId={selectedUser.id}
           recipientName={selectedUser.name}
+        />
+      )}
+
+      {selectedProfileUser && (
+        <UserProfileModal
+          open={profileModalOpen}
+          onOpenChange={setProfileModalOpen}
+          user={selectedProfileUser}
+          onScheduleMeeting={() => {
+            setProfileModalOpen(false);
+            setSelectedUser({ 
+              id: selectedProfileUser.user_id, 
+              name: formatDisplayName(selectedProfileUser.full_name) 
+            });
+            setQuickScheduleOpen(true);
+          }}
         />
       )}
 
