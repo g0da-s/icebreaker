@@ -294,8 +294,8 @@ const Meetings = () => {
       if (error) throw error;
 
       toast({
-        title: "Meeting Confirmed!",
-        description: `Your meeting with ${requesterName} has been confirmed.`,
+        title: "Meeting Confirmed",
+        duration: 2000,
       });
 
       fetchAllMeetings();
