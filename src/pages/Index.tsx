@@ -75,7 +75,15 @@ const Index = () => {
 
       <main className="relative z-10">
         <Hero />
-        <Testimonials />
+        
+        {/* Decorative blue glow effect */}
+        <div className="relative py-12">
+          <div className="absolute top-0 left-0 w-full flex justify-center items-center pointer-events-none">
+            <div className="w-[600px] md:w-[900px] h-[300px] bg-blue-500/10 rounded-full blur-[100px] -translate-y-1/2" />
+            <div className="absolute top-0 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+          </div>
+        </div>
+
         <StickyScroll />
         <BentoGrid />
         <Testimonials />

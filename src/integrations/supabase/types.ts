@@ -102,6 +102,10 @@ export type Database = {
           created_at: string
           email: string
           full_name: string | null
+          google_access_token: string | null
+          google_calendar_connected: boolean | null
+          google_refresh_token: string | null
+          google_token_expires_at: string | null
           id: string
           onboarding_answers: Json | null
           role: string
@@ -117,6 +121,10 @@ export type Database = {
           created_at?: string
           email: string
           full_name?: string | null
+          google_access_token?: string | null
+          google_calendar_connected?: boolean | null
+          google_refresh_token?: string | null
+          google_token_expires_at?: string | null
           id: string
           onboarding_answers?: Json | null
           role: string
@@ -132,6 +140,10 @@ export type Database = {
           created_at?: string
           email?: string
           full_name?: string | null
+          google_access_token?: string | null
+          google_calendar_connected?: boolean | null
+          google_refresh_token?: string | null
+          google_token_expires_at?: string | null
           id?: string
           onboarding_answers?: Json | null
           role?: string
