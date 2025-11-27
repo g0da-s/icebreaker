@@ -26,7 +26,6 @@ import { Switch } from "@/components/ui/switch";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { CalendarAvailability } from "@/components/CalendarAvailability";
-import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -1050,10 +1049,6 @@ const ProfileSetup = () => {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <GoogleCalendarConnect 
-                onAvailabilityImported={(imported) => setAvailability(imported)}
-              />
-
               <Card className="bg-white/5 border-white/20 backdrop-blur-xl">
                 <CardContent className="pt-6 space-y-4">
                   <Label htmlFor="availability-text" className="text-white/80 font-medium">
