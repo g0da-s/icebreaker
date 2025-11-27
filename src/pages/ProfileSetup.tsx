@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Upload, Search, MessageSquare, User, Sparkles, Calendar as CalendarIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, Upload, Search, MessageSquare, User, Sparkles, Calendar as CalendarIcon } from "lucide-react";
 import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -880,8 +880,8 @@ const ProfileSetup = () => {
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="font-semibold mb-1">AI-Powered Suggestions</h3>
-                        <p className="text-sm text-muted-foreground">Based on your profile answers</p>
+                        <h3 className="font-semibold mb-1 text-white">AI-Powered Suggestions</h3>
+                        <p className="text-sm text-white">Based on your profile answers</p>
                       </div>
                       <Button 
                         size="sm"
@@ -892,7 +892,7 @@ const ProfileSetup = () => {
                       </Button>
                     </div>
                     {isGeneratingSuggestions && (
-                      <p className="text-sm text-muted-foreground">Generating personalized interests...</p>
+                      <p className="text-sm text-white">Generating personalized interests...</p>
                     )}
                     {suggestedInterests.length > 0 && (
                       <div className="flex flex-wrap gap-2">
@@ -913,14 +913,15 @@ const ProfileSetup = () => {
               )}
 
               <div className="space-y-2">
+                <Label className="text-slate-400">Search or add custom interest</Label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                   <Input
                     placeholder="Search or add custom interest..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleSearchKeyDown}
-                    className="pl-10"
+                    className="pl-10 rounded-full bg-white/5 backdrop-blur-xl border border-white/20 text-white placeholder:text-slate-400"
                     disabled={isStandardizing}
                   />
                 </div>
@@ -941,7 +942,7 @@ const ProfileSetup = () => {
 
               {selectedInterests.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold mb-3">Your Selected Interests</h3>
+                  <h3 className="text-sm font-semibold mb-3 text-white">Your Selected Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedInterests.map(interest => (
                       <Badge
@@ -959,7 +960,7 @@ const ProfileSetup = () => {
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-semibold mb-3">Creative & Personal Interests</h3>
+                  <h3 className="text-sm font-semibold mb-3 text-white">Creative & Personal Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {filteredCreative.map(interest => (
                       <Badge
@@ -975,7 +976,7 @@ const ProfileSetup = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-semibold mb-3">Activity & Lifestyle</h3>
+                  <h3 className="text-sm font-semibold mb-3 text-white">Activity & Lifestyle</h3>
                   <div className="flex flex-wrap gap-2">
                     {filteredLifestyle.map(interest => (
                       <Badge
@@ -992,10 +993,20 @@ const ProfileSetup = () => {
               </div>
 
               <div className="flex justify-between gap-2">
-                <Button variant="outline" onClick={handleBack}>
+                <Button 
+                  onClick={handleBack}
+                  className="rounded-full bg-white/5 backdrop-blur-xl border border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
                   Back
                 </Button>
-                <Button onClick={handleNext}>Next</Button>
+                <Button 
+                  onClick={handleNext}
+                  className="rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 transition-all duration-300"
+                >
+                  Next
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
               </div>
             </motion.div>
           )}
