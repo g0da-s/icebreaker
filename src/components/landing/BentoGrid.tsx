@@ -32,7 +32,7 @@ export const BentoGrid: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-3xl md:text-5xl font-bold text-white mb-6"
+          className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-6"
         >
           Ways To Connect
         </motion.h2>
@@ -41,7 +41,7 @@ export const BentoGrid: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="text-slate-300 max-w-2xl mx-auto text-lg"
+          className="text-slate-300 max-w-2xl mx-auto text-sm md:text-base lg:text-lg px-4"
         >
           Choose your path and let our AI find the perfect matches for meaningful connections
         </motion.p>
@@ -61,10 +61,10 @@ export const BentoGrid: React.FC = () => {
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-lg backdrop-blur-md">
                     {way.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight drop-shadow-md">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-3 tracking-tight drop-shadow-md">
                     {way.title}
                 </h3>
-                <p className="text-slate-200 font-medium leading-relaxed text-sm opacity-90">
+                <p className="text-slate-200 font-medium leading-relaxed text-xs md:text-sm opacity-90">
                     {way.description}
                 </p>
             </LiquidCrystalCard>
