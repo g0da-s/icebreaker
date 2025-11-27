@@ -887,6 +887,7 @@ const ProfileSetup = () => {
                         size="sm"
                         onClick={generateInterestSuggestions}
                         disabled={isGeneratingSuggestions}
+                        className="bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300 disabled:opacity-50"
                       >
                         {isGeneratingSuggestions ? "Generating..." : suggestedInterests.length > 0 ? "Regenerate" : "Generate"}
                       </Button>
