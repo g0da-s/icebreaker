@@ -11,7 +11,6 @@ import { BottomNav } from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { QuickScheduleModal } from "@/components/QuickScheduleModal";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { UserProfileModal } from "@/components/UserProfileModal";
 import { formatDisplayName } from "@/lib/utils";
 import logo from "@/assets/logo.png";
@@ -394,38 +393,43 @@ const Home = () => {
                 className="flex flex-col items-center gap-2"
               >
                 <p className="text-xs text-slate-400">Choose what you're searching for</p>
-                <div className="flex gap-2">
-                  <ToggleGroup 
-                    type="single" 
-                    value={selectedCategory || ""}
-                    onValueChange={(value) => setSelectedCategory(value as CategoryFilter || null)}
-                    className="justify-center gap-2"
+                <div className="flex gap-2 flex-wrap justify-center">
+                  <Button
+                    size="sm"
+                    onClick={() => setSelectedCategory(selectedCategory === "surprise-me" ? null : "surprise-me")}
+                    className={`rounded-full px-3 h-8 text-sm transition-all ${
+                      selectedCategory === "surprise-me"
+                        ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
+                        : "bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/30 hover:text-white"
+                    }`}
                   >
-                    <ToggleGroupItem 
-                      value="surprise-me" 
-                      aria-label="Surprise me"
-                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/30 hover:text-white transition-all px-3 h-8 text-sm"
-                    >
-                      <Shuffle className="w-3 h-3 mr-1.5" />
-                      Surprise Me
-                    </ToggleGroupItem>
-                    <ToggleGroupItem 
-                      value="mentoring" 
-                      aria-label="Mentoring"
-                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/30 hover:text-white transition-all px-3 h-8 text-sm"
-                    >
-                      <GraduationCap className="w-3 h-3 mr-1.5" />
-                      Mentoring
-                    </ToggleGroupItem>
-                    <ToggleGroupItem 
-                      value="co-founding" 
-                      aria-label="Co-founding"
-                      className="rounded-full data-[state=on]:bg-gradient-to-r data-[state=on]:from-cyan-500 data-[state=on]:to-blue-600 data-[state=on]:text-white bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/30 hover:text-white transition-all px-3 h-8 text-sm"
-                    >
-                      <Rocket className="w-3 h-3 mr-1.5" />
-                      Co-founding
-                    </ToggleGroupItem>
-                  </ToggleGroup>
+                    <Shuffle className="w-3 h-3 mr-1.5" />
+                    Surprise Me
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => setSelectedCategory(selectedCategory === "mentoring" ? null : "mentoring")}
+                    className={`rounded-full px-3 h-8 text-sm transition-all ${
+                      selectedCategory === "mentoring"
+                        ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
+                        : "bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/30 hover:text-white"
+                    }`}
+                  >
+                    <GraduationCap className="w-3 h-3 mr-1.5" />
+                    Mentoring
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => setSelectedCategory(selectedCategory === "co-founding" ? null : "co-founding")}
+                    className={`rounded-full px-3 h-8 text-sm transition-all ${
+                      selectedCategory === "co-founding"
+                        ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white"
+                        : "bg-slate-800/40 backdrop-blur-xl border border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/30 hover:text-white"
+                    }`}
+                  >
+                    <Rocket className="w-3 h-3 mr-1.5" />
+                    Co-founding
+                  </Button>
                 </div>
               </motion.div>
               </div>
