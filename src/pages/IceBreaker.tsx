@@ -571,18 +571,19 @@ const IceBreaker = () => {
                   </button>
                 )}
                 
-                <button 
+                <Button 
                   onClick={handleNext} 
-                  className="flex-1 px-6 py-3 rounded-lg text-cyan-300 font-medium transition-all hover:text-cyan-200"
+                  size="sm"
+                  className="flex-1 rounded-full text-cyan-300 font-medium transition-all hover:text-cyan-200"
                   style={{
                     background: 'rgba(34, 211, 238, 0.1)',
                     boxShadow: 'inset 0 3px 8px rgba(0, 0, 0, 0.5), inset 0 -1px 2px rgba(255, 255, 255, 0.05), 0 0 15px rgba(34,211,238,0.3)',
-                    textShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.3)'
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
                   }}
                 >
                   Next Question
-                  <ArrowRight className="w-5 h-5 ml-2 inline" />
-                </button>
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
               </div>
             ) : waitingForOther ? (
               <div className="space-y-3">
