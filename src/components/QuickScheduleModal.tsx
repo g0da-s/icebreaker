@@ -122,8 +122,8 @@ export const QuickScheduleModal = ({
         if (insertError) throw insertError;
 
         toast({
-          title: "Meeting Requested!",
-          description: `AI suggested ${bestSlot.reason}. Request sent to ${recipientName}.`,
+          title: "Meeting request sent",
+          duration: 2000,
         });
         
         onOpenChange(false);
