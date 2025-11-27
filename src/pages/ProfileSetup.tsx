@@ -1058,20 +1058,20 @@ const ProfileSetup = () => {
                 onAvailabilityImported={(imported) => setAvailability(imported)}
               />
               
-              <div className="relative">
+              <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+                  <span className="w-full border-t border-white/20" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
+                  <span className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-4 text-white/60 font-medium backdrop-blur-xl">
                     Or describe your availability
                   </span>
                 </div>
               </div>
 
-              <Card className="bg-secondary/5">
+              <Card className="bg-white/5 border-white/20 backdrop-blur-xl">
                 <CardContent className="pt-6 space-y-4">
-                  <Label htmlFor="availability-text" className="text-white">
+                  <Label htmlFor="availability-text" className="text-white/80 font-medium">
                     Describe your typical availability in your own words
                   </Label>
                   <Textarea
@@ -1079,7 +1079,7 @@ const ProfileSetup = () => {
                     placeholder="E.g., 'Free all next week', 'Available Tuesday and Thursday evenings after 6 PM', 'I am free all the time'"
                     value={availabilityText}
                     onChange={(e) => setAvailabilityText(e.target.value)}
-                    className="min-h-[100px] bg-white/5 border-white/10 text-white placeholder:text-slate-400"
+                    className="min-h-[100px] bg-white/5 border-white/20 text-white placeholder:text-white/40 backdrop-blur-xl focus:border-cyan-500/50 focus:ring-cyan-500/20"
                     disabled={isParsing}
                   />
                   <Button 
@@ -1092,12 +1092,12 @@ const ProfileSetup = () => {
                 </CardContent>
               </Card>
 
-              <div className="relative">
+              <div className="relative my-8">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+                  <span className="w-full border-t border-white/20" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
+                  <span className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-4 text-white/60 font-medium backdrop-blur-xl">
                     Or set manually
                   </span>
                 </div>
