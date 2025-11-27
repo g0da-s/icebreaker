@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 export const Hero: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden pt-32 pb-12">
       
@@ -94,9 +109,9 @@ export const Hero: React.FC = () => {
         transition={{ duration: 0.8, delay: 0.4 }}
         className="z-10 mt-10 flex flex-col items-center mb-16"
       >
-        <Link to="/auth?mode=signup">
+        <Link to={isAuthenticated ? "/home" : "/auth?mode=signup"}>
           <button className="px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-2 whitespace-nowrap shadow-lg shadow-cyan-500/20">
-            Try Now <ArrowRight size={16} />
+            {isAuthenticated ? "Dashboard" : "Try Now"} <ArrowRight size={16} />
           </button>
         </Link>
       </motion.div>

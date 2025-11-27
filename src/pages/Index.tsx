@@ -57,14 +57,7 @@ const Index = () => {
           <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
           <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
         </Link>
-        {isAuthenticated ? (
-          <button 
-            onClick={() => navigate('/home')}
-            className="px-4 py-2 rounded-lg bg-white/10 border border-white/10 text-xs font-medium text-white hover:bg-white/20 transition-colors"
-          >
-            Dashboard
-          </button>
-        ) : (
+        {!isAuthenticated && (
           <Link to="/auth?mode=signin">
             <button className="px-4 py-2 rounded-lg bg-white/10 border border-white/10 text-xs font-medium text-white hover:bg-white/20 transition-colors">
               Log In
