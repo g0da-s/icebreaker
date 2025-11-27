@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Upload, Search, MessageSquare, User, Sparkles, Calendar as CalendarIcon } from "lucide-react";
 import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Select,
   SelectContent,
@@ -665,12 +665,29 @@ const ProfileSetup = () => {
             <p className="text-white/60 text-sm">
               Step {step} of 5 - Let's get to know you
             </p>
-            <Progress value={progress} className="h-2 bg-white/10" />
+            <div className="relative">
+              <Progress value={progress} className="h-2 bg-white/10" />
+              <div 
+                className="absolute top-0 left-0 h-2 rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 transition-all duration-500 ease-out"
+                style={{ 
+                  width: `${progress}%`,
+                  boxShadow: '0 0 15px rgba(6, 182, 212, 0.6), 0 0 30px rgba(6, 182, 212, 0.3)'
+                }}
+              />
+            </div>
           </div>
           <div>
+          <AnimatePresence mode="wait">
           {/* Step 1: Basic Identity */}
           {step === 1 && (
-            <div className="space-y-6">
+            <motion.div 
+              key="step1"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName" className="text-white">First Name *</Label>
@@ -760,12 +777,19 @@ const ProfileSetup = () => {
               <div className="flex justify-end">
                 <Button onClick={handleNext}>Next</Button>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* Step 2: Bridge Screen */}
           {step === 2 && (
-            <div className="space-y-6 text-center py-8">
+            <motion.div 
+              key="step2"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6 text-center py-8"
+            >
               <div className="space-y-4">
                 <div className="mx-auto w-20 h-20 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
                   <span className="text-4xl">🤝</span>
@@ -778,12 +802,19 @@ const ProfileSetup = () => {
               <Button onClick={handleNext} className="mt-8">
                 Continue
               </Button>
-            </div>
+            </motion.div>
           )}
 
           {/* Step 3: AI Chat Interface */}
           {step === 3 && (
-            <div className="space-y-6">
+            <motion.div 
+              key="step3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
               <div 
                 ref={chatContainerRef}
                 className="h-96 overflow-y-auto space-y-4 p-4 bg-white/5 backdrop-blur-xl rounded-lg border border-white/10"
@@ -831,12 +862,19 @@ const ProfileSetup = () => {
                   </Button>
                 </div>
               )}
-            </div>
+            </motion.div>
           )}
 
           {/* Step 4: Interests & Skills */}
           {step === 4 && (
-            <div className="space-y-6">
+            <motion.div 
+              key="step4"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
               {chatAnswers.length > 0 && (
                 <Card className="bg-primary/5 border-primary/20">
                   <CardContent className="pt-6">
@@ -959,12 +997,19 @@ const ProfileSetup = () => {
                 </Button>
                 <Button onClick={handleNext}>Next</Button>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* Step 5: Availability Scheduler */}
           {step === 5 && (
-            <div className="space-y-6">
+            <motion.div 
+              key="step5"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
               <GoogleCalendarConnect 
                 onAvailabilityImported={(imported) => setAvailability(imported)}
               />
@@ -1037,8 +1082,9 @@ const ProfileSetup = () => {
                   {loading ? "Saving..." : "Finish"}
                 </Button>
               </div>
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
           </div>
         </div>
       </LiquidCrystalCard>
