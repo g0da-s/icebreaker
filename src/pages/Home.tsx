@@ -15,6 +15,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { UserProfileModal } from "@/components/UserProfileModal";
 import { formatDisplayName } from "@/lib/utils";
 import logo from "@/assets/logo.png";
+import { IceBreakerLeaders } from "@/components/IceBreakerLeaders";
 
 interface Match {
   user_id: string;
@@ -38,7 +39,6 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter | null>(null);
   const [matches, setMatches] = useState<Match[]>([]);
-  const [featuredUsers, setFeaturedUsers] = useState<Match[]>([]);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string>("");
   const [quickScheduleOpen, setQuickScheduleOpen] = useState(false);
@@ -172,52 +172,6 @@ const Home = () => {
     checkWelcomeAchievement();
   }, [toast]);
 
-  useEffect(() => {
-    const fetchActiveCommunity = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
-
-        // Fetch 8 recently active users excluding current user
-        const { data: profiles, error: profilesError } = await supabase
-          .from('public_profiles')
-          .select('id, full_name, studies, role, avatar_url, avatar_type, updated_at')
-          .neq('id', session.user.id)
-          .order('updated_at', { ascending: false })
-          .limit(8);
-
-        if (profilesError) throw profilesError;
-
-        // Fetch interests for these users
-        const userIds = profiles?.map(p => p.id) || [];
-        const { data: interests } = await supabase
-          .from('user_interests')
-          .select('user_id, tags, bio')
-          .in('user_id', userIds);
-
-        // Combine data
-        const community: Match[] = (profiles || []).map(profile => {
-          const userInterest = interests?.find(i => i.user_id === profile.id);
-          return {
-            user_id: profile.id,
-            full_name: profile.full_name || 'No Name',
-            studies: profile.studies,
-            role: profile.role,
-            avatar_url: profile.avatar_url,
-            avatar_type: profile.avatar_type,
-            tags: userInterest?.tags || [],
-            bio: userInterest?.bio || null,
-          };
-        });
-
-        setFeaturedUsers(community);
-      } catch (error: any) {
-        console.error('Error fetching active community:', error);
-      }
-    };
-
-    fetchActiveCommunity();
-  }, []);
 
   // Real-time search effect - ONLY triggers when there's text input
   useEffect(() => {
@@ -276,7 +230,6 @@ const Home = () => {
 
   // Search mode is ONLY active when there's text in the input
   const isSearchMode = searchQuery.trim().length > 0;
-  const hasResults = matches.length > 0 || featuredUsers.length > 0;
 
   // Helper function to prioritize tags based on search query
   const getPrioritizedTags = (tags: string[], query: string) => {
@@ -631,119 +584,44 @@ const Home = () => {
             </motion.div>
           )}
 
-          {/* STATE A: Active Community Members (Default View) */}
-          {!isSearchMode && featuredUsers.length > 0 && (
-            <div className="mb-12">
-              <motion.h2 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="text-2xl font-bold text-white mb-2"
-              >
-                Active Community Members
-              </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-slate-300 mb-4"
-              >
-                Recently active members you can connect with
-              </motion.p>
-              <div className="space-y-4">
-                {featuredUsers.map((user, index) => (
-                  <motion.div
-                    key={user.user_id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <Card className="p-5 bg-slate-800/40 backdrop-blur-xl border-white/10 hover:bg-slate-800/60 hover:border-white/20 transition-all shadow-xl">
-                    <div 
-                      className="flex items-start gap-3 mb-4 cursor-pointer"
-                      onClick={() => {
-                        setSelectedProfileUser(user);
-                        setProfileModalOpen(true);
-                      }}
-                    >
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage 
-                          src={user.avatar_url || undefined} 
-                          alt={user.full_name} 
-                        />
-                        <AvatarFallback className="text-lg">
-                          {user.full_name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-white text-lg hover:text-cyan-400 transition-colors mb-1">
-                          {formatDisplayName(user.full_name)}
-                        </h3>
-                        {user.role && (
-                          <Badge className="mb-2 bg-white/10 text-white border-white/20 text-xs px-2 py-0.5 flex items-center gap-1 w-fit">
-                            {getRoleIcon(user.role)}
-                            {user.role}
-                          </Badge>
-                        )}
-                        {(user.studies || user.role) && (
-                          <p className="text-sm text-slate-300">
-                            {user.studies?.includes(' - ')
-                              ? user.studies.split(' - ')[1]
-                              : user.studies
-                            }
-                          </p>
-                        )}
-                        {user.studies?.includes(' - ') && (
-                          <p className="text-xs text-slate-400">
-                            {user.studies.split(' - ')[0]}
-                          </p>
-                        )}
-                      </div>
-                    </div>
+          {/* STATE A: Ice Breaker Leaders (Default View) */}
+          {!isSearchMode && (
+            <IceBreakerLeaders
+              onUserClick={async (userId) => {
+                // Fetch user data for profile modal
+                try {
+                  const [profileResult, interestsResult] = await Promise.all([
+                    supabase
+                      .from('public_profiles')
+                      .select('*')
+                      .eq('id', userId)
+                      .single(),
+                    supabase
+                      .from('user_interests')
+                      .select('tags, bio')
+                      .eq('user_id', userId)
+                      .maybeSingle()
+                  ]);
 
-                    {user.tags && user.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {user.tags.slice(0, 3).map((tag, idx) => (
-                          <Badge key={idx} className="text-xs bg-slate-700/50 text-slate-200 border-white/10 hover:bg-slate-600/50">
-                            {tag}
-                          </Badge>
-                        ))}
-                        {user.tags.length > 3 && (
-                          <Badge className="text-xs bg-slate-700/30 text-slate-300 border-white/10">
-                            +{user.tags.length - 3}
-                          </Badge>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setSelectedProfileUser(user);
-                          setProfileModalOpen(true);
-                        }}
-                        className="flex-1 rounded-full bg-slate-700/30 backdrop-blur-sm hover:bg-slate-600/50 border-white/20 text-white"
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        View Profile
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setSelectedUser({ id: user.user_id, name: formatDisplayName(user.full_name) });
-                          setQuickScheduleOpen(true);
-                        }}
-                        className="flex-1 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0 shadow-lg shadow-cyan-500/20"
-                      >
-                        <Calendar className="w-4 h-4 mr-2" />
-                        Meet Up
-                      </Button>
-                    </div>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+                  if (profileResult.data) {
+                    const user: Match = {
+                      user_id: userId,
+                      full_name: profileResult.data.full_name || '',
+                      studies: profileResult.data.studies,
+                      role: profileResult.data.role,
+                      avatar_url: profileResult.data.avatar_url,
+                      avatar_type: profileResult.data.avatar_type,
+                      tags: interestsResult.data?.tags || [],
+                      bio: interestsResult.data?.bio || null,
+                    };
+                    setSelectedProfileUser(user);
+                    setProfileModalOpen(true);
+                  }
+                } catch (error) {
+                  console.error('Error loading user profile:', error);
+                }
+              }}
+            />
           )}
 
         </div>
