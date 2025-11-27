@@ -133,6 +133,17 @@ const EditProfile = () => {
           return;
         }
 
+        // Check if user just connected Google Calendar
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('calendar_connected') === 'true') {
+          toast({
+            title: "Google Calendar Connected!",
+            description: "Your calendar is now synced with Icebreaker",
+          });
+          // Clean up URL
+          window.history.replaceState({}, '', '/edit-profile');
+        }
+
         // Fetch profile data
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
