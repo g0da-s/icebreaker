@@ -584,8 +584,6 @@ const ProfileSetup = () => {
         }
       }
       
-      if (location) profileUpdate.location = location;
-      
       profileUpdate.avatar_type = avatarType;
       profileUpdate.avatar_url = avatarType === "mascot" ? selectedMascot : null;
       
