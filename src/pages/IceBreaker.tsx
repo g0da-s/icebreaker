@@ -502,17 +502,13 @@ const IceBreaker = () => {
                   {currentEndlessTopic}
                 </p>
                 <div className="flex gap-3">
-                  <button 
+                  <Button 
                     onClick={handleBack} 
-                    className="px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
-                    }}
+                    className="rounded-full bg-white/5 text-white/90 hover:bg-white/10"
                   >
-                    <ArrowLeft className="w-5 h-5 mr-2 inline" />
+                    <ArrowLeft className="w-4 h-4 mr-2" />
                     Back
-                  </button>
+                  </Button>
                   <Button 
                     onClick={handleGenerateNewTopic} 
                     className="flex-1 rounded-full bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30"
@@ -554,17 +550,13 @@ const IceBreaker = () => {
             {stage < 4 ? (
               <div className="flex gap-3">
                 {stage > 1 && (
-                  <button 
+                  <Button 
                     onClick={handleBack} 
-                    className="px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
-                    }}
+                    className="rounded-full bg-white/5 text-white/90 hover:bg-white/10"
                   >
-                    <ArrowLeft className="w-5 h-5 mr-2 inline" />
+                    <ArrowLeft className="w-4 h-4 mr-2" />
                     Back
-                  </button>
+                  </Button>
                 )}
                 
                 <Button 
@@ -577,39 +569,27 @@ const IceBreaker = () => {
               </div>
             ) : waitingForOther ? (
               <div className="space-y-3">
-                <button 
+                <Button 
                   disabled 
-                  className="w-full px-6 py-3 rounded-lg text-white/50 font-medium cursor-not-allowed"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4)'
-                  }}
+                  className="w-full rounded-full bg-white/5 text-white/50 cursor-not-allowed"
                 >
                   Waiting for other person to confirm...
-                </button>
-                <button 
+                </Button>
+                <Button 
                   onClick={() => navigate("/meetings")} 
-                  className="w-full px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
-                  }}
+                  className="w-full rounded-full bg-white/5 text-white/90 hover:bg-white/10"
                 >
                   Back to Meetings List
-                </button>
+                </Button>
               </div>
             ) : (
               <div className="flex gap-3">
-                <button 
+                <Button 
                   onClick={() => navigate("/meetings")} 
-                  className="flex-1 px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
-                  }}
+                  className="flex-1 rounded-full bg-white/5 text-white/90 hover:bg-white/10"
                 >
                   Return to Dashboard
-                </button>
+                </Button>
                 <Button 
                   onClick={handleMarkCompleted} 
                   className="flex-1 rounded-full bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30"
