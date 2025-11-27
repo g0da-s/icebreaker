@@ -307,10 +307,6 @@ const ProfileSetup = () => {
       if (error) throw error;
       
       setAvailability(data.availability);
-      toast({
-        title: "Availability set",
-        description: "Your schedule has been updated based on your description",
-      });
     } catch (error) {
       console.error('Error parsing availability:', error);
       toast({
