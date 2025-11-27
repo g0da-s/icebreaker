@@ -4,7 +4,6 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.png";
 import { Hero } from "@/components/landing/Hero";
-import { Marquee } from "@/components/landing/Marquee";
 import { StickyScroll } from "@/components/landing/StickyScroll";
 import { BentoGrid } from "@/components/landing/BentoGrid";
 import { Testimonials } from "@/components/landing/Testimonials";
@@ -76,7 +75,6 @@ const Index = () => {
 
       <main className="relative z-10">
         <Hero />
-        <Marquee />
         <StickyScroll />
         <BentoGrid />
         <Testimonials />
