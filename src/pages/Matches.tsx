@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -102,7 +101,6 @@ const Matches = () => {
         <div className="container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-muted-foreground">Loading suggestions...</p>
         </div>
-        <BottomNav />
       </div>
     );
   }
@@ -196,8 +194,6 @@ const Matches = () => {
           </div>
         )}
       </div>
-
-      <BottomNav />
     </div>
   );
 };

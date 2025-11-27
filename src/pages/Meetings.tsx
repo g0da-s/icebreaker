@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 import { Badge } from "@/components/ui/badge";
@@ -509,7 +508,6 @@ const Meetings = () => {
         <div className="relative z-10 container max-w-screen-sm mx-auto px-4 pt-24 pb-6">
           <p className="text-center text-slate-300">Loading meetings...</p>
         </div>
-        <BottomNav />
       </div>
     );
   }
@@ -915,8 +913,6 @@ const Meetings = () => {
           user={profileModal.user}
         />
       )}
-
-      <BottomNav />
     </div>
     </>
   );
