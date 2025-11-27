@@ -775,7 +775,13 @@ const ProfileSetup = () => {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleNext}>Next</Button>
+                <Button 
+                  onClick={handleNext}
+                  className="rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300"
+                >
+                  Next
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
               </div>
             </motion.div>
           )}
@@ -799,7 +805,10 @@ const ProfileSetup = () => {
                   We need to understand your goals and interests to help you find meaningful networking possibilities.
                 </p>
               </div>
-              <Button onClick={handleNext} className="mt-8">
+              <Button 
+                onClick={handleNext} 
+                className="mt-8 rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300"
+              >
                 Continue
               </Button>
             </motion.div>
@@ -850,14 +859,22 @@ const ProfileSetup = () => {
                     }
                   }}
                 />
-                <Button onClick={handleChatSubmit} disabled={!currentAnswer.trim()}>
+                <Button 
+                  onClick={handleChatSubmit} 
+                  disabled={!currentAnswer.trim()}
+                  className="rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300 disabled:opacity-50"
+                >
                   Send
                 </Button>
               </div>
 
               {chatAnswers.length >= 3 && (
                 <div className="flex justify-center animate-fade-in">
-                  <Button onClick={() => setStep(4)} size="lg" className="w-full sm:w-auto">
+                  <Button 
+                    onClick={() => setStep(4)} 
+                    size="lg" 
+                    className="w-full sm:w-auto rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300"
+                  >
                     Continue to Interests
                   </Button>
                 </div>
@@ -930,13 +947,13 @@ const ProfileSetup = () => {
                   />
                 </div>
                 {canAddCustom && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2 text-sm text-white/70">
                     <span>Press Enter to add "{searchTerm}"</span>
                     <Button 
                       size="sm" 
-                      variant="outline"
                       onClick={handleAddCustomInterest}
                       disabled={isStandardizing}
+                      className="rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] active:shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-300 disabled:opacity-50"
                     >
                       {isStandardizing ? "Adding..." : "Add"}
                     </Button>
@@ -1061,7 +1078,7 @@ const ProfileSetup = () => {
                   <Button 
                     onClick={parseAvailability}
                     disabled={isParsing || !availabilityText.trim()}
-                    className="w-full"
+                    className="w-full rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300 disabled:opacity-50"
                   >
                     {isParsing ? "Analyzing..." : "Analyze & Set Availability (AI)"}
                   </Button>
@@ -1080,9 +1097,8 @@ const ProfileSetup = () => {
               </div>
 
               <Button 
-                variant="outline" 
                 onClick={() => setShowManualCalendar(!showManualCalendar)}
-                className="w-full"
+                className="w-full rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] active:shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all duration-300"
               >
                 {showManualCalendar ? "Hide" : "Show"} Manual Calendar
               </Button>
@@ -1095,10 +1111,18 @@ const ProfileSetup = () => {
               )}
 
               <div className="flex justify-between gap-2">
-                <Button variant="outline" onClick={handleBack}>
+                <Button 
+                  onClick={handleBack}
+                  className="rounded-full bg-white/5 backdrop-blur-xl border border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
                   Back
                 </Button>
-                <Button onClick={handleComplete} disabled={loading}>
+                <Button 
+                  onClick={handleComplete} 
+                  disabled={loading}
+                  className="rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300 disabled:opacity-50"
+                >
                   {loading ? "Saving..." : "Finish"}
                 </Button>
               </div>
