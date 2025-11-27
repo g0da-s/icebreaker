@@ -75,7 +75,13 @@ const Index = () => {
 
       <main className="relative z-10">
         <Hero />
-        <Testimonials />
+        
+        <div className="relative py-12">
+          <div className="absolute top-0 left-0 w-full flex justify-center items-center pointer-events-none">
+            <div className="absolute top-0 w-full max-w-4xl h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+          </div>
+        </div>
+
         <StickyScroll />
         <BentoGrid />
         <Testimonials />
