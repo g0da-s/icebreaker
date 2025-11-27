@@ -899,8 +899,11 @@ const ProfileSetup = () => {
                         {suggestedInterests.map(interest => (
                           <Badge
                             key={interest}
-                            variant={selectedInterests.includes(interest) ? "default" : "secondary"}
-                            className="cursor-pointer"
+                            className={`cursor-pointer backdrop-blur-xl border transition-all duration-300 ${
+                              selectedInterests.includes(interest) 
+                                ? "bg-cyan-500/30 border-cyan-500/50 text-white hover:bg-cyan-500/40 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)]" 
+                                : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] active:shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                            }`}
                             onClick={() => toggleInterest(interest)}
                           >
                             {interest}
@@ -947,8 +950,7 @@ const ProfileSetup = () => {
                     {selectedInterests.map(interest => (
                       <Badge
                         key={interest}
-                        variant="default"
-                        className="cursor-pointer"
+                        className="cursor-pointer bg-cyan-500/30 backdrop-blur-xl border border-cyan-500/50 text-white hover:bg-cyan-500/40 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300"
                         onClick={() => toggleInterest(interest)}
                       >
                         {interest} ×
@@ -965,8 +967,11 @@ const ProfileSetup = () => {
                     {filteredCreative.map(interest => (
                       <Badge
                         key={interest}
-                        variant={selectedInterests.includes(interest) ? "default" : "outline"}
-                        className="cursor-pointer"
+                        className={`cursor-pointer backdrop-blur-xl border transition-all duration-300 ${
+                          selectedInterests.includes(interest) 
+                            ? "bg-cyan-500/30 border-cyan-500/50 text-white hover:bg-cyan-500/40 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)]" 
+                            : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] active:shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                        }`}
                         onClick={() => toggleInterest(interest)}
                       >
                         {interest}
@@ -981,8 +986,11 @@ const ProfileSetup = () => {
                     {filteredLifestyle.map(interest => (
                       <Badge
                         key={interest}
-                        variant={selectedInterests.includes(interest) ? "default" : "outline"}
-                        className="cursor-pointer"
+                        className={`cursor-pointer backdrop-blur-xl border transition-all duration-300 ${
+                          selectedInterests.includes(interest) 
+                            ? "bg-cyan-500/30 border-cyan-500/50 text-white hover:bg-cyan-500/40 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)]" 
+                            : "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] active:shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                        }`}
                         onClick={() => toggleInterest(interest)}
                       >
                         {interest}
