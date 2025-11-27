@@ -4,8 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Sparkles, ArrowLeft, Award } from "lucide-react";
+import { Sparkles, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
@@ -15,10 +14,7 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const defaultTab = searchParams.get('mode') === 'signin' ? 'signin' : 'signup';
   const [isLoading, setIsLoading] = useState(false);
-  const [showAchievement, setShowAchievement] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const allowedDomains = ['@ism.lt', '@stud.ism.lt', '@faculty.ism.lt'];
 
@@ -85,11 +81,7 @@ const Auth = () => {
         variant: "destructive"
       });
     } else {
-      setShowAchievement(true);
-      setTimeout(() => {
-        setShowAchievement(false);
-        navigate("/profile-setup");
-      }, 3000);
+      navigate("/profile-setup");
     }
     setIsLoading(false);
   };
@@ -120,24 +112,8 @@ const Auth = () => {
     }
     setIsLoading(false);
   };
-  return <>
-      <Dialog open={showAchievement} onOpenChange={setShowAchievement}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <div className="flex justify-center mb-4">
-              <div className="bg-primary/10 p-4 rounded-full">
-                <Award className="w-12 h-12 text-primary" />
-              </div>
-            </div>
-            <DialogTitle className="text-2xl text-center">Achievement Unlocked</DialogTitle>
-            <DialogDescription className="text-center text-lg font-semibold">
-              New on Ice
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-
-      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center p-4 relative overflow-hidden">
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center p-4 relative overflow-hidden">
         <div className="fixed inset-0 z-0 pointer-events-none">
           <motion.div 
             animate={{ 
@@ -234,6 +210,6 @@ const Auth = () => {
         </div>
       </LiquidCrystalCard>
     </div>
-    </>;
+  );
 };
 export default Auth;
