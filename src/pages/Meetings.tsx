@@ -7,7 +7,7 @@ import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, Check, X, Clock, User, Inbox, CalendarDays, History as HistoryIcon } from "lucide-react";
+import { Calendar, Check, X, Clock, User, Inbox, CalendarDays, History as HistoryIcon, MapPin } from "lucide-react";
 import { format, isPast } from "date-fns";
 import { ScheduleMeetingModal } from "@/components/ScheduleMeetingModal";
 import { MeetingNotifications } from "@/components/MeetingNotifications";
@@ -580,6 +580,10 @@ const Meetings = () => {
                         <div className="text-sm text-slate-300 mt-1 ml-6">
                           {format(new Date(meeting.scheduled_at), 'h:mm a')}
                         </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-400 mt-2">
+                          <MapPin className="w-4 h-4" />
+                          <span>Main Hall, ISM</span>
+                        </div>
                       </div>
 
                       <div className="flex gap-2">
@@ -645,6 +649,10 @@ const Meetings = () => {
                           <p className="text-sm text-slate-300 mt-1">
                             {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d')} at {format(new Date(meeting.scheduled_at), 'h:mm a')}
                           </p>
+                          <div className="flex items-center gap-1 text-xs text-slate-400 mt-1">
+                            <MapPin className="w-3 h-3" />
+                            <span>Main Hall, ISM</span>
+                          </div>
                         </div>
                         <Badge variant="outline" className="text-slate-300">Awaiting Response</Badge>
                       </div>
@@ -706,6 +714,10 @@ const Meetings = () => {
                       <div className="flex items-center gap-2 text-sm text-slate-300 ml-6">
                         <Clock className="w-4 h-4" />
                         {format(new Date(meeting.scheduled_at), 'h:mm a')}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-slate-400 ml-6 mt-2">
+                        <MapPin className="w-4 h-4" />
+                        <span>Main Hall, ISM</span>
                       </div>
                     </div>
 
@@ -820,6 +832,10 @@ const Meetings = () => {
                         <p className="text-sm text-slate-300 mt-1">
                           {format(new Date(meeting.scheduled_at), 'MMMM d, yyyy')} at {format(new Date(meeting.scheduled_at), 'h:mm a')}
                         </p>
+                        <div className="flex items-center gap-1 text-xs text-slate-400 mt-1">
+                          <MapPin className="w-3 h-3" />
+                          <span>Main Hall, ISM</span>
+                        </div>
                       </div>
                       <Badge variant={meeting.status === 'cancelled' ? 'destructive' : 'secondary'}>
                         {meeting.status === 'cancelled' ? 'Cancelled' : meeting.status === 'completed' ? 'Completed' : 'Past'}
