@@ -20,6 +20,8 @@ import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 import GoogleCalendarCallback from "./pages/GoogleCalendarCallback";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -96,6 +98,8 @@ function AppContent() {
           </ProtectedRoute>
         } />
         <Route path="/auth/callback/google" element={<GoogleCalendarCallback />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
