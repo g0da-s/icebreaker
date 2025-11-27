@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import UserProfile from "./pages/UserProfile";
 import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
+import GoogleCalendarCallback from "./pages/GoogleCalendarCallback";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -82,6 +83,7 @@ const App = () => (
               <UserProfile />
             </ProtectedRoute>
           } />
+          <Route path="/auth/callback/google" element={<GoogleCalendarCallback />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
