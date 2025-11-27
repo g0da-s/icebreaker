@@ -1057,17 +1057,6 @@ const ProfileSetup = () => {
               <GoogleCalendarConnect 
                 onAvailabilityImported={(imported) => setAvailability(imported)}
               />
-              
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-white/20" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-4 text-white/60 font-medium backdrop-blur-xl">
-                    Or describe your availability
-                  </span>
-                </div>
-              </div>
 
               <Card className="bg-white/5 border-white/20 backdrop-blur-xl">
                 <CardContent className="pt-6 space-y-4">
@@ -1091,17 +1080,6 @@ const ProfileSetup = () => {
                   </Button>
                 </CardContent>
               </Card>
-
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-white/20" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 px-4 text-white/60 font-medium backdrop-blur-xl">
-                    Or set manually
-                  </span>
-                </div>
-              </div>
 
               <Button 
                 onClick={() => setShowManualCalendar(!showManualCalendar)}
