@@ -72,7 +72,7 @@ export const Hero: React.FC = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500 shadow-[0_0_8px_rgba(74,222,128,0.8)]"></span>
           </div>
-          <p className="text-xs text-slate-200">
+          <p className="text-[10px] md:text-xs text-slate-200">
             Limited early access for <span className="text-white font-bold">ISM University Community</span>.
           </p>
         </div>
@@ -87,7 +87,7 @@ export const Hero: React.FC = () => {
     }} transition={{
       duration: 0.8,
       delay: 0.2
-    }} className="z-10 text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white max-w-5xl mx-auto leading-[1.1] drop-shadow-sm">Network without the awkwardness</motion.h1>
+    }} className="z-10 text-xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white max-w-5xl mx-auto leading-[1.1] drop-shadow-sm px-2">Network without the awkwardness</motion.h1>
 
       <motion.p initial={{
       opacity: 0,
@@ -98,7 +98,7 @@ export const Hero: React.FC = () => {
     }} transition={{
       duration: 0.8,
       delay: 0.3
-    }} className="z-10 mt-6 text-lg md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium">Our AI connects you, sets the meeting, and breaks the ice. 
+    }} className="z-10 mt-6 text-sm md:text-lg lg:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium px-4">Our AI connects you, sets the meeting, and breaks the ice. 
 All you have to do is just create a profile and show up</motion.p>
 
       <motion.div initial={{

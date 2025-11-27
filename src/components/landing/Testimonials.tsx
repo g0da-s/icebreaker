@@ -56,10 +56,10 @@ export const Testimonials: React.FC = () => {
       </div>
 
       <div className="text-center mb-16 relative z-10 px-4 mt-12">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
             Member Stories
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+          <p className="text-slate-400 max-w-2xl mx-auto text-sm md:text-base lg:text-lg">
             Real connections made by real people.
           </p>
       </div>
@@ -74,7 +74,7 @@ export const Testimonials: React.FC = () => {
               <GlassCard hoverEffect={true} className="p-8 h-full flex flex-col justify-between">
                 <div className="mb-6">
                   <div className="text-4xl text-cyan-500/20 font-serif leading-none mb-2">"</div>
-                  <p className="text-slate-200 leading-relaxed font-medium relative z-10">
+                  <p className="text-slate-200 leading-relaxed font-medium relative z-10 text-xs md:text-sm">
                     {t.quote}
                   </p>
                 </div>

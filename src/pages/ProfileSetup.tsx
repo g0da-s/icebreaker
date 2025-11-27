@@ -660,7 +660,7 @@ const ProfileSetup = () => {
               {step === 3 && <MessageSquare className="w-5 h-5 text-cyan-400" />}
               {step === 4 && <Sparkles className="w-5 h-5 text-cyan-400" />}
               {step === 5 && <CalendarIcon className="w-5 h-5 text-cyan-400" />}
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-lg md:text-2xl font-bold text-white">
                 {step === 3 ? "Let's get to know you" : "Build Your Profile"}
               </h2>
             </div>
@@ -802,8 +802,8 @@ const ProfileSetup = () => {
                 <div className="mx-auto w-20 h-20 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
                   <span className="text-4xl">🤝</span>
                 </div>
-                <h3 className="text-2xl font-bold text-white">Let's Get to Know You</h3>
-                <p className="text-white/70 max-w-md mx-auto">
+                <h3 className="text-xl md:text-2xl font-bold text-white">Let's Get to Know You</h3>
+                <p className="text-sm md:text-base text-white/70 max-w-md mx-auto px-4">
                   We need to understand your goals and interests to help you find meaningful networking possibilities.
                 </p>
               </div>
@@ -838,7 +838,7 @@ const ProfileSetup = () => {
                     className={`flex ${msg.role === "ai" ? "justify-start" : "justify-end"}`}
                   >
                     <div
-                      className={`max-w-[80%] p-3 rounded-lg ${
+                      className={`max-w-[80%] p-3 rounded-lg text-xs md:text-sm ${
                         msg.role === "ai"
                           ? "bg-cyan-500/20 text-white border border-cyan-500/30"
                           : "bg-blue-500/20 text-white border border-blue-500/30"
@@ -913,8 +913,8 @@ const ProfileSetup = () => {
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="font-semibold mb-1 text-white">AI-Powered Suggestions</h3>
-                        <p className="text-sm text-white">Based on your profile answers</p>
+                        <h3 className="text-sm md:text-base font-semibold mb-1 text-white">AI-Powered Suggestions</h3>
+                        <p className="text-xs md:text-sm text-white">Based on your profile answers</p>
                       </div>
                       <Button 
                         size="sm"
@@ -950,7 +950,7 @@ const ProfileSetup = () => {
               )}
 
               <div className="space-y-2">
-                <Label className="text-slate-400">Search or add custom interest</Label>
+                <Label className="text-xs md:text-sm text-slate-400">Search or add custom interest</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                   <Input
@@ -979,7 +979,7 @@ const ProfileSetup = () => {
 
               {selectedInterests.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold mb-3 text-white">Your Selected Interests</h3>
+                  <h3 className="text-xs md:text-sm font-semibold mb-3 text-white">Your Selected Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedInterests.map(interest => (
                       <Badge
@@ -996,7 +996,7 @@ const ProfileSetup = () => {
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-semibold mb-3 text-white">Creative & Personal Interests</h3>
+                  <h3 className="text-xs md:text-sm font-semibold mb-3 text-white">Creative & Personal Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {filteredCreative.map(interest => (
                       <Badge

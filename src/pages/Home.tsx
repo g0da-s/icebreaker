@@ -314,7 +314,7 @@ const Home = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-white/5">
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
-          <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
+          <div className="text-base md:text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
         </Link>
       </nav>
 
@@ -343,7 +343,7 @@ const Home = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-3xl font-bold text-white mb-2"
+                  className="text-2xl md:text-3xl font-bold text-white mb-2"
                 >
                   Find Your First Icebreak
                 </motion.h1>
@@ -438,7 +438,7 @@ const Home = () => {
               <motion.h2 
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="text-2xl font-bold text-white mb-2"
+                className="text-xl md:text-2xl font-bold text-white mb-2"
               >
                 Search Results
               </motion.h2>

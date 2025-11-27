@@ -111,7 +111,7 @@ const Matches = () => {
     <div className="min-h-screen bg-background pb-24">
       <div className="container max-w-screen-sm mx-auto px-4 py-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-foreground mb-2">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground mb-2">
             Suggested Connections
           </h1>
           <p className="text-muted-foreground">

@@ -442,7 +442,7 @@ const Meetings = () => {
         <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center backdrop-blur-md bg-slate-950/50 border-b border-white/5">
           <Link to="/" className="flex items-center gap-3">
             <img src={logo} alt="icebreaker.ai Logo" className="h-10 w-10 rounded-lg brightness-75" />
-            <div className="text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
+            <div className="text-base md:text-xl font-bold tracking-tighter text-white">icebreaker.ai</div>
           </Link>
         </nav>
 
