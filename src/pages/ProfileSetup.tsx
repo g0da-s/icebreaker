@@ -828,7 +828,9 @@ const ProfileSetup = () => {
             >
               <div 
                 ref={chatContainerRef}
-                className="h-96 overflow-y-auto space-y-4 p-4 bg-white/5 backdrop-blur-xl rounded-lg border border-white/10"
+                className={`overflow-y-auto space-y-4 p-4 bg-white/5 backdrop-blur-xl rounded-lg border border-white/10 transition-all duration-500 ${
+                  chatHistory.length <= 1 ? 'h-32' : 'h-96'
+                }`}
               >
                 {chatHistory.map((msg, idx) => (
                   <div
