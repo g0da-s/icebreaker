@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, ArrowLeft, Sparkles, MessageCircle, Target } from "lucide-react";
@@ -10,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { formatDisplayName } from "@/lib/utils";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
+import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 
 type Meeting = {
   id: string;
@@ -408,180 +408,230 @@ const IceBreaker = () => {
         <CelebrationOverlay onComplete={() => navigate("/meetings")} />
       )}
       
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-        <Card className="w-full max-w-2xl">
-        <CardHeader className="text-center space-y-4">
-          <div className="flex justify-center items-center gap-4">
-            <Avatar className="h-16 w-16">
-              <AvatarImage
-                src={otherUser.avatar_url || undefined}
-                alt={otherUser.full_name}
-              />
-              <AvatarFallback>
-                {otherUser.full_name.split(' ').map(n => n[0]).join('')}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-2xl">🧊</span>
-          </div>
-          <div>
-            <CardTitle className="text-2xl">Ice Breaker</CardTitle>
-            <p className="text-sm text-muted-foreground mt-2">
-              Meeting with {formatDisplayName(otherUser.full_name)}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d, h:mm a')}
-            </p>
-          </div>
-          <div className="flex justify-center gap-2">
-            {[1, 2, 3, 4].map((s) => (
-              <div
-                key={s}
-                className={`h-2 w-12 rounded-full transition-colors ${
-                  s <= stage ? 'bg-primary' : 'bg-muted'
-                }`}
-              />
-            ))}
-          </div>
-        </CardHeader>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center p-4">
+        <LiquidCrystalCard className="w-full max-w-2xl p-8">
+          <div className="text-center space-y-6">
+            <div className="flex justify-center items-center gap-4">
+              <Avatar className="h-16 w-16 ring-2 ring-white/20">
+                <AvatarImage
+                  src={otherUser.avatar_url || undefined}
+                  alt={otherUser.full_name}
+                />
+                <AvatarFallback>
+                  {otherUser.full_name.split(' ').map(n => n[0]).join('')}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-2xl">🧊</span>
+            </div>
+            
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">Ice Breaker</h1>
+              <p className="text-sm text-white/70 mt-2">
+                Meeting with {formatDisplayName(otherUser.full_name)}
+              </p>
+              <p className="text-xs text-white/50">
+                {format(new Date(meeting.scheduled_at), 'EEEE, MMMM d, h:mm a')}
+              </p>
+            </div>
 
-        <CardContent className="space-y-6">
-          {stage < 4 ? (
-            <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="pt-6 space-y-4">
+            {/* Glowing Progress Indicators */}
+            <div className="flex justify-center gap-3">
+              {[1, 2, 3, 4].map((s) => (
+                <div
+                  key={s}
+                  className={`h-3 w-14 rounded-full transition-all duration-500 ${
+                    s <= stage 
+                      ? 'bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.8)] animate-pulse' 
+                      : 'bg-white/10'
+                  }`}
+                  style={{
+                    filter: s <= stage ? `brightness(${1 + (s * 0.2)})` : 'brightness(1)',
+                    boxShadow: s <= stage 
+                      ? `0 0 ${15 + (s * 5)}px rgba(34,211,238,${0.6 + (s * 0.1)})` 
+                      : 'none'
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-6 mt-8">
+            {stage < 4 ? (
+              <div 
+                className="p-6 rounded-2xl space-y-4"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 -2px 4px rgba(255, 255, 255, 0.05)'
+                }}
+              >
                 <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-full bg-primary/10 text-primary">
+                  <div className="p-3 rounded-full bg-cyan-500/20 text-cyan-400">
                     {questionData.icon}
                   </div>
                   <div>
-                    <Badge variant="secondary" className="mb-2">
+                    <Badge variant="secondary" className="mb-2 bg-white/10 text-white border-white/20">
                       Stage {stage} of 4
                     </Badge>
-                    <h3 className="text-lg font-semibold">{questionData.title}</h3>
+                    <h3 className="text-lg font-semibold text-white">{questionData.title}</h3>
                   </div>
                 </div>
-                <p className="text-lg text-foreground leading-relaxed">
+                <p className="text-lg text-white/90 leading-relaxed">
                   {questionData.question}
                 </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="pt-6 space-y-6">
+              </div>
+            ) : (
+              <div 
+                className="p-6 rounded-2xl space-y-6"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 -2px 4px rgba(255, 255, 255, 0.05)'
+                }}
+              >
                 <div className="flex items-center gap-3">
-                  <div className="p-3 rounded-full bg-primary/10 text-primary">
+                  <div className="p-3 rounded-full bg-cyan-500/20 text-cyan-400">
                     <MessageCircle className="w-6 h-6" />
                   </div>
                   <div>
-                    <Badge variant="secondary" className="mb-2">
+                    <Badge variant="secondary" className="mb-2 bg-white/10 text-white border-white/20">
                       Stage 4 of 4
                     </Badge>
-                    <h3 className="text-lg font-semibold">Endless Conversation</h3>
+                    <h3 className="text-lg font-semibold text-white">Endless Conversation</h3>
                   </div>
                 </div>
-                <p className="text-xl text-foreground leading-relaxed font-medium text-center py-8">
+                <p className="text-xl text-white/90 leading-relaxed font-medium text-center py-8">
                   {currentEndlessTopic}
                 </p>
                 <div className="flex gap-3">
-                  <Button 
+                  <button 
                     onClick={handleBack} 
-                    variant="outline" 
-                    size="lg" 
-                    className="h-12"
+                    className="px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
+                    }}
                   >
-                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    <ArrowLeft className="w-5 h-5 mr-2 inline" />
                     Back
-                  </Button>
-                  <Button 
+                  </button>
+                  <button 
                     onClick={handleGenerateNewTopic} 
-                    variant="outline" 
-                    className="flex-1 h-12"
-                    size="lg"
+                    className="flex-1 px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
+                    }}
                   >
                     Generate New Topic 🎲
-                  </Button>
+                  </button>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              </div>
+            )}
 
-          {meeting?.connected_interest && stage === 1 && (
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">
-                Connected Interest:
-              </p>
-              <Badge variant="default" className="text-base px-4 py-1">
-                {meeting.connected_interest}
-              </Badge>
-            </div>
-          )}
+            {meeting?.connected_interest && stage === 1 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-white/60">
+                  Connected Interest:
+                </p>
+                <Badge variant="default" className="text-base px-4 py-1 bg-cyan-500/20 text-cyan-300 border-cyan-400/30">
+                  {meeting.connected_interest}
+                </Badge>
+              </div>
+            )}
 
-          {stage < 4 && (
-            <div className="bg-muted/30 rounded-lg p-4 space-y-2">
-              <p className="text-sm font-medium">💡 Tip</p>
-              <p className="text-sm text-muted-foreground">
-                {stage === 1 && "Start with something you both care about to create common ground."}
-                {stage === 2 && "Share your curiosity and be open to their perspective."}
-                {stage === 3 && "Think about how you can mutually benefit from this connection."}
-              </p>
-            </div>
-          )}
+            {stage < 4 && (
+              <div 
+                className="rounded-lg p-4 space-y-2"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.3)'
+                }}
+              >
+                <p className="text-sm font-medium text-white/80">💡 Tip</p>
+                <p className="text-sm text-white/60">
+                  {stage === 1 && "Start with something you both care about to create common ground."}
+                  {stage === 2 && "Share your curiosity and be open to their perspective."}
+                  {stage === 3 && "Think about how you can mutually benefit from this connection."}
+                </p>
+              </div>
+            )}
 
-          {stage < 4 ? (
-            <div className="flex gap-3">
-              {stage > 1 && (
-                <Button 
-                  onClick={handleBack} 
-                  variant="outline" 
-                  size="lg" 
-                  className="h-12"
+            {stage < 4 ? (
+              <div className="flex gap-3">
+                {stage > 1 && (
+                  <button 
+                    onClick={handleBack} 
+                    className="px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
+                    }}
+                  >
+                    <ArrowLeft className="w-5 h-5 mr-2 inline" />
+                    Back
+                  </button>
+                )}
+                
+                <button 
+                  onClick={handleNext} 
+                  className="flex-1 px-6 py-3 rounded-lg bg-cyan-500/20 text-cyan-300 font-medium transition-all hover:bg-cyan-500/30"
+                  style={{
+                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 15px rgba(34,211,238,0.3)'
+                  }}
                 >
-                  <ArrowLeft className="w-5 h-5 mr-2" />
-                  Back
-                </Button>
-              )}
-              
-              <Button onClick={handleNext} className="flex-1 h-12" size="lg">
-                Next Question
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-          ) : waitingForOther ? (
-            <div className="space-y-3">
-              <Button disabled className="w-full h-12" size="lg">
-                Waiting for other person to confirm...
-              </Button>
-              <Button 
-                onClick={() => navigate("/meetings")} 
-                variant="outline" 
-                className="w-full h-12" 
-                size="lg"
-              >
-                Back to Meetings List
-              </Button>
-            </div>
-          ) : (
-            <div className="flex gap-3">
-              <Button 
-                onClick={() => navigate("/meetings")} 
-                variant="outline" 
-                className="flex-1 h-12" 
-                size="lg"
-              >
-                Return to Dashboard
-              </Button>
-              <Button 
-                onClick={handleMarkCompleted} 
-                className="flex-1 h-12" 
-                size="lg"
-                disabled={isCompleting}
-              >
-                {isCompleting ? "Marking..." : "Finish Meeting"}
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+                  Next Question
+                  <ArrowRight className="w-5 h-5 ml-2 inline" />
+                </button>
+              </div>
+            ) : waitingForOther ? (
+              <div className="space-y-3">
+                <button 
+                  disabled 
+                  className="w-full px-6 py-3 rounded-lg text-white/50 font-medium cursor-not-allowed"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4)'
+                  }}
+                >
+                  Waiting for other person to confirm...
+                </button>
+                <button 
+                  onClick={() => navigate("/meetings")} 
+                  className="w-full px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  Back to Meetings List
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => navigate("/meetings")} 
+                  className="flex-1 px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  Return to Dashboard
+                </button>
+                <button 
+                  onClick={handleMarkCompleted} 
+                  className="flex-1 px-6 py-3 rounded-lg bg-cyan-500/20 text-cyan-300 font-medium transition-all hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isCompleting}
+                  style={{
+                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 15px rgba(34,211,238,0.3)'
+                  }}
+                >
+                  {isCompleting ? "Marking..." : "Finish Meeting"}
+                </button>
+              </div>
+            )}
+          </div>
+        </LiquidCrystalCard>
+      </div>
     </>
   );
 };
