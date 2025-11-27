@@ -149,8 +149,9 @@ export const MeetingNotifications = () => {
         if (notif.type === "cancelled") {
           toast({
             title: "Meeting Declined",
-            description: `${notif.other_user_name} is unfortunately not available for the meeting.`,
+            description: `${notif.other_user_name} is not available`,
             variant: "destructive",
+            duration: 2000,
           });
         } else if (notif.type === "reminder") {
           toast({
@@ -161,8 +162,13 @@ export const MeetingNotifications = () => {
         // Confirmed meetings only show in the glassy notification card
       });
 
+      // Only add non-cancelled notifications to the visible list
+      const visibleNotifs = newNotifs.filter(n => n.type !== "cancelled");
+      if (visibleNotifs.length > 0) {
+        setNotifications(prev => [...visibleNotifs, ...prev]);
+      }
+      
       if (newNotifs.length > 0) {
-        setNotifications(prev => [...newNotifs, ...prev]);
         setShownNotifications(prev => {
           const newSet = new Set(prev);
           newNotifs.forEach(n => newSet.add(n.id));
