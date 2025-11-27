@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +20,7 @@ import { CalendarAvailability } from "@/components/CalendarAvailability";
 import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
 import { AIAvailabilityEditor } from "@/components/AIAvailabilityEditor";
 import { DateSpecificAvailability } from "@/components/DateSpecificAvailability";
+import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -392,7 +392,7 @@ const EditProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background pb-24">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 pb-24">
         <div className="container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-muted-foreground">Loading profile...</p>
         </div>
@@ -402,24 +402,24 @@ const EditProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 pb-24">
       <div className="container max-w-2xl mx-auto px-4 py-6">
         <div className="mb-4">
-          <Link to="/profile" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/profile" className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
             <span>Back to Profile</span>
           </Link>
         </div>
 
-        <Card>
-          <CardHeader>
+        <LiquidCrystalCard className="p-6">
+          <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Edit Profile</CardTitle>
-                <CardDescription>Update your profile information</CardDescription>
+                <h1 className="text-2xl font-bold text-white">Edit Profile</h1>
+                <p className="text-sm text-white/60 mt-1">Update your profile information</p>
               </div>
               {/* Avatar Preview */}
-              <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-primary/20 flex items-center justify-center bg-muted">
+              <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/20 flex items-center justify-center bg-white/5">
                 {selectedMascot ? (
                   <img 
                     src={selectedMascot} 
@@ -427,51 +427,51 @@ const EditProfile = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-2xl font-bold text-muted-foreground">
+                  <span className="text-2xl font-bold text-white/60">
                     {firstName ? firstName.charAt(0) : '?'}
                   </span>
                 )}
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
             {/* Basic Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Basic Information</h3>
+              <h3 className="text-lg font-semibold text-white">Basic Information</h3>
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name *</Label>
+                  <Label htmlFor="firstName" className="text-white/80">First Name *</Label>
                   <Input
                     id="firstName"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="John"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name *</Label>
+                  <Label htmlFor="lastName" className="text-white/80">Last Name *</Label>
                   <Input
                     id="lastName"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Doe"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="studyLevel">Study Level</Label>
+                <Label htmlFor="studyLevel" className="text-white/80">Study Level</Label>
                 <Select value={studyLevel} onValueChange={(value) => {
                   setStudyLevel(value);
                   setStudies("");
                 }}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/5 border-white/10 text-white">
                     <SelectValue placeholder="Select your study level" />
                   </SelectTrigger>
-                  <SelectContent className="bg-background z-50">
+                  <SelectContent className="bg-slate-900 border-white/10 z-50">
                     {STUDY_LEVELS.map(option => (
-                      <SelectItem key={option} value={option}>
+                      <SelectItem key={option} value={option} className="text-white focus:bg-white/10">
                         {option}
                       </SelectItem>
                     ))}
@@ -481,14 +481,14 @@ const EditProfile = () => {
 
               {studyLevel && studyLevel !== "Faculty Member" && (
                 <div className="space-y-2">
-                  <Label htmlFor="studies">Program</Label>
+                  <Label htmlFor="studies" className="text-white/80">Program</Label>
                   <Select value={studies} onValueChange={setStudies}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder={`Select your ${studyLevel} program`} />
                     </SelectTrigger>
-                    <SelectContent className="bg-background z-50 max-h-[300px] overflow-y-auto">
+                    <SelectContent className="bg-slate-900 border-white/10 z-50 max-h-[300px] overflow-y-auto">
                       {getAvailablePrograms().map(program => (
-                        <SelectItem key={program} value={program}>
+                        <SelectItem key={program} value={program} className="text-white focus:bg-white/10">
                           {program}
                         </SelectItem>
                       ))}
@@ -498,30 +498,32 @@ const EditProfile = () => {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
+                <Label htmlFor="bio" className="text-white/80">Bio</Label>
                 <Textarea
                   id="bio"
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   placeholder="Tell us about yourself..."
                   rows={3}
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="linkedin">LinkedIn URL</Label>
+                <Label htmlFor="linkedin" className="text-white/80">LinkedIn URL</Label>
                 <Input
                   id="linkedin"
                   value={linkedinUrl}
                   onChange={(e) => setLinkedinUrl(e.target.value)}
                   placeholder="https://linkedin.com/in/yourprofile"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
                 />
               </div>
             </div>
 
             {/* Avatar Section */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Choose your Avatar</h3>
+              <h3 className="text-lg font-semibold text-white">Choose your Avatar</h3>
               <div className="grid grid-cols-4 gap-4">
                 {[1, 2, 3, 4].map((num) => {
                   const avatarPath = `/avatar-${num}.png`;
@@ -555,28 +557,28 @@ const EditProfile = () => {
                   );
                 })}
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-white/60">
                 Select one of the avatars to represent you on the platform
               </p>
             </div>
 
             {/* Interests */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Interests & Skills</h3>
+              <h3 className="text-lg font-semibold text-white">Interests & Skills</h3>
               
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-white/40" />
                 <Input
                   placeholder="Search interests..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/40"
                 />
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-sm font-semibold mb-3">Creative & Personal Interests</h4>
+                  <h4 className="text-sm font-semibold mb-3 text-white/80">Creative & Personal Interests</h4>
                   <div className="flex flex-wrap gap-2">
                     {filteredCreative.map(interest => (
                       <Badge
@@ -592,7 +594,7 @@ const EditProfile = () => {
                 </div>
 
                 <div>
-                  <h4 className="text-sm font-semibold mb-3">Activity & Lifestyle</h4>
+                  <h4 className="text-sm font-semibold mb-3 text-white/80">Activity & Lifestyle</h4>
                   <div className="flex flex-wrap gap-2">
                     {filteredLifestyle.map(interest => (
                       <Badge
@@ -611,7 +613,7 @@ const EditProfile = () => {
 
             {/* Availability */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Availability</h3>
+              <h3 className="text-lg font-semibold text-white">Availability</h3>
               
               <AIAvailabilityEditor 
                 onAvailabilityUpdated={(updated) => setAvailability(updated)}
@@ -620,10 +622,10 @@ const EditProfile = () => {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+                  <span className="w-full border-t border-white/10" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
+                  <span className="bg-transparent px-2 text-white/60">
                     Or use other methods
                   </span>
                 </div>
@@ -640,10 +642,10 @@ const EditProfile = () => {
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+                  <span className="w-full border-t border-white/10" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
+                  <span className="bg-transparent px-2 text-white/60">
                     Specific dates
                   </span>
                 </div>
@@ -660,67 +662,65 @@ const EditProfile = () => {
               <Button 
                 variant="outline" 
                 onClick={() => navigate("/profile")}
-                className="flex-1"
+                className="flex-1 bg-white/5 border-white/20 text-white hover:bg-white/10"
               >
                 Cancel
               </Button>
               <Button 
                 onClick={handleSave} 
                 disabled={saving}
-                className="flex-1"
+                className="flex-1 bg-white/20 text-white hover:bg-white/30"
               >
                 {saving ? "Saving..." : "Save Changes"}
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </LiquidCrystalCard>
 
         {/* Danger Zone - Separate Card */}
-        <Card className="mt-6 border-destructive/50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-destructive">Danger Zone</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Irreversible actions that affect your account
-                </p>
-              </div>
-              
-              <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="destructive"
-                    className="ml-4"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Account
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete your account and remove your data from our servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleDeleteAccount();
-                      }}
-                      disabled={deleting}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    >
-                      {deleting ? "Deleting..." : "Yes, Delete Account"}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+        <LiquidCrystalCard className="mt-6 p-6 border-2 border-destructive/30">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-red-400">Danger Zone</h3>
+              <p className="text-sm text-white/60 mt-1">
+                Irreversible actions that affect your account
+              </p>
             </div>
-          </CardContent>
-        </Card>
+              
+            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="destructive"
+                  className="ml-4"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-slate-900 border-white/10">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-white">Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="text-white/60">
+                    This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={deleting} className="bg-white/5 border-white/20 text-white hover:bg-white/10">Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDeleteAccount();
+                    }}
+                    disabled={deleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleting ? "Deleting..." : "Yes, Delete Account"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </LiquidCrystalCard>
       </div>
 
       <BottomNav />
