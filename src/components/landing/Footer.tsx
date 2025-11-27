@@ -8,8 +8,9 @@ export const Footer: React.FC = () => {
         </div>
         
         <div className="flex gap-8 text-sm text-slate-400">
-            <a href="/privacy" className="hover:text-cyan-400 transition-colors">Privacy Policy</a>
-            <a href="/terms" className="hover:text-cyan-400 transition-colors">Terms</a>
+            
+            
+            <a href="#" className="hover:text-cyan-400 transition-colors">Terms</a>
         </div>
       </div>
     </footer>;

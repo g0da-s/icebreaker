@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 import { Badge } from "@/components/ui/badge";
@@ -292,66 +293,6 @@ const Meetings = () => {
 
       if (error) throw error;
 
-      // Create Google Calendar events for both users if connected
-      const { data: meeting, error: meetingFetchError } = await supabase
-        .from('meetings')
-        .select('scheduled_at, requester_id, recipient_id')
-        .eq('id', meetingId)
-        .single();
-
-      if (!meetingFetchError && meeting) {
-        const { data: requesterProfile } = await supabase
-          .from('profiles')
-          .select('google_calendar_connected, email, full_name')
-          .eq('id', meeting.requester_id)
-          .single();
-
-        const { data: recipientProfile } = await supabase
-          .from('profiles')
-          .select('google_calendar_connected, email, full_name')
-          .eq('id', meeting.recipient_id)
-          .single();
-
-        const startTime = new Date(meeting.scheduled_at);
-        const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // 1 hour meeting
-
-        // Create calendar event for requester if connected
-        if (requesterProfile?.google_calendar_connected) {
-          try {
-            await supabase.functions.invoke('google-calendar-create-event', {
-              body: {
-                meetingId: meetingId,
-                attendeeEmail: recipientProfile?.email,
-                startTime: startTime.toISOString(),
-                endTime: endTime.toISOString(),
-                title: `Icebreaker Meeting with ${recipientProfile?.full_name || 'User'}`,
-                description: `Meeting scheduled via Icebreaker app. Connected interest: ${connectedInterest}`,
-              },
-            });
-          } catch (err) {
-            console.error('Failed to create calendar event for requester:', err);
-          }
-        }
-
-        // Create calendar event for recipient if connected
-        if (recipientProfile?.google_calendar_connected) {
-          try {
-            await supabase.functions.invoke('google-calendar-create-event', {
-              body: {
-                meetingId: meetingId,
-                attendeeEmail: requesterProfile?.email,
-                startTime: startTime.toISOString(),
-                endTime: endTime.toISOString(),
-                title: `Icebreaker Meeting with ${requesterProfile?.full_name || 'User'}`,
-                description: `Meeting scheduled via Icebreaker app. Connected interest: ${connectedInterest}`,
-              },
-            });
-          } catch (err) {
-            console.error('Failed to create calendar event for recipient:', err);
-          }
-        }
-      }
-
       toast({
         title: "Meeting Confirmed!",
         description: `Your meeting with ${requesterName} has been confirmed.`,
@@ -508,6 +449,7 @@ const Meetings = () => {
         <div className="relative z-10 container max-w-screen-sm mx-auto px-4 pt-24 pb-6">
           <p className="text-center text-slate-300">Loading meetings...</p>
         </div>
+        <BottomNav />
       </div>
     );
   }
@@ -913,6 +855,8 @@ const Meetings = () => {
           user={profileModal.user}
         />
       )}
+
+      <BottomNav />
     </div>
     </>
   );

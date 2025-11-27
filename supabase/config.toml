@@ -1,13 +1,2 @@
 project_id = "ulomnesokzzflfslgrbf"
 
-[functions.google-oauth-callback]
-verify_jwt = false
-
-[functions.google-calendar-fetch]
-verify_jwt = true
-
-[functions.google-calendar-create-event]
-verify_jwt = true
-
-[functions.google-refresh-token]
-verify_jwt = false

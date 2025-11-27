@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Calendar, Link2, Unlink } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 interface GoogleCalendarConnectProps {
   onAvailabilityImported?: (availability: any) => void;
@@ -15,115 +14,43 @@ export const GoogleCalendarConnect = ({ onAvailabilityImported }: GoogleCalendar
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    checkConnectionStatus();
-  }, []);
-
-  const checkConnectionStatus = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('google_calendar_connected')
-        .eq('id', user.id)
-        .single();
-
-      setIsConnected(profile?.google_calendar_connected || false);
-    } catch (error) {
-      console.error('Error checking calendar connection:', error);
-    }
-  };
-
   const handleConnect = async () => {
     setLoading(true);
     
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-
-      const clientId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      const redirectUri = `${window.location.origin}/auth/callback/google`;
-      
-      // Construct Google OAuth URL
-      const oauthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-      oauthUrl.searchParams.append('client_id', import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID || clientId);
-      oauthUrl.searchParams.append('redirect_uri', redirectUri);
-      oauthUrl.searchParams.append('response_type', 'code');
-      oauthUrl.searchParams.append('scope', 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events');
-      oauthUrl.searchParams.append('access_type', 'offline');
-      oauthUrl.searchParams.append('prompt', 'consent');
-      oauthUrl.searchParams.append('state', user.id);
-
-      // Redirect to Google OAuth
-      window.location.href = oauthUrl.toString();
-    } catch (error) {
-      console.error('OAuth error:', error);
-      toast({
-        title: "Connection Failed",
-        description: "Could not connect to Google Calendar",
-        variant: "destructive",
-      });
+    // Simulated Google Calendar OAuth flow
+    // In production, this would redirect to Google OAuth
+    setTimeout(() => {
+      setIsConnected(true);
       setLoading(false);
-    }
-  };
-
-  const handleDisconnect = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          google_access_token: null,
-          google_refresh_token: null,
-          google_token_expires_at: null,
-          google_calendar_connected: false,
-        })
-        .eq('id', user.id);
-
-      if (error) throw error;
-
-      setIsConnected(false);
-      toast({
-        title: "Calendar Disconnected",
-        description: "Google Calendar has been unlinked",
-      });
-    } catch (error) {
-      console.error('Disconnect error:', error);
-      toast({
-        title: "Disconnection Failed",
-        description: "Could not disconnect Google Calendar",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const fetchAvailability = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('google-calendar-fetch');
       
-      if (error) throw error;
+      toast({
+        title: "Google Calendar Connected",
+        description: "Your availability has been synced",
+      });
+
+      // Simulate imported availability
+      const mockAvailability = {
+        monday: { active: true, start: "09:00", end: "17:00" },
+        tuesday: { active: true, start: "09:00", end: "17:00" },
+        wednesday: { active: true, start: "09:00", end: "17:00" },
+        thursday: { active: true, start: "09:00", end: "17:00" },
+        friday: { active: true, start: "09:00", end: "17:00" },
+        saturday: { active: false, start: "09:00", end: "17:00" },
+        sunday: { active: false, start: "09:00", end: "17:00" },
+      };
       
-      if (data?.availability && onAvailabilityImported) {
-        onAvailabilityImported(data.availability);
-        toast({
-          title: "Availability Synced",
-          description: "Your calendar has been synced successfully",
-        });
+      if (onAvailabilityImported) {
+        onAvailabilityImported(mockAvailability);
       }
-    } catch (error) {
-      console.error('Fetch availability error:', error);
-      toast({
-        title: "Sync Failed",
-        description: "Could not sync calendar availability",
-        variant: "destructive",
-      });
-    }
+    }, 1500);
+  };
+
+  const handleDisconnect = () => {
+    setIsConnected(false);
+    toast({
+      title: "Calendar Disconnected",
+      description: "Google Calendar has been unlinked",
+    });
   };
 
   return (

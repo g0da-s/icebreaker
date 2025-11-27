@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { BottomNav } from "@/components/BottomNav";
 import { ArrowLeft, RefreshCw, Calendar, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDisplayName } from "@/lib/utils";
@@ -246,6 +247,8 @@ const Match = () => {
           </div>
         </div>
       </div>
+
+      <BottomNav />
     </div>
   );
 };

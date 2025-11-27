@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { BottomNav } from "@/components/BottomNav";
 import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 import { GlassCard } from "@/components/landing/GlassCard";
 import { Button } from "@/components/ui/button";
@@ -76,6 +77,7 @@ const Profile = () => {
         <div className="relative z-10 container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-slate-300">Loading...</p>
         </div>
+        <BottomNav />
       </div>
     );
   }
@@ -86,6 +88,7 @@ const Profile = () => {
         <div className="relative z-10 container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-slate-300">Profile not found</p>
         </div>
+        <BottomNav />
       </div>
     );
   }
@@ -362,6 +365,8 @@ const Profile = () => {
           </div>
         </LiquidCrystalCard>
       </div>
+
+      <BottomNav />
     </div>
   );
 };
