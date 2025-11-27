@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDisplayName } from "@/lib/utils";
 
@@ -25,13 +24,32 @@ export const IceBreakerLeaders = ({ onUserClick }: IceBreakerLeadersProps) => {
 
   useEffect(() => {
     fetchLeaders();
+
+    // Real-time subscription for meeting completions
+    const channel = supabase
+      .channel('leaderboard-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'meetings',
+          filter: 'status=eq.completed'
+        },
+        () => {
+          // Refresh leaderboard when a meeting is completed
+          fetchLeaders();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchLeaders = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
       // Fetch all completed meetings
       const { data: meetings, error: meetingsError } = await supabase
         .from('meetings')
@@ -40,21 +58,19 @@ export const IceBreakerLeaders = ({ onUserClick }: IceBreakerLeadersProps) => {
 
       if (meetingsError) throw meetingsError;
 
-      // Count meetings per user (excluding current user)
+      // Count meetings per user (INCLUDING EVERYONE)
       const userMeetingCounts = new Map<string, number>();
       meetings?.forEach((meeting) => {
-        if (meeting.requester_id !== session.user.id) {
-          userMeetingCounts.set(
-            meeting.requester_id,
-            (userMeetingCounts.get(meeting.requester_id) || 0) + 1
-          );
-        }
-        if (meeting.recipient_id !== session.user.id) {
-          userMeetingCounts.set(
-            meeting.recipient_id,
-            (userMeetingCounts.get(meeting.recipient_id) || 0) + 1
-          );
-        }
+        // Count for requester
+        userMeetingCounts.set(
+          meeting.requester_id,
+          (userMeetingCounts.get(meeting.requester_id) || 0) + 1
+        );
+        // Count for recipient
+        userMeetingCounts.set(
+          meeting.recipient_id,
+          (userMeetingCounts.get(meeting.recipient_id) || 0) + 1
+        );
       });
 
       // Get top 5 users sorted by meeting count
@@ -100,18 +116,6 @@ export const IceBreakerLeaders = ({ onUserClick }: IceBreakerLeadersProps) => {
     }
   };
 
-  const getMedalEmoji = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return '🥇';
-      case 2:
-        return '🥈';
-      case 3:
-        return '🥉';
-      default:
-        return null;
-    }
-  };
 
   if (loading) {
     return (
@@ -183,7 +187,6 @@ export const IceBreakerLeaders = ({ onUserClick }: IceBreakerLeadersProps) => {
       <div className="space-y-3">
         {leaders.map((leader, index) => {
           const rank = index + 1;
-          const medal = getMedalEmoji(rank);
 
           return (
             <motion.div
@@ -197,13 +200,9 @@ export const IceBreakerLeaders = ({ onUserClick }: IceBreakerLeadersProps) => {
                 onClick={() => onUserClick(leader.user_id)}
               >
                 <div className="flex items-center gap-4">
-                  {/* Rank */}
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 flex-shrink-0">
-                    {medal ? (
-                      <span className="text-2xl">{medal}</span>
-                    ) : (
-                      <span className="text-xl font-bold text-cyan-400">{rank}</span>
-                    )}
+                  {/* Rank Number */}
+                  <div className="flex items-center justify-center w-10 h-10 flex-shrink-0">
+                    <span className="text-2xl font-bold text-cyan-400">{rank}</span>
                   </div>
 
                   {/* Avatar */}
@@ -217,22 +216,22 @@ export const IceBreakerLeaders = ({ onUserClick }: IceBreakerLeadersProps) => {
                     </AvatarFallback>
                   </Avatar>
 
-                  {/* Name and Score */}
+                  {/* Name */}
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-white text-base truncate hover:text-cyan-400 transition-colors">
                       {formatDisplayName(leader.full_name)}
                     </h3>
-                    <p className="text-sm text-slate-400">
-                      {leader.meeting_count} {leader.meeting_count === 1 ? 'meeting' : 'meetings'}
-                    </p>
                   </div>
 
-                  {/* Badge for top 3 */}
-                  {rank <= 3 && (
-                    <Badge className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white border-0 text-xs px-3 py-1 flex-shrink-0">
-                      Top {rank}
-                    </Badge>
-                  )}
+                  {/* Score Column */}
+                  <div className="flex flex-col items-end flex-shrink-0">
+                    <span className="text-2xl font-bold text-white">
+                      {leader.meeting_count}
+                    </span>
+                    <span className="text-xs text-slate-400 whitespace-nowrap">
+                      Successful Meetings
+                    </span>
+                  </div>
                 </div>
               </Card>
             </motion.div>
