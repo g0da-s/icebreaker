@@ -913,24 +913,25 @@ const ProfileSetup = () => {
 
               <div className="space-y-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
                   <Input
                     placeholder="Search or add custom interest..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleSearchKeyDown}
-                    className="pl-10"
+                    className="pl-11 pr-4 h-12 rounded-full bg-white/5 backdrop-blur-xl border border-white/20 text-white placeholder:text-slate-400 focus:border-white/40 focus:ring-2 focus:ring-white/20"
                     disabled={isStandardizing}
                   />
                 </div>
                 {canAddCustom && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2 text-sm text-white/60">
                     <span>Press Enter to add "{searchTerm}"</span>
                     <Button 
                       size="sm" 
                       variant="outline"
                       onClick={handleAddCustomInterest}
                       disabled={isStandardizing}
+                      className="rounded-full"
                     >
                       {isStandardizing ? "Adding..." : "Add"}
                     </Button>
@@ -940,7 +941,7 @@ const ProfileSetup = () => {
 
               {selectedInterests.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold mb-3">Your Selected Interests</h3>
+                  <h3 className="text-sm font-semibold mb-3 text-white">Your Selected Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedInterests.map(interest => (
                       <Badge
@@ -958,7 +959,7 @@ const ProfileSetup = () => {
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-semibold mb-3">Creative & Personal Interests</h3>
+                  <h3 className="text-sm font-semibold mb-3 text-white">Creative & Personal Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {filteredCreative.map(interest => (
                       <Badge
@@ -974,7 +975,7 @@ const ProfileSetup = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-semibold mb-3">Activity & Lifestyle</h3>
+                  <h3 className="text-sm font-semibold mb-3 text-white">Activity & Lifestyle</h3>
                   <div className="flex flex-wrap gap-2">
                     {filteredLifestyle.map(interest => (
                       <Badge
@@ -990,11 +991,21 @@ const ProfileSetup = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between gap-2">
-                <Button variant="outline" onClick={handleBack}>
-                  Back
-                </Button>
-                <Button onClick={handleNext}>Next</Button>
+              <div className="flex justify-between gap-4">
+                <button
+                  onClick={handleBack}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 backdrop-blur-xl border border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all"
+                >
+                  <span>←</span>
+                  <span>Back</span>
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:border-cyan-500/60 transition-all"
+                >
+                  <span>Next</span>
+                  <span>→</span>
+                </button>
               </div>
             </motion.div>
           )}
