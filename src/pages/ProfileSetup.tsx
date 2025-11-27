@@ -510,6 +510,17 @@ const ProfileSetup = () => {
       return;
     }
 
+    // Check if user has set at least one availability time
+    const hasActiveAvailability = Object.values(availability).some(day => day.active);
+    if (!hasActiveAvailability) {
+      toast({
+        title: "Set your availability",
+        description: "Please set at least one time when you're available for meetings",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -1116,7 +1127,7 @@ const ProfileSetup = () => {
                 </Button>
                 <Button 
                   onClick={handleComplete} 
-                  disabled={loading}
+                  disabled={loading || !Object.values(availability).some(day => day.active)}
                   className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold hover:scale-105 hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] active:shadow-[0_0_40px_rgba(6,182,212,0.8)] transition-all duration-300 shadow-lg shadow-cyan-500/20 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   {loading ? "Saving..." : "Finish"}
