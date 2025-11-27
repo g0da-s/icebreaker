@@ -1068,6 +1068,43 @@ const ProfileSetup = () => {
                   <Label htmlFor="availability-text" className="text-white/80 font-medium">
                     Describe your typical availability in your own words
                   </Label>
+                  
+                  {/* Quick Suggestion Chips */}
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setAvailabilityText("I am flexible and available any day between 10:00 and 22:00.")}
+                      className="rounded-full bg-white/10 backdrop-blur-xl border border-white/30 text-white text-xs hover:bg-white/20 hover:border-white/50 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] transition-all duration-300"
+                    >
+                      Any time
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setAvailabilityText("I am available Monday to Friday between 10:00 and 22:00.")}
+                      className="rounded-full bg-white/10 backdrop-blur-xl border border-white/30 text-white text-xs hover:bg-white/20 hover:border-white/50 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] transition-all duration-300"
+                    >
+                      Weekdays
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setAvailabilityText("I am available Saturday and Sunday between 10:00 and 22:00.")}
+                      className="rounded-full bg-white/10 backdrop-blur-xl border border-white/30 text-white text-xs hover:bg-white/20 hover:border-white/50 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] transition-all duration-300"
+                    >
+                      Weekends
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setAvailabilityText("I am available on weekdays after 18:00 (until 22:00).")}
+                      className="rounded-full bg-white/10 backdrop-blur-xl border border-white/30 text-white text-xs hover:bg-white/20 hover:border-white/50 hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] transition-all duration-300"
+                    >
+                      Evenings
+                    </Button>
+                  </div>
+
                   <Textarea
                     id="availability-text"
                     placeholder="E.g., 'Free all next week', 'Available Tuesday and Thursday evenings after 6 PM', 'I am free all the time'"
