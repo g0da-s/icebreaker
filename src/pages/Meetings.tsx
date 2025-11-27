@@ -721,12 +721,9 @@ const Meetings = () => {
                       </div>
                     </div>
 
-                    {/* Show Ice-Breaker button if within 5 days, always show Cancel */}
+                    {/* Ice-Breaker button is always available */}
                     {(() => {
-                      const now = new Date();
-                      const meetingStart = new Date(meeting.scheduled_at);
-                      const fiveDaysBefore = new Date(meetingStart.getTime() - 5 * 24 * 60 * 60 * 1000);
-                      const canAccessIceBreaker = now >= fiveDaysBefore;
+                      const canAccessIceBreaker = true;
                       
                       // Check if current user has completed
                       const currentUserCompleted = meeting.isRequester 
