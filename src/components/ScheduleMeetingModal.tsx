@@ -54,6 +54,7 @@ export const ScheduleMeetingModal = ({
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [currentUserAvailability, setCurrentUserAvailability] = useState<WeekAvailability | null>(null);
   const [overlappingSlots, setOverlappingSlots] = useState<TimeSlot[]>([]);
+  const [location, setLocation] = useState('');
 
   useEffect(() => {
     const fetchCurrentUserAvailability = async () => {
@@ -228,16 +229,12 @@ export const ScheduleMeetingModal = ({
 
       if (meetingId) {
         // RESCHEDULE LOGIC (Ping-Pong Flow):
-        // - Update the existing meeting with new time
-        // - Set status to 'pending' so the OTHER PARTY must confirm
-        // - The proposer is automatically considered "ready" for this new time
-        // - The recipient will see this in their "Requests" tab with "Reschedule Proposed" badge
-        // - This allows unlimited back-and-forth rescheduling
         const { error } = await supabase
           .from('meetings')
           .update({
             scheduled_at: scheduledDateTime.toISOString(),
             status: 'pending',
+            location: location || null,
           })
           .eq('id', meetingId);
 
@@ -249,15 +246,39 @@ export const ScheduleMeetingModal = ({
         });
       } else {
         // NEW MEETING: Create new meeting
-        const { error } = await supabase.from('meetings').insert({
+        const { data: newMeeting, error } = await supabase.from('meetings').insert({
           requester_id: session.user.id,
           recipient_id: recipientId,
           scheduled_at: scheduledDateTime.toISOString(),
           meeting_type: 'friendly',
           status: 'pending',
-        });
+          location: location || null,
+        }).select().single();
 
         if (error) throw error;
+
+        // Get recipient email for calendar invite
+        const { data: recipientProfile } = await supabase
+          .from('profiles')
+          .select('email, google_calendar_connected')
+          .eq('id', recipientId)
+          .single();
+
+        // Create calendar event if user has Google Calendar connected
+        if (recipientProfile?.email && newMeeting) {
+          try {
+            await supabase.functions.invoke('create-calendar-event', {
+              body: {
+                meetingId: newMeeting.id,
+                attendeeEmail: recipientProfile.email,
+                scheduledAt: scheduledDateTime.toISOString(),
+                location: location || 'Online',
+              }
+            });
+          } catch (calError) {
+            console.error('Failed to create calendar event:', calError);
+          }
+        }
 
         toast({
           title: "Invitation Sent!",
@@ -303,7 +324,20 @@ export const ScheduleMeetingModal = ({
                 </p>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Meeting Location (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="e.g., Zoom, Office, Coffee shop..."
+                    className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/30"
+                  />
+                </div>
+
                 {loadingSlots ? (
                   <div className="text-center py-8">
                     <div className="animate-pulse space-y-3">
@@ -361,7 +395,7 @@ export const ScheduleMeetingModal = ({
                 )}
               </div>
             </div>
-          </LiquidCrystalCard>
+           </LiquidCrystalCard>
         </DialogPrimitive.Content>
       </DialogPortal>
     </Dialog>

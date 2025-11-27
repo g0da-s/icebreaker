@@ -46,10 +46,12 @@ export type Database = {
       }
       meetings: {
         Row: {
+          calendar_event_id: string | null
           connected_interest: string | null
           created_at: string
           current_stage: number | null
           id: string
+          location: string | null
           meeting_type: string
           recipient_completed: boolean | null
           recipient_id: string
@@ -61,10 +63,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          calendar_event_id?: string | null
           connected_interest?: string | null
           created_at?: string
           current_stage?: number | null
           id?: string
+          location?: string | null
           meeting_type: string
           recipient_completed?: boolean | null
           recipient_id: string
@@ -76,10 +80,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          calendar_event_id?: string | null
           connected_interest?: string | null
           created_at?: string
           current_stage?: number | null
           id?: string
+          location?: string | null
           meeting_type?: string
           recipient_completed?: boolean | null
           recipient_id?: string
