@@ -555,73 +555,57 @@ const IceBreaker = () => {
             {stage < 4 ? (
               <div className="flex gap-3">
                 {stage > 1 && (
-                  <button 
+                  <Button 
                     onClick={handleBack} 
-                    className="px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
-                    }}
+                    variant="outline"
+                    className="rounded-full bg-white/5 text-white/90 hover:bg-white/10 border-white/10"
                   >
-                    <ArrowLeft className="w-5 h-5 mr-2 inline" />
+                    <ArrowLeft className="w-5 h-5 mr-2" />
                     Back
-                  </button>
+                  </Button>
                 )}
                 
                 <Button 
                   onClick={handleNext} 
-                  size="sm"
                   className="flex-1 rounded-full bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30"
                 >
                   Next Question
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
             ) : waitingForOther ? (
               <div className="space-y-3">
-                <button 
+                <Button 
                   disabled 
-                  className="w-full px-6 py-3 rounded-lg text-white/50 font-medium cursor-not-allowed"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4)'
-                  }}
+                  variant="outline"
+                  className="w-full rounded-full bg-white/5 text-white/50 border-white/10 cursor-not-allowed"
                 >
                   Waiting for other person to confirm...
-                </button>
-                <button 
+                </Button>
+                <Button 
                   onClick={() => navigate("/meetings")} 
-                  className="w-full px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
-                  }}
+                  variant="outline"
+                  className="w-full rounded-full bg-white/5 text-white/90 hover:bg-white/10 border-white/10"
                 >
                   Back to Meetings List
-                </button>
+                </Button>
               </div>
             ) : (
               <div className="flex gap-3">
-                <button 
+                <Button 
                   onClick={() => navigate("/meetings")} 
-                  className="flex-1 px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
-                  }}
+                  variant="outline"
+                  className="flex-1 rounded-full bg-white/5 text-white/90 hover:bg-white/10 border-white/10"
                 >
                   Return to Dashboard
-                </button>
-                <button 
+                </Button>
+                <Button 
                   onClick={handleMarkCompleted} 
-                  className="flex-1 px-6 py-3 rounded-lg bg-cyan-500/20 text-cyan-300 font-medium transition-all hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 rounded-full bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30"
                   disabled={isCompleting}
-                  style={{
-                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 15px rgba(34,211,238,0.3)'
-                  }}
                 >
                   {isCompleting ? "Marking..." : "Finish Meeting"}
-                </button>
+                </Button>
               </div>
             )}
           </div>
