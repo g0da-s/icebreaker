@@ -18,9 +18,9 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AvailabilityScheduler } from "@/components/AvailabilityScheduler";
 import { CalendarAvailability } from "@/components/CalendarAvailability";
+import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
 import { AIAvailabilityEditor } from "@/components/AIAvailabilityEditor";
 import { DateSpecificAvailability } from "@/components/DateSpecificAvailability";
-import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -624,17 +624,19 @@ const EditProfile = () => {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-background px-2 text-muted-foreground">
-                    Or set manually
+                    Or use other methods
                   </span>
                 </div>
               </div>
 
-              <LiquidCrystalCard className="p-6">
-                <CalendarAvailability 
-                  availability={availability}
-                  onChange={setAvailability}
-                />
-              </LiquidCrystalCard>
+              <GoogleCalendarConnect 
+                onAvailabilityImported={(imported) => setAvailability(imported)}
+              />
+
+              <CalendarAvailability 
+                availability={availability}
+                onChange={setAvailability}
+              />
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -647,12 +649,10 @@ const EditProfile = () => {
                 </div>
               </div>
 
-              <LiquidCrystalCard className="p-6">
-                <DateSpecificAvailability 
-                  dateSlots={dateSlots}
-                  onChange={setDateSlots}
-                />
-              </LiquidCrystalCard>
+              <DateSpecificAvailability 
+                dateSlots={dateSlots}
+                onChange={setDateSlots}
+              />
             </div>
 
             {/* Action Buttons */}
