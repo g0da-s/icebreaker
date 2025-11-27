@@ -99,10 +99,10 @@ export const Hero: React.FC = () => {
       >
         <Input
           type="email"
-          placeholder="Enter your email"
+          placeholder="Enter ISM email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-slate-800/50 border-slate-700/50 backdrop-blur-md text-white placeholder:text-slate-400"
+          className="w-full h-12 px-6 rounded-full bg-white/10 border border-white/20 backdrop-blur-xl text-white placeholder:text-white/50 focus-visible:ring-white/30 focus-visible:ring-offset-0 shadow-lg"
         />
         <Link to="/auth?mode=signup" className="w-full sm:w-auto">
           <button className="w-full px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-2 whitespace-nowrap shadow-lg shadow-cyan-500/20">
