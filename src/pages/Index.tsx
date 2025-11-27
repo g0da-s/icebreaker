@@ -75,6 +75,7 @@ const Index = () => {
 
       <main className="relative z-10">
         <Hero />
+        <Testimonials />
         <StickyScroll />
         <BentoGrid />
         <Testimonials />
