@@ -114,6 +114,7 @@ const Auth = () => {
     } else {
       toast({
         title: "Welcome Back!",
+        duration: 1500,
       });
       navigate("/home");
     }
