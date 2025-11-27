@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Upload, Search } from "lucide-react";
+import { ArrowLeft, Upload, Search, MessageSquare, User, Sparkles, Calendar as CalendarIcon } from "lucide-react";
+import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
+import { motion } from "framer-motion";
 import {
   Select,
   SelectContent,
@@ -22,7 +24,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CalendarAvailability } from "@/components/CalendarAvailability";
 import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
@@ -80,7 +81,7 @@ const AI_QUESTIONS = [
   "What qualities do you enjoy in the people you work or spend time with?",
   "What do you usually hope to get out of a first meeting - a friendly connection, idea exchange, or potential collaboration?",
   "When talking to someone new, what makes you feel at ease - shared interests, a friendly tone, or clear purpose?",
-  "ARE YOU READY TO BREAK THE ICE?"
+  "Anything else you would like to tell about yourself?"
 ];
 
 const ProfileSetup = () => {
@@ -115,8 +116,7 @@ const ProfileSetup = () => {
   const [chatAnswers, setChatAnswers] = useState<string[]>([]);
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [chatHistory, setChatHistory] = useState<Array<{role: "ai" | "user", text: string}>>([]);
-  const [typingText, setTypingText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // Step 3: Interests
   const [searchTerm, setSearchTerm] = useState("");
@@ -244,26 +244,16 @@ const ProfileSetup = () => {
   // Initialize chat when entering step 3
   useEffect(() => {
     if (step === 3 && chatHistory.length === 0) {
-      setIsTyping(true);
-      const text = AI_QUESTIONS[0];
-      let index = 0;
-      setTypingText("");
-      
-      const typingInterval = setInterval(() => {
-        if (index < text.length) {
-          setTypingText(text.slice(0, index + 1));
-          index++;
-        } else {
-          clearInterval(typingInterval);
-          setIsTyping(false);
-          setChatHistory([{ role: "ai", text }]);
-          setTypingText("");
-        }
-      }, 30);
-      
-      return () => clearInterval(typingInterval);
+      setChatHistory([{ role: "ai", text: AI_QUESTIONS[0] }]);
     }
   }, [step, chatHistory.length]);
+
+  // Auto-scroll to bottom when chat history updates
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
 
   const generateInterestSuggestions = async () => {
     setIsGeneratingSuggestions(true);
@@ -414,7 +404,7 @@ const ProfileSetup = () => {
   };
 
   const handleChatSubmit = async () => {
-    if (!currentAnswer.trim() || isTyping) return;
+    if (!currentAnswer.trim()) return;
 
     const newHistory = [...chatHistory, { role: "user" as const, text: currentAnswer }];
     const newAnswers = [...chatAnswers, currentAnswer];
@@ -422,53 +412,27 @@ const ProfileSetup = () => {
     setChatHistory(newHistory);
     setCurrentAnswer("");
 
-    // Check if this is the last question (ARE YOU READY TO BREAK THE ICE?)
-    if (currentQuestion === AI_QUESTIONS.length - 1) {
-      // User answered "Yes" to the final question - generate AI summary
-      if (currentAnswer.toLowerCase().includes('yes') || currentAnswer.toLowerCase().includes('ready')) {
-        try {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-            // Call edge function to generate AI summary
-            await supabase.functions.invoke('generate-user-story', {
-              body: {
-                answers: newAnswers.slice(0, 3), // Use Q1, Q2, Q3 (not Q4 which is confirmation)
-              }
-            });
-            
-            toast({
-              title: "Your story has been created!",
-              description: "AI has generated your personalized profile summary",
-            });
-          }
-        } catch (error) {
-          console.error('Error generating user story:', error);
+    // After 3 answers, generate AI summary
+    if (newAnswers.length === 3) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await supabase.functions.invoke('generate-user-story', {
+            body: {
+              answers: newAnswers.slice(0, 3),
+            }
+          });
         }
+      } catch (error) {
+        console.error('Error generating user story:', error);
       }
-      return;
     }
 
+    // Move to next question if not at the end
     if (currentQuestion < AI_QUESTIONS.length - 1) {
       const nextQuestion = currentQuestion + 1;
       setCurrentQuestion(nextQuestion);
-      setTimeout(() => {
-        setIsTyping(true);
-        const text = AI_QUESTIONS[nextQuestion];
-        let index = 0;
-        setTypingText("");
-        
-        const typingInterval = setInterval(() => {
-          if (index < text.length) {
-            setTypingText(text.slice(0, index + 1));
-            index++;
-          } else {
-            clearInterval(typingInterval);
-            setIsTyping(false);
-            setChatHistory([...newHistory, { role: "ai", text }]);
-            setTypingText("");
-          }
-        }, 30);
-      }, 500);
+      setChatHistory([...newHistory, { role: "ai", text: AI_QUESTIONS[nextQuestion] }]);
     }
   };
 
@@ -647,65 +611,101 @@ const ProfileSetup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4 pb-24">
-      <div className="absolute top-4 left-4">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center p-4 pb-24 relative overflow-hidden">
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <motion.div 
+          animate={{ 
+            y: [0, 100, 0],
+            rotate: [0, 45, 0]
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-[20%] -left-[10%] w-[800px] h-[800px] bg-blue-900/20 rounded-full blur-[120px] opacity-40"
+        />
+        
+        <motion.div 
+          animate={{ 
+            y: [0, -100, 0],
+            rotate: [0, -45, 0]
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[30%] -right-[15%] w-[900px] h-[900px] bg-blue-500/20 rounded-full blur-[130px] opacity-40"
+        />
+        
+        <motion.div 
+          animate={{ y: [0, 50, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-[-20%] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-blue-700/15 rounded-full blur-[140px] opacity-30"
+        />
+      </div>
+
+      <div className="absolute top-4 left-4 z-50">
         <Button
           variant="ghost"
           onClick={handleBack}
-          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          className="inline-flex items-center gap-2 text-white/70 hover:text-white"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
         </Button>
       </div>
       
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <div className="space-y-2">
-            <CardTitle>{step === 3 ? "Let's get to know you" : "Build Your Profile"}</CardTitle>
-            <CardDescription>
+      <LiquidCrystalCard className="w-full max-w-2xl z-10">
+        <div className="p-6">
+          <div className="space-y-2 mb-6">
+            <div className="flex items-center gap-2">
+              {step === 1 && <User className="w-5 h-5 text-cyan-400" />}
+              {step === 2 && <MessageSquare className="w-5 h-5 text-cyan-400" />}
+              {step === 3 && <MessageSquare className="w-5 h-5 text-cyan-400" />}
+              {step === 4 && <Sparkles className="w-5 h-5 text-cyan-400" />}
+              {step === 5 && <CalendarIcon className="w-5 h-5 text-cyan-400" />}
+              <h2 className="text-2xl font-bold text-white">
+                {step === 3 ? "Let's get to know you" : "Build Your Profile"}
+              </h2>
+            </div>
+            <p className="text-white/60 text-sm">
               Step {step} of 5 - Let's get to know you
-            </CardDescription>
-            <Progress value={progress} className="h-2" />
+            </p>
+            <Progress value={progress} className="h-2 bg-white/10" />
           </div>
-        </CardHeader>
-        <CardContent>
+          <div>
           {/* Step 1: Basic Identity */}
           {step === 1 && (
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name *</Label>
+                  <Label htmlFor="firstName" className="text-white">First Name *</Label>
                   <Input
                     id="firstName"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="John"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name *</Label>
+                  <Label htmlFor="lastName" className="text-white">Last Name *</Label>
                   <Input
                     id="lastName"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Doe"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-white/40"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="studyLevel">Study Level *</Label>
+                <Label htmlFor="studyLevel" className="text-white">Study Level *</Label>
                 <Select value={studyLevel} onValueChange={(value) => {
                   setStudyLevel(value);
                   setStudies("");
                 }}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/5 border-white/10 text-white">
                     <SelectValue placeholder="Select your study level" />
                   </SelectTrigger>
-                  <SelectContent className="bg-background z-50">
+                  <SelectContent className="bg-slate-900 border-white/10 z-50">
                     {STUDY_LEVELS.map(option => (
-                      <SelectItem key={option} value={option}>
+                      <SelectItem key={option} value={option} className="text-white">
                         {option}
                       </SelectItem>
                     ))}
@@ -715,14 +715,14 @@ const ProfileSetup = () => {
 
               {studyLevel && studyLevel !== "Faculty Member" && (
                 <div className="space-y-2">
-                  <Label htmlFor="studies">Program *</Label>
+                  <Label htmlFor="studies" className="text-white">Program *</Label>
                   <Select value={studies} onValueChange={setStudies}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
                       <SelectValue placeholder={`Select your ${studyLevel} program`} />
                     </SelectTrigger>
-                    <SelectContent className="bg-background z-50 max-h-[300px] overflow-y-auto">
+                    <SelectContent className="bg-slate-900 border-white/10 z-50 max-h-[300px] overflow-y-auto">
                       {getAvailablePrograms().map(program => (
-                        <SelectItem key={program} value={program}>
+                        <SelectItem key={program} value={program} className="text-white">
                           {program}
                         </SelectItem>
                       ))}
@@ -732,7 +732,7 @@ const ProfileSetup = () => {
               )}
 
               <div className="space-y-4">
-                <Label>Choose Mascot *</Label>
+                <Label className="text-white">Choose Mascot *</Label>
                 <div className="grid grid-cols-4 gap-4">
                   {["/avatar-1.png", "/avatar-2.png", "/avatar-3.png", "/avatar-4.png"].map((mascot, idx) => (
                     <div
@@ -743,8 +743,8 @@ const ProfileSetup = () => {
                       }}
                       className={`aspect-square rounded-lg border-2 cursor-pointer overflow-hidden ${
                         selectedMascot === mascot
-                          ? "border-primary ring-2 ring-primary"
-                          : "border-border hover:border-primary/50"
+                          ? "border-cyan-500 ring-2 ring-cyan-500/50"
+                          : "border-white/20 hover:border-cyan-500/50"
                       }`}
                     >
                       <img 
@@ -767,11 +767,11 @@ const ProfileSetup = () => {
           {step === 2 && (
             <div className="space-y-6 text-center py-8">
               <div className="space-y-4">
-                <div className="mx-auto w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="mx-auto w-20 h-20 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
                   <span className="text-4xl">🤝</span>
                 </div>
-                <h3 className="text-2xl font-bold">Let's Get to Know You</h3>
-                <p className="text-muted-foreground max-w-md mx-auto">
+                <h3 className="text-2xl font-bold text-white">Let's Get to Know You</h3>
+                <p className="text-white/70 max-w-md mx-auto">
                   We need to understand your goals and interests to help you find meaningful networking possibilities.
                 </p>
               </div>
@@ -784,7 +784,10 @@ const ProfileSetup = () => {
           {/* Step 3: AI Chat Interface */}
           {step === 3 && (
             <div className="space-y-6">
-              <div className="h-96 overflow-y-auto space-y-4 p-4 bg-muted/30 rounded-lg">
+              <div 
+                ref={chatContainerRef}
+                className="h-96 overflow-y-auto space-y-4 p-4 bg-white/5 backdrop-blur-xl rounded-lg border border-white/10"
+              >
                 {chatHistory.map((msg, idx) => (
                   <div
                     key={idx}
@@ -793,22 +796,14 @@ const ProfileSetup = () => {
                     <div
                       className={`max-w-[80%] p-3 rounded-lg ${
                         msg.role === "ai"
-                          ? "bg-primary/10 text-foreground"
-                          : "bg-primary text-primary-foreground"
+                          ? "bg-cyan-500/20 text-white border border-cyan-500/30"
+                          : "bg-blue-500/20 text-white border border-blue-500/30"
                       }`}
                     >
                       {msg.text}
                     </div>
                   </div>
                 ))}
-                {isTyping && typingText && (
-                  <div className="flex justify-start">
-                    <div className="max-w-[80%] p-3 rounded-lg bg-primary/10 text-foreground">
-                      {typingText}
-                      <span className="inline-block w-1 h-4 ml-1 bg-foreground animate-pulse" />
-                    </div>
-                  </div>
-                )}
               </div>
 
               <div className="flex gap-2">
@@ -816,21 +811,20 @@ const ProfileSetup = () => {
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   placeholder="Type your answer..."
-                  className="min-h-[60px]"
+                  className="min-h-[60px] bg-white/5 border-white/10 text-white placeholder:text-white/40"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
                       handleChatSubmit();
                     }
                   }}
-                  disabled={isTyping}
                 />
-                <Button onClick={handleChatSubmit} disabled={!currentAnswer.trim() || isTyping}>
+                <Button onClick={handleChatSubmit} disabled={!currentAnswer.trim()}>
                   Send
                 </Button>
               </div>
 
-              {chatAnswers.length === AI_QUESTIONS.length && (
+              {chatAnswers.length >= 3 && (
                 <div className="flex justify-center animate-fade-in">
                   <Button onClick={() => setStep(4)} size="lg" className="w-full sm:w-auto">
                     Continue to Interests
@@ -988,7 +982,7 @@ const ProfileSetup = () => {
 
               <Card className="bg-secondary/5">
                 <CardContent className="pt-6 space-y-4">
-                  <Label htmlFor="availability-text">
+                  <Label htmlFor="availability-text" className="text-white">
                     Describe your typical availability in your own words
                   </Label>
                   <Textarea
@@ -996,7 +990,7 @@ const ProfileSetup = () => {
                     placeholder="E.g., 'Free all next week', 'Available Tuesday and Thursday evenings after 6 PM', 'I am free all the time'"
                     value={availabilityText}
                     onChange={(e) => setAvailabilityText(e.target.value)}
-                    className="min-h-[100px]"
+                    className="min-h-[100px] bg-white/5 border-white/10 text-white placeholder:text-slate-400"
                     disabled={isParsing}
                   />
                   <Button 
@@ -1045,8 +1039,9 @@ const ProfileSetup = () => {
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+      </LiquidCrystalCard>
 
       <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
         <AlertDialogContent>
