@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BottomNav } from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { QuickScheduleModal } from "@/components/QuickScheduleModal";
@@ -154,15 +153,8 @@ const Home = () => {
             return;
           }
 
-          // Step 4: Show the toast notification only once
-          const welcomeShown = localStorage.getItem('welcome_achievement_shown');
-          if (!welcomeShown) {
-            toast({
-              title: "❄️ First Icebreak!",
-              description: "Welcome to the community",
-            });
-            localStorage.setItem('welcome_achievement_shown', 'true');
-          }
+          // Silent achievement - no toast notification
+          localStorage.setItem('welcome_achievement_shown', 'true');
         }
       } catch (error) {
         console.error('Error in welcome achievement flow:', error);
@@ -773,8 +765,6 @@ const Home = () => {
           }}
         />
       )}
-
-      <BottomNav />
     </div>
   );
 };

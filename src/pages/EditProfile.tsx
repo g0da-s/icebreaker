@@ -10,7 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Search, Check, Trash2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { BottomNav } from "@/components/BottomNav";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
@@ -385,7 +384,6 @@ const EditProfile = () => {
         <div className="container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-muted-foreground">Loading profile...</p>
         </div>
-        <BottomNav />
       </div>
     );
   }
@@ -711,8 +709,6 @@ const EditProfile = () => {
           </CardContent>
         </Card>
       </div>
-
-      <BottomNav />
     </div>
   );
 };

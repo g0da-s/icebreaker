@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BottomNav } from "@/components/BottomNav";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -334,7 +333,6 @@ export default function Achievements() {
           ))}
         </div>
       </div>
-      <BottomNav />
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -98,7 +97,6 @@ const UserProfile = () => {
         <div className="container max-w-screen-sm mx-auto px-4 py-6">
           <p className="text-center text-muted-foreground">Loading profile...</p>
         </div>
-        <BottomNav />
       </div>
     );
   }
@@ -115,7 +113,6 @@ const UserProfile = () => {
             </Button>
           </div>
         </div>
-        <BottomNav />
       </div>
     );
   }
@@ -253,8 +250,6 @@ const UserProfile = () => {
         recipientName={formatDisplayName(profile.full_name)}
         recipientAvailability={profile.availability}
       />
-
-      <BottomNav />
     </div>
   );
 };
