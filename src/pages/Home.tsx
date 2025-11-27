@@ -251,7 +251,7 @@ const Home = () => {
 
         // Execute AI match with text (and optional category filter)
         const { data, error } = await supabase.functions.invoke('ai-match', {
-          body: { searchQuery: finalSearchQuery, userId }
+          body: { searchQuery: finalSearchQuery }
         });
         
         if (error) throw error;

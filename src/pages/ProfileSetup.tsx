@@ -433,7 +433,6 @@ const ProfileSetup = () => {
             await supabase.functions.invoke('generate-user-story', {
               body: {
                 answers: newAnswers.slice(0, 3), // Use Q1, Q2, Q3 (not Q4 which is confirmation)
-                userId: session.user.id
               }
             });
             
