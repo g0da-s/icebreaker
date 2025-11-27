@@ -887,8 +887,8 @@ const ProfileSetup = () => {
                   <p className="text-white/50 text-sm">You can complete this later</p>
                   <Button 
                     onClick={() => setStep(4)} 
-                    variant="ghost"
-                    className="text-white/70 hover:text-white hover:bg-white/5"
+                    variant="outline"
+                    className="border-white/30 text-white hover:bg-white/10 hover:border-white/50"
                   >
                     Skip
                   </Button>
