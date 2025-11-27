@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { X, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { differenceInMinutes, format } from "date-fns";
 import { formatDisplayName } from "@/lib/utils";
+import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
 
 type Notification = {
   id: string;
@@ -152,17 +152,13 @@ export const MeetingNotifications = () => {
             description: `${notif.other_user_name} is unfortunately not available for the meeting.`,
             variant: "destructive",
           });
-        } else if (notif.type === "confirmed") {
-          toast({
-            title: "Meeting Confirmed!",
-            description: `Your meeting with ${notif.other_user_name} has been confirmed for ${format(new Date(notif.scheduled_at!), "MMM d 'at' h:mm a")}.`,
-          });
         } else if (notif.type === "reminder") {
           toast({
             title: "Meeting Starting Soon!",
             description: `Your meeting with ${notif.other_user_name} starts in 1 hour. Are you still going?`,
           });
         }
+        // Confirmed meetings only show in the glassy notification card
       });
 
       if (newNotifs.length > 0) {
@@ -196,44 +192,49 @@ export const MeetingNotifications = () => {
   return (
     <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
       {notifications.map((notif) => (
-        <Card key={notif.id} className="p-4 shadow-lg border">
+        <LiquidCrystalCard key={notif.id} className="p-6">
           <div className="flex items-start gap-3">
-            <Bell className={`h-5 w-5 mt-0.5 ${
-              notif.type === "cancelled" ? "text-destructive" : 
-              notif.type === "confirmed" ? "text-primary" : 
-              "text-warning"
-            }`} />
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant={
-                  notif.type === "cancelled" ? "destructive" : 
-                  notif.type === "confirmed" ? "default" : 
-                  "secondary"
-                }>
-                  {notif.type === "cancelled" ? "Meeting Declined" : 
-                   notif.type === "confirmed" ? "Meeting Confirmed" : 
-                   "Reminder"}
-                </Badge>
-              </div>
-              <p className="text-sm text-foreground">
-                {notif.type === "cancelled" && 
-                  `${notif.other_user_name} is unfortunately not available for your meeting request.`}
-                {notif.type === "confirmed" && 
-                  `Your meeting with ${notif.other_user_name} is confirmed for ${format(new Date(notif.scheduled_at!), "MMM d 'at' h:mm a")}.`}
-                {notif.type === "reminder" && 
-                  `Your meeting with ${notif.other_user_name} starts in 1 hour!`}
-              </p>
+            <div className="flex-1 text-center">
+              {notif.type === "confirmed" ? (
+                <div className="space-y-1">
+                  <Badge className="mb-2 bg-cyan-500/20 text-cyan-300 border-cyan-400/30">
+                    Meeting Confirmed
+                  </Badge>
+                  <p className="text-base text-white/90">
+                    with {notif.other_user_name}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 mb-2 justify-center">
+                    <Bell className={`h-5 w-5 ${
+                      notif.type === "cancelled" ? "text-red-400" : "text-amber-400"
+                    }`} />
+                    <Badge variant={
+                      notif.type === "cancelled" ? "destructive" : "secondary"
+                    } className="bg-white/10 text-white border-white/20">
+                      {notif.type === "cancelled" ? "Meeting Declined" : "Reminder"}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-white/80">
+                    {notif.type === "cancelled" && 
+                      `${notif.other_user_name} is unfortunately not available for your meeting request.`}
+                    {notif.type === "reminder" && 
+                      `Your meeting with ${notif.other_user_name} starts in 1 hour!`}
+                  </p>
+                </>
+              )}
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6"
+              className="h-6 w-6 text-white/60 hover:text-white hover:bg-white/10"
               onClick={() => dismissNotification(notif.id)}
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
-        </Card>
+        </LiquidCrystalCard>
       ))}
     </div>
   );

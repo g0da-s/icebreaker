@@ -441,7 +441,7 @@ const IceBreaker = () => {
                   key={s}
                   className={`h-3 w-14 rounded-full transition-all duration-500 ${
                     s <= stage 
-                      ? 'bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.8)] animate-pulse' 
+                      ? 'bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.8)]' 
                       : 'bg-white/10'
                   }`}
                   style={{
@@ -573,9 +573,11 @@ const IceBreaker = () => {
                 
                 <button 
                   onClick={handleNext} 
-                  className="flex-1 px-6 py-3 rounded-lg bg-cyan-500/20 text-cyan-300 font-medium transition-all hover:bg-cyan-500/30"
+                  className="flex-1 px-6 py-3 rounded-lg text-cyan-300 font-medium transition-all hover:text-cyan-200"
                   style={{
-                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 15px rgba(34,211,238,0.3)'
+                    background: 'rgba(34, 211, 238, 0.1)',
+                    boxShadow: 'inset 0 3px 8px rgba(0, 0, 0, 0.5), inset 0 -1px 2px rgba(255, 255, 255, 0.05), 0 0 15px rgba(34,211,238,0.3)',
+                    textShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.3)'
                   }}
                 >
                   Next Question
