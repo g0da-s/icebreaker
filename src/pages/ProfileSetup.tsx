@@ -876,40 +876,39 @@ const ProfileSetup = () => {
               className="space-y-6"
             >
               {chatAnswers.length > 0 && (
-                <Card className="bg-primary/5 border-primary/20">
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="font-semibold mb-1">AI-Powered Suggestions</h3>
-                        <p className="text-sm text-muted-foreground">Based on your profile answers</p>
-                      </div>
-                      <Button 
-                        size="sm"
-                        onClick={generateInterestSuggestions}
-                        disabled={isGeneratingSuggestions}
-                      >
-                        {isGeneratingSuggestions ? "Generating..." : suggestedInterests.length > 0 ? "Regenerate" : "Generate"}
-                      </Button>
+                <div className="bg-cyan-500/10 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="font-semibold mb-1 text-white">AI-Powered Suggestions</h3>
+                      <p className="text-sm text-white/60">Based on your profile answers</p>
                     </div>
-                    {isGeneratingSuggestions && (
-                      <p className="text-sm text-muted-foreground">Generating personalized interests...</p>
-                    )}
-                    {suggestedInterests.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {suggestedInterests.map(interest => (
-                          <Badge
-                            key={interest}
-                            variant={selectedInterests.includes(interest) ? "default" : "secondary"}
-                            className="cursor-pointer"
-                            onClick={() => toggleInterest(interest)}
-                          >
-                            {interest}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                    <Button 
+                      size="sm"
+                      onClick={generateInterestSuggestions}
+                      disabled={isGeneratingSuggestions}
+                      className="rounded-full"
+                    >
+                      {isGeneratingSuggestions ? "Generating..." : suggestedInterests.length > 0 ? "Regenerate" : "Generate"}
+                    </Button>
+                  </div>
+                  {isGeneratingSuggestions && (
+                    <p className="text-sm text-white/60">Generating personalized interests...</p>
+                  )}
+                  {suggestedInterests.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {suggestedInterests.map(interest => (
+                        <Badge
+                          key={interest}
+                          variant={selectedInterests.includes(interest) ? "default" : "secondary"}
+                          className="cursor-pointer"
+                          onClick={() => toggleInterest(interest)}
+                        >
+                          {interest}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )}
 
               <div className="space-y-2">
