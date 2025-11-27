@@ -276,10 +276,6 @@ const ProfileSetup = () => {
       if (error) throw error;
       
       setSuggestedInterests(data.suggestions || []);
-      toast({
-        title: "Suggestions generated",
-        description: "AI has created personalized interest suggestions for you",
-      });
     } catch (error) {
       console.error('Error generating suggestions:', error);
       toast({
@@ -758,10 +754,10 @@ const ProfileSetup = () => {
                         setAvatarType("mascot");
                         setSelectedMascot(mascot);
                       }}
-                      className={`aspect-square rounded-lg border-2 cursor-pointer overflow-hidden ${
+                      className={`aspect-square rounded-2xl cursor-pointer overflow-hidden backdrop-blur-xl border-2 transition-all duration-300 ${
                         selectedMascot === mascot
-                          ? "border-cyan-500 ring-2 ring-cyan-500/50"
-                          : "border-white/20 hover:border-cyan-500/50"
+                          ? "bg-cyan-500/30 border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+                          : "bg-white/5 border-white/20 hover:bg-white/10 hover:border-cyan-500/30 hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]"
                       }`}
                     >
                       <img 
@@ -1121,7 +1117,7 @@ const ProfileSetup = () => {
                 <Button 
                   onClick={handleComplete} 
                   disabled={loading}
-                  className="rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300 disabled:opacity-50"
+                  className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold hover:scale-105 hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] active:shadow-[0_0_40px_rgba(6,182,212,0.8)] transition-all duration-300 shadow-lg shadow-cyan-500/20 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   {loading ? "Saving..." : "Finish"}
                 </Button>
