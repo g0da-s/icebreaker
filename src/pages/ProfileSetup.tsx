@@ -870,17 +870,30 @@ const ProfileSetup = () => {
                 </Button>
               </div>
 
-              {chatAnswers.length >= 3 && (
-                <div className="flex justify-center animate-fade-in">
+              <div className="space-y-3">
+                {chatAnswers.length >= 3 && (
+                  <div className="flex justify-center animate-fade-in">
+                    <Button 
+                      onClick={() => setStep(4)} 
+                      size="lg" 
+                      className="w-full sm:w-auto rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300"
+                    >
+                      Continue to Interests
+                    </Button>
+                  </div>
+                )}
+                
+                <div className="text-center space-y-2">
+                  <p className="text-white/50 text-sm">You can complete this later</p>
                   <Button 
                     onClick={() => setStep(4)} 
-                    size="lg" 
-                    className="w-full sm:w-auto rounded-full bg-cyan-500/20 backdrop-blur-xl border border-cyan-500/40 text-white hover:bg-cyan-500/30 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-all duration-300"
+                    variant="ghost"
+                    className="text-white/70 hover:text-white hover:bg-white/5"
                   >
-                    Continue to Interests
+                    Skip
                   </Button>
                 </div>
-              )}
+              </div>
             </motion.div>
           )}
 
