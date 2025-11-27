@@ -2,10 +2,9 @@ import { Dialog, DialogPortal, DialogOverlay, DialogClose } from "@/components/u
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, X, ChevronRight } from "lucide-react";
+import { Calendar, X } from "lucide-react";
 import { formatDisplayName } from "@/lib/utils";
 import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
-import { GlassCard } from "@/components/landing/GlassCard";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 
 interface UserProfileModalProps {
@@ -23,14 +22,6 @@ interface UserProfileModalProps {
   };
   onScheduleMeeting?: () => void;
 }
-
-const CREATIVE_INTERESTS = [
-  "Photography", "Music", "Art", "Design", "Writing", "Dance", "Theater", "Cooking", "Crafts", "Fashion"
-];
-
-const LIFESTYLE_INTERESTS = [
-  "Sports", "Fitness", "Travel", "Gaming", "Reading", "Hiking", "Yoga", "Running", "Cycling", "Swimming"
-];
 
 export const UserProfileModal = ({ 
   open, 
@@ -51,7 +42,7 @@ export const UserProfileModal = ({
             <div className="space-y-6 p-6">
               {/* Centered Avatar Section */}
               <div className="flex flex-col items-center">
-                <Avatar className="h-24 w-24 mb-4 border-4 border-white shadow-xl">
+                <Avatar className="h-24 w-24 mb-4 border-4 border-white/20 shadow-xl">
                   <AvatarImage 
                     src={user.avatar_url || undefined} 
                     alt={user.full_name} 
@@ -61,83 +52,34 @@ export const UserProfileModal = ({
                   </AvatarFallback>
                 </Avatar>
                 
-                {/* Name - Smaller */}
-                <h2 className="text-xl font-bold text-white mb-2">
+                {/* Name */}
+                <h2 className="text-2xl font-bold text-white mb-2">
                   {formatDisplayName(user.full_name)}
                 </h2>
                 
                 {/* Role Badge under name */}
                 {user.role && (
-                  <Badge className="mb-4 bg-white/10 text-white border-white/20 px-3 py-1">
+                  <Badge className="mb-4 bg-cyan-500/20 text-white border-cyan-500/40 px-4 py-1">
                     {user.role}
                   </Badge>
                 )}
               </div>
 
-              {/* Content Sections Grid */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                {/* Studies Section */}
-                {user.studies && (
-                  <GlassCard className="p-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-xs font-bold text-white">Studies</h3>
-                      <ChevronRight className="w-3 h-3 text-slate-400" />
-                    </div>
-                    <p className="text-xs text-slate-300 line-clamp-2">
-                      {user.studies?.includes(' - ')
-                        ? user.studies.split(' - ')[1]
-                        : user.studies
-                      }
-                    </p>
-                  </GlassCard>
-                )}
-
-                {/* Bio Section */}
-                {user.bio && (
-                  <GlassCard className="p-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="text-xs font-bold text-white">About</h3>
-                      <ChevronRight className="w-3 h-3 text-slate-400" />
-                    </div>
-                    <p className="text-xs text-slate-300 line-clamp-2">
-                      {user.bio}
-                    </p>
-                  </GlassCard>
-                )}
-              </div>
-
-              {/* Interests Section */}
-              {user.tags.filter(tag => CREATIVE_INTERESTS.includes(tag)).length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold text-white mb-2">
-                    Interests
+              {/* Interests & Skills Section */}
+              {user.tags && user.tags.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-white/80">
+                    Interests & Skills
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {user.tags
-                      .filter(tag => CREATIVE_INTERESTS.includes(tag))
-                      .map((tag, index) => (
-                        <Badge key={index} variant="outline" className="bg-white/5 text-slate-300 border-white/20">
-                          {tag}
-                        </Badge>
-                      ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Skills Section */}
-              {user.tags.filter(tag => LIFESTYLE_INTERESTS.includes(tag)).length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold text-white mb-2">
-                    Skills
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {user.tags
-                      .filter(tag => LIFESTYLE_INTERESTS.includes(tag))
-                      .map((tag, index) => (
-                        <Badge key={index} variant="outline" className="bg-white/5 text-slate-300 border-white/20">
-                          {tag}
-                        </Badge>
-                      ))}
+                    {user.tags.map((tag, index) => (
+                      <Badge 
+                        key={index} 
+                        className="bg-white/10 text-white border-white/20 hover:bg-white/15 transition-colors"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               )}
