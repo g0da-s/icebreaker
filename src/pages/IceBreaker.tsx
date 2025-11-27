@@ -504,7 +504,7 @@ const IceBreaker = () => {
                 <div className="flex gap-3">
                   <button 
                     onClick={handleBack} 
-                    className="px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
+                    className="px-6 py-3 rounded-full text-white/90 font-medium transition-all hover:text-white"
                     style={{
                       background: 'rgba(255, 255, 255, 0.05)',
                       boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
@@ -513,16 +513,13 @@ const IceBreaker = () => {
                     <ArrowLeft className="w-5 h-5 mr-2 inline" />
                     Back
                   </button>
-                  <button 
+                  <Button 
                     onClick={handleGenerateNewTopic} 
-                    className="flex-1 px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
-                    }}
+                    variant="outline"
+                    className="flex-1 rounded-full bg-white/5 text-white/90 hover:bg-white/10 border-white/10"
                   >
                     Generate New Topic 🎲
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
