@@ -26,9 +26,6 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CalendarAvailability } from "@/components/CalendarAvailability";
 import { GoogleCalendarConnect } from "@/components/GoogleCalendarConnect";
-import { LiquidCrystalCard } from "@/components/landing/LiquidCrystalCard";
-import { GlassCard } from "@/components/landing/GlassCard";
-import { motion } from "framer-motion";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -652,111 +649,65 @@ const ProfileSetup = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center p-4 pb-24 overflow-hidden">
-      {/* Animated Background Orbs */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-            x: [-20, 20, -20]
-          }}
-          transition={{ 
-            duration: 15, 
-            repeat: Infinity, 
-            ease: "easeInOut" 
-          }}
-          className="absolute top-[10%] left-[5%] w-[600px] h-[600px] bg-blue-900/20 rounded-full blur-[120px]"
-        />
-        
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.3, 1],
-            opacity: [0.3, 0.6, 0.3],
-            y: [20, -20, 20]
-          }}
-          transition={{ 
-            duration: 20, 
-            repeat: Infinity, 
-            ease: "easeInOut",
-            delay: 2
-          }}
-          className="absolute top-[40%] right-[10%] w-[700px] h-[700px] bg-blue-500/20 rounded-full blur-[130px]"
-        />
-        
-        <motion.div 
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.2, 0.4, 0.2]
-          }}
-          transition={{ 
-            duration: 18, 
-            repeat: Infinity, 
-            ease: "easeInOut",
-            delay: 4
-          }}
-          className="absolute bottom-[10%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-700/15 rounded-full blur-[140px]"
-        />
-      </div>
-
-      <div className="relative z-10 absolute top-4 left-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4 pb-24">
+      <div className="absolute top-4 left-4">
         <Button
           variant="ghost"
           onClick={handleBack}
-          className="inline-flex items-center gap-2 text-slate-300 hover:text-white backdrop-blur-xl bg-slate-800/40 border border-white/10"
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
         </Button>
       </div>
       
-      <LiquidCrystalCard className="relative z-10 w-full max-w-2xl">
-        <div className="p-6 sm:p-8">
-          <div className="space-y-2 mb-6">
-            <h2 className="text-2xl font-bold text-white">{step === 3 ? "Let's get to know you" : "Build Your Profile"}</h2>
-            <p className="text-slate-300">
+      <Card className="w-full max-w-2xl">
+        <CardHeader>
+          <div className="space-y-2">
+            <CardTitle>{step === 3 ? "Let's get to know you" : "Build Your Profile"}</CardTitle>
+            <CardDescription>
               Step {step} of 5 - Let's get to know you
-            </p>
+            </CardDescription>
             <Progress value={progress} className="h-2" />
           </div>
+        </CardHeader>
+        <CardContent>
           {/* Step 1: Basic Identity */}
           {step === 1 && (
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-white">First Name *</Label>
+                  <Label htmlFor="firstName">First Name *</Label>
                   <Input
                     id="firstName"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="John"
-                    className="bg-slate-800/40 border-white/10 text-white placeholder:text-slate-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-white">Last Name *</Label>
+                  <Label htmlFor="lastName">Last Name *</Label>
                   <Input
                     id="lastName"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Doe"
-                    className="bg-slate-800/40 border-white/10 text-white placeholder:text-slate-400"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="studyLevel" className="text-white">Study Level *</Label>
+                <Label htmlFor="studyLevel">Study Level *</Label>
                 <Select value={studyLevel} onValueChange={(value) => {
                   setStudyLevel(value);
                   setStudies("");
                 }}>
-                  <SelectTrigger className="bg-slate-800/40 border-white/10 text-white">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select your study level" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-white/10 z-50">
+                  <SelectContent className="bg-background z-50">
                     {STUDY_LEVELS.map(option => (
-                      <SelectItem key={option} value={option} className="text-white">
+                      <SelectItem key={option} value={option}>
                         {option}
                       </SelectItem>
                     ))}
@@ -766,14 +717,14 @@ const ProfileSetup = () => {
 
               {studyLevel && studyLevel !== "Faculty Member" && (
                 <div className="space-y-2">
-                  <Label htmlFor="studies" className="text-white">Program *</Label>
+                  <Label htmlFor="studies">Program *</Label>
                   <Select value={studies} onValueChange={setStudies}>
-                    <SelectTrigger className="bg-slate-800/40 border-white/10 text-white">
+                    <SelectTrigger>
                       <SelectValue placeholder={`Select your ${studyLevel} program`} />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-900 border-white/10 z-50 max-h-[300px] overflow-y-auto">
+                    <SelectContent className="bg-background z-50 max-h-[300px] overflow-y-auto">
                       {getAvailablePrograms().map(program => (
-                        <SelectItem key={program} value={program} className="text-white">
+                        <SelectItem key={program} value={program}>
                           {program}
                         </SelectItem>
                       ))}
@@ -783,7 +734,7 @@ const ProfileSetup = () => {
               )}
 
               <div className="space-y-4">
-                <Label className="text-white">Choose Mascot *</Label>
+                <Label>Choose Mascot *</Label>
                 <div className="grid grid-cols-4 gap-4">
                   {["/avatar-1.png", "/avatar-2.png", "/avatar-3.png", "/avatar-4.png"].map((mascot, idx) => (
                     <div
@@ -792,10 +743,10 @@ const ProfileSetup = () => {
                         setAvatarType("mascot");
                         setSelectedMascot(mascot);
                       }}
-                      className={`aspect-square rounded-lg border-2 cursor-pointer overflow-hidden transition-all ${
+                      className={`aspect-square rounded-lg border-2 cursor-pointer overflow-hidden ${
                         selectedMascot === mascot
                           ? "border-primary ring-2 ring-primary"
-                          : "border-white/20 hover:border-primary/50"
+                          : "border-border hover:border-primary/50"
                       }`}
                     >
                       <img 
@@ -818,11 +769,11 @@ const ProfileSetup = () => {
           {step === 2 && (
             <div className="space-y-6 text-center py-8">
               <div className="space-y-4">
-                <div className="mx-auto w-20 h-20 rounded-full bg-slate-700/50 flex items-center justify-center">
+                <div className="mx-auto w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
                   <span className="text-4xl">🤝</span>
                 </div>
-                <h3 className="text-2xl font-bold text-white">Let's Get to Know You</h3>
-                <p className="text-slate-300 max-w-md mx-auto">
+                <h3 className="text-2xl font-bold">Let's Get to Know You</h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
                   We need to understand your goals and interests to help you find meaningful networking possibilities.
                 </p>
               </div>
@@ -835,7 +786,7 @@ const ProfileSetup = () => {
           {/* Step 3: AI Chat Interface */}
           {step === 3 && (
             <div className="space-y-6">
-              <GlassCard className="h-96 overflow-y-auto space-y-4 p-4">
+              <div className="h-96 overflow-y-auto space-y-4 p-4 bg-muted/30 rounded-lg">
                 {chatHistory.map((msg, idx) => (
                   <div
                     key={idx}
@@ -844,7 +795,7 @@ const ProfileSetup = () => {
                     <div
                       className={`max-w-[80%] p-3 rounded-lg ${
                         msg.role === "ai"
-                          ? "bg-slate-700/50 text-slate-100 backdrop-blur-xl border border-white/10"
+                          ? "bg-primary/10 text-foreground"
                           : "bg-primary text-primary-foreground"
                       }`}
                     >
@@ -854,20 +805,20 @@ const ProfileSetup = () => {
                 ))}
                 {isTyping && typingText && (
                   <div className="flex justify-start">
-                    <div className="max-w-[80%] p-3 rounded-lg bg-slate-700/50 text-slate-100 backdrop-blur-xl border border-white/10">
+                    <div className="max-w-[80%] p-3 rounded-lg bg-primary/10 text-foreground">
                       {typingText}
-                      <span className="inline-block w-1 h-4 ml-1 bg-slate-100 animate-pulse" />
+                      <span className="inline-block w-1 h-4 ml-1 bg-foreground animate-pulse" />
                     </div>
                   </div>
                 )}
-              </GlassCard>
+              </div>
 
               <div className="flex gap-2">
                 <Textarea
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   placeholder="Type your answer..."
-                  className="min-h-[60px] bg-slate-800/40 border-white/10 text-white placeholder:text-slate-400"
+                  className="min-h-[60px]"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -895,54 +846,56 @@ const ProfileSetup = () => {
           {step === 4 && (
             <div className="space-y-6">
               {chatAnswers.length > 0 && (
-                <GlassCard className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="font-semibold mb-1 text-white">AI-Powered Suggestions</h3>
-                      <p className="text-sm text-slate-300">Based on your profile answers</p>
+                <Card className="bg-primary/5 border-primary/20">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="font-semibold mb-1">AI-Powered Suggestions</h3>
+                        <p className="text-sm text-muted-foreground">Based on your profile answers</p>
+                      </div>
+                      <Button 
+                        size="sm"
+                        onClick={generateInterestSuggestions}
+                        disabled={isGeneratingSuggestions}
+                      >
+                        {isGeneratingSuggestions ? "Generating..." : suggestedInterests.length > 0 ? "Regenerate" : "Generate"}
+                      </Button>
                     </div>
-                    <Button 
-                      size="sm"
-                      onClick={generateInterestSuggestions}
-                      disabled={isGeneratingSuggestions}
-                    >
-                      {isGeneratingSuggestions ? "Generating..." : suggestedInterests.length > 0 ? "Regenerate" : "Generate"}
-                    </Button>
-                  </div>
-                  {isGeneratingSuggestions && (
-                    <p className="text-sm text-slate-300">Generating personalized interests...</p>
-                  )}
-                  {suggestedInterests.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {suggestedInterests.map(interest => (
-                        <Badge
-                          key={interest}
-                          variant={selectedInterests.includes(interest) ? "default" : "secondary"}
-                          className="cursor-pointer"
-                          onClick={() => toggleInterest(interest)}
-                        >
-                          {interest}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </GlassCard>
+                    {isGeneratingSuggestions && (
+                      <p className="text-sm text-muted-foreground">Generating personalized interests...</p>
+                    )}
+                    {suggestedInterests.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {suggestedInterests.map(interest => (
+                          <Badge
+                            key={interest}
+                            variant={selectedInterests.includes(interest) ? "default" : "secondary"}
+                            className="cursor-pointer"
+                            onClick={() => toggleInterest(interest)}
+                          >
+                            {interest}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               )}
 
               <div className="space-y-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search or add custom interest..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleSearchKeyDown}
-                    className="pl-10 bg-slate-800/40 border-white/10 text-white placeholder:text-slate-400"
+                    className="pl-10"
                     disabled={isStandardizing}
                   />
                 </div>
                 {canAddCustom && (
-                  <div className="flex items-center gap-2 text-sm text-slate-300">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <span>Press Enter to add "{searchTerm}"</span>
                     <Button 
                       size="sm" 
@@ -958,7 +911,7 @@ const ProfileSetup = () => {
 
               {selectedInterests.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold mb-3 text-white">Your Selected Interests</h3>
+                  <h3 className="text-sm font-semibold mb-3">Your Selected Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedInterests.map(interest => (
                       <Badge
@@ -976,7 +929,7 @@ const ProfileSetup = () => {
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-semibold mb-3 text-white">Creative & Personal Interests</h3>
+                  <h3 className="text-sm font-semibold mb-3">Creative & Personal Interests</h3>
                   <div className="flex flex-wrap gap-2">
                     {filteredCreative.map(interest => (
                       <Badge
@@ -992,7 +945,7 @@ const ProfileSetup = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-semibold mb-3 text-white">Activity & Lifestyle</h3>
+                  <h3 className="text-sm font-semibold mb-3">Activity & Lifestyle</h3>
                   <div className="flex flex-wrap gap-2">
                     {filteredLifestyle.map(interest => (
                       <Badge
@@ -1026,42 +979,44 @@ const ProfileSetup = () => {
               
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-white/10" />
+                  <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-slate-950 px-2 text-slate-400">
+                  <span className="bg-background px-2 text-muted-foreground">
                     Or describe your availability
                   </span>
                 </div>
               </div>
 
-              <GlassCard className="p-6 space-y-4">
-                <Label htmlFor="availability-text" className="text-white">
-                  Describe your typical availability in your own words
-                </Label>
-                <Textarea
-                  id="availability-text"
-                  placeholder="E.g., 'Free all next week', 'Available Tuesday and Thursday evenings after 6 PM', 'I am free all the time'"
-                  value={availabilityText}
-                  onChange={(e) => setAvailabilityText(e.target.value)}
-                  className="min-h-[100px] bg-slate-800/40 border-white/10 text-white placeholder:text-slate-400"
-                  disabled={isParsing}
-                />
-                <Button 
-                  onClick={parseAvailability}
-                  disabled={isParsing || !availabilityText.trim()}
-                  className="w-full"
-                >
-                  {isParsing ? "Analyzing..." : "Analyze & Set Availability (AI)"}
-                </Button>
-              </GlassCard>
+              <Card className="bg-secondary/5">
+                <CardContent className="pt-6 space-y-4">
+                  <Label htmlFor="availability-text">
+                    Describe your typical availability in your own words
+                  </Label>
+                  <Textarea
+                    id="availability-text"
+                    placeholder="E.g., 'Free all next week', 'Available Tuesday and Thursday evenings after 6 PM', 'I am free all the time'"
+                    value={availabilityText}
+                    onChange={(e) => setAvailabilityText(e.target.value)}
+                    className="min-h-[100px]"
+                    disabled={isParsing}
+                  />
+                  <Button 
+                    onClick={parseAvailability}
+                    disabled={isParsing || !availabilityText.trim()}
+                    className="w-full"
+                  >
+                    {isParsing ? "Analyzing..." : "Analyze & Set Availability (AI)"}
+                  </Button>
+                </CardContent>
+              </Card>
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-white/10" />
+                  <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-slate-950 px-2 text-slate-400">
+                  <span className="bg-background px-2 text-muted-foreground">
                     Or set manually
                   </span>
                 </div>
@@ -1092,19 +1047,19 @@ const ProfileSetup = () => {
               </div>
             </div>
           )}
-        </div>
-      </LiquidCrystalCard>
+        </CardContent>
+      </Card>
 
       <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
-        <AlertDialogContent className="bg-slate-900 border-white/10">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">Exit Registration?</AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-300">
+            <AlertDialogTitle>Exit Registration?</AlertDialogTitle>
+            <AlertDialogDescription>
               Are you sure you want to leave the registration form? Aren't you afraid of freezing? ❄️
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={handleExitConfirm} className="bg-slate-800 text-white hover:bg-slate-700 border border-white/10">
+            <AlertDialogAction onClick={handleExitConfirm} className="bg-background text-foreground hover:bg-background/90 border border-border">
               Yes, leave
             </AlertDialogAction>
             <AlertDialogCancel className="bg-primary text-primary-foreground hover:bg-primary/90">
