@@ -513,16 +513,12 @@ const IceBreaker = () => {
                     <ArrowLeft className="w-5 h-5 mr-2 inline" />
                     Back
                   </button>
-                  <button 
+                  <Button 
                     onClick={handleGenerateNewTopic} 
-                    className="flex-1 px-6 py-3 rounded-lg text-white/90 font-medium transition-all hover:text-white"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(255, 255, 255, 0.1)'
-                    }}
+                    className="flex-1 rounded-full bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30"
                   >
                     Generate New Topic 🎲
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -573,7 +569,6 @@ const IceBreaker = () => {
                 
                 <Button 
                   onClick={handleNext} 
-                  size="sm"
                   className="flex-1 rounded-full bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30"
                 >
                   Next Question
@@ -615,16 +610,13 @@ const IceBreaker = () => {
                 >
                   Return to Dashboard
                 </button>
-                <button 
+                <Button 
                   onClick={handleMarkCompleted} 
-                  className="flex-1 px-6 py-3 rounded-lg bg-cyan-500/20 text-cyan-300 font-medium transition-all hover:bg-cyan-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 rounded-full bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30"
                   disabled={isCompleting}
-                  style={{
-                    boxShadow: 'inset 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 15px rgba(34,211,238,0.3)'
-                  }}
                 >
                   {isCompleting ? "Marking..." : "Finish Meeting"}
-                </button>
+                </Button>
               </div>
             )}
           </div>
