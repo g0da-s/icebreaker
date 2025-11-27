@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
 
 export const Hero: React.FC = () => {
+  const [email, setEmail] = useState('');
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden pt-32 pb-12">
       
@@ -92,10 +95,17 @@ export const Hero: React.FC = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.4 }}
-        className="z-10 mt-10 flex flex-col items-center mb-16"
+        className="z-10 mt-10 flex flex-col sm:flex-row items-center gap-3 mb-16 w-full max-w-md px-4"
       >
-        <Link to="/auth?mode=signup">
-          <button className="px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-2 whitespace-nowrap shadow-lg shadow-cyan-500/20">
+        <Input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full bg-slate-800/50 border-slate-700/50 backdrop-blur-md text-white placeholder:text-slate-400"
+        />
+        <Link to="/auth?mode=signup" className="w-full sm:w-auto">
+          <button className="w-full px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-sm hover:scale-105 transition-transform flex items-center justify-center gap-2 whitespace-nowrap shadow-lg shadow-cyan-500/20">
             Try Now <ArrowRight size={16} />
           </button>
         </Link>
