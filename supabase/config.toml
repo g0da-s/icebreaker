@@ -3,3 +3,6 @@ project_id = "ulomnesokzzflfslgrbf"
 [functions.google-calendar-auth]
 verify_jwt = false
 
+[functions.batch-delete-users]
+verify_jwt = false
+
